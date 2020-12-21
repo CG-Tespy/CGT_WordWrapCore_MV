@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+      "target": "es5",
+      "module": "ES6",
+      "sourceMap": false,
+      //"declaration": true,
+      "downlevelIteration": true
+    }
+  }
