@@ -25,9 +25,9 @@ export class CoreWrapParams
     /** 
      * Whether or not this aligns parentheses a certain way.
      */
-    get ParenthesesAlignment(): boolean { return this.parenthesesAlignment; }
-    private parenthesesAlignment: boolean = true;
-    set ParenthesesAlignment(value) { this.parenthesesAlignment = value; }
+    get ParenthesesAlignment(): boolean { return this.parenthesisAlignment; }
+    private parenthesisAlignment: boolean = true;
+    set ParenthesesAlignment(value) { this.parenthesisAlignment = value; }
 
     /**
      * How many words this makes sure each line has, when the text

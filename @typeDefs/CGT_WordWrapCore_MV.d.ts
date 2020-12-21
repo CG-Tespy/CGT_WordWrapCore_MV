@@ -128,19 +128,22 @@ declare namespace CGT
              * Whether or not this aligns parentheses a certain way.
              */
             get ParenthesesAlignment(): boolean;
+            set ParenthesesAlignment(value);
 
             /**
              * How many words this makes sure each line has, when the text
              * besides the nametag has enough.
              */
             get LineMinWordCount(): number;
+            set LineMinWordCount(value);
 
             /** 
              * You'll want this to be set to true if your game's text is all in Japanese,
              * or some other language that doesn't use English spaces.
              */
             get SplitWordsBetweenLines(): boolean;
-
+            set SplitWordsBetweenLines(value);
+            
             /** 
              * You put these in the text where you want to guarantee a line break.
              */

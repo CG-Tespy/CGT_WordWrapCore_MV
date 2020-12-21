@@ -1,7 +1,7 @@
 /*:
 @plugindesc Needed for the CGT word-wrapping plugins, holding information they can use.
 @author CG-Tespy – https://github.com/CG-Tespy
-@help This is version 0.01.01 BETA of this plugin. Tested with RMMV versions 1.5.1 and 1.6.2.
+@help This is version 1.01.01 of this plugin. Tested with RMMV versions 1.5.1 and 1.6.2.
 
 Needs the CGT CoreEngine 1.01.11+ to work. Make sure this is below that in the Plugin Manager.
 

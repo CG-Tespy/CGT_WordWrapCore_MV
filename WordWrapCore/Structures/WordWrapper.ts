@@ -25,6 +25,8 @@ export class WordWrapper implements IWordWrapper
         nametag = this.WithNewlineAsNeeded(nametag);
 
         let lines = this.AsWrappedLines(textField, withoutNametag);
+        lines = this.ApplyLineMinWordCount(lines);
+        lines = this.ApplyParenthesisAlignment(lines);
 
         let result = nametag + lines.join(singleNewline);
         
@@ -114,6 +116,85 @@ export class WordWrapper implements IWordWrapper
     {
         throw subclassImplementationAlert;
     }
+
+    /** Returns the lines with the min word count enforced. */
+    ApplyLineMinWordCount(lines: string[])
+    {
+        let cannotApply = lines.length < 2;
+
+        if (cannotApply)
+            return lines;
+
+        lines = lines.slice(); // So we don't modify the original input
+
+        let lastLineWords = lines[lines.length - 1].split(singleSpace);
+        let secondToLastLineWords = lines[lines.length - 2].split(singleSpace);
+
+        let lastLineNeedsMore = lastLineWords.length < this.LineMinWordCount;
+        let secondToLastDoesNot = secondToLastLineWords.length > this.LineMinWordCount;
+
+        while (lastLineNeedsMore && secondToLastDoesNot)
+        {
+            let wordToMove = secondToLastLineWords.pop();
+            lastLineWords.unshift(wordToMove);
+
+            lastLineNeedsMore = lastLineWords.length < this.LineMinWordCount;
+            secondToLastDoesNot = secondToLastLineWords.length > this.LineMinWordCount;
+        }
+
+        lines[lines.length - 1] = lastLineWords.join(singleSpace);
+        lines[lines.length - 2] = secondToLastLineWords.join(singleSpace);
+
+        return lines;
+
+    }
+
+    get LineMinWordCount(): number { return CGT.WWCore.Params.LineMinWordCount; }
+
+    ApplyParenthesisAlignment(lines: string[])
+    {
+        let cannotApply = lines.length < 2 || !this.ShouldAlignWithParentheses;
+        if (cannotApply)
+            return lines;
+
+        lines = lines.slice(); // Using a copy to avoid changing the input
+
+        // Find the first line that starts with a parenthesis
+        let startsWithParenthesis = "";
+        let firstParenIndex = 0;
+        for (let i = 0; i < lines.length; i++)
+        {
+            let lineEl = lines[i];
+            if (lineEl[0] === "(")
+            {
+                startsWithParenthesis = lineEl;
+                firstParenIndex = i;
+                break;
+            }
+        }
+
+        let nothingFound = startsWithParenthesis == "";
+        let foundAtLastLine = firstParenIndex === lines.length - 1;
+        if (nothingFound || foundAtLastLine)
+            return lines;
+
+        // Apply the leading spaces as appropriate
+        for (let i = firstParenIndex + 1; i < lines.length; i++)
+        {
+            let lineAfter = lines[i];
+            lineAfter = " " + lineAfter;
+            lines[i] = lineAfter;
+
+            let endsWithClosingParenthesis = lineAfter[lineAfter.length - 1] === ")";
+            if (endsWithClosingParenthesis)
+                break;
+        }
+
+        return lines;
+
+    }
+
+    get ShouldAlignWithParentheses(): boolean { return CGT.WWCore.Params.ParenthesesAlignment; }
 
     constructor(overflowFinder?: IOverflowFinder) {}
 

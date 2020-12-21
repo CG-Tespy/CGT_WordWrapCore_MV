@@ -1,4 +1,5 @@
 import { pluginParams } from './PluginParamSetup/_PluginParamSetup';
+import "./PluginCommands/_PluginCommands_Setup";
 import { CoreWrapParams } from './Structures/CoreWrapParams';
 import { WordWrapper } from './Structures/WordWrapper';
 import { NullWordWrapper } from './Structures/NullWordWrapper';
