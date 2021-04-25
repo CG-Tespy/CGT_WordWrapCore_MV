@@ -1,5 +1,7 @@
+import { globalMultiline } from '../Shared/_Strings';
 let Event = CGT.Core.Utils.Event;
 type Event = CGT.Core.Utils.Event;
+let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
 /**
  * Params to affect the word-wrapping, set in the Plugin Manager.
@@ -20,7 +22,11 @@ export class CoreWrapParams
      * */
     get NametagFormats(): RegExp[] { return this.nametagFormats; }
     private nametagFormats = [];
-    set NametagFormats(value) { this.nametagFormats = value; }
+    set NametagFormats(value) 
+    { 
+        ArrayEx.Clear(this.nametagFormats);
+        this.nametagFormats = this.nametagFormats.concat(value); 
+    }
 
     /** 
      * Whether or not this aligns parentheses a certain way.
@@ -47,7 +53,23 @@ export class CoreWrapParams
 
     get LineBreakMarkers(): string[] { return this.lineBreakMarkers; }
     private lineBreakMarkers: string[] = [];
-    set LineBreakMarkers(value) { this.lineBreakMarkers = value; }
+    set LineBreakMarkers(value) 
+    {
+        ArrayEx.Clear(this.lineBreakMarkers);
+        this.lineBreakMarkers = this.lineBreakMarkers.concat(value); 
+    }
+
+    get EmptyText(): RegExp[] { return this.emptyText; }
+    private emptyText: RegExp[] = [];
+    set EmptyText(value) 
+    { 
+        ArrayEx.Clear(this.emptyText);
+        this.emptyText = this.emptyText.concat(value); 
+    }
+
+    get BoldItalicWidthModifier(): number { return this.boldItalicWidthModifier; }
+    private boldItalicWidthModifier: number = 1.2;
+    set BoldItalicWidthModifier(value) { this.boldItalicWidthModifier = value; }
 
 }
 
@@ -73,20 +95,42 @@ export class WrapParamsFactory
     protected static SetNumbersFromParams(baseParams: object, wrapParams: CoreWrapParams)
     {
         wrapParams.LineMinWordCount = Number(baseParams[names.LineMinWordCount]);
+        wrapParams.BoldItalicWidthModifier = Number(baseParams[names.boldItalicWidthModifier]);
     }
 
     protected static SetRegexesFromParams(baseParams: object, wrapParams: CoreWrapParams)
     {
-        let patternsAsStrings: string[] = JSON.parse(baseParams[names.NametagFormats]);
-        let regexes: RegExp[] = [];
+        this.SetNametagFormats(baseParams, wrapParams);
+        this.SetWidthlessText(baseParams, wrapParams);
+    }
 
-        for (let i = 0; i < patternsAsStrings.length; i++)
-        {
-            let stringPattern = patternsAsStrings[i];
-            regexes.push(new RegExp(stringPattern, "gm"));
-        }
+    protected static SetNametagFormats(baseParams: object, wrapParams: CoreWrapParams)
+    {
+        let patternsAsStrings: string[] = JSON.parse(baseParams[names.NametagFormats]);
+        let regexes: RegExp[] = this.StringPatternsToRegexes(patternsAsStrings);
 
         wrapParams.NametagFormats = regexes;
+    }
+
+    protected static StringPatternsToRegexes(patterns: string[])
+    {
+        let regexes: RegExp[] = [];
+
+        for (const patternEl of patterns)
+        {
+            let newRegExp = new RegExp(patternEl, globalMultiline);
+            regexes.push(newRegExp);
+        }
+
+        return regexes;
+    }
+
+    protected static SetWidthlessText(baseParams: object, wrapParams: CoreWrapParams)
+    {
+        let patternsAsStrings: string[] = JSON.parse(baseParams[names.EmptyText]);
+        let regexes: RegExp[] = this.StringPatternsToRegexes(patternsAsStrings);
+
+        wrapParams.EmptyText = regexes;
     }
 
     protected static SetBooleansFromParams(baseParams: object, wrapParams: CoreWrapParams)
@@ -111,4 +155,6 @@ export let names =
     ParenthesisAlignment: "ParenthesisAlignment",
     SplitWordsBetweenLines: "SplitWordsBetweenLines",
     LineBreakMarkers: "LineBreakMarkers",
+    EmptyText: "EmptyText",
+    boldItalicWidthModifier: "BoldItalicWidthModifier",
 };

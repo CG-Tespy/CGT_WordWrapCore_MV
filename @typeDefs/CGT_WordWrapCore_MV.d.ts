@@ -81,7 +81,7 @@ declare namespace CGT
              * For when you need to make any alterations to the text before wrapping it.
              * @param text 
              */
-            protected PrepareForWrapping(text: string): string
+            protected PreparedForWrapping(text: string): string
 
             /**
              * Wraps the (nametagless) text into a string array holding the lines.

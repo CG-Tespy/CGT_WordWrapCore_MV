@@ -1,11 +1,11 @@
 import { pluginParams } from './PluginParamSetup/_PluginParamSetup';
 import "./PluginCommands/_PluginCommands_Setup";
 import { CoreWrapParams } from './Structures/CoreWrapParams';
-import { WordWrapper } from './Structures/WordWrapper';
-import { NullWordWrapper } from './Structures/NullWordWrapper';
-import "./Overrides/_Apply";
-import { NullOverflowFinder } from './Structures/NullOverflowFinder';
-import { SpacialOverflowFinder } from './Structures/SpacialOverflowFinder';
+import { WordWrapper } from './Structures/WordWrappers/WordWrapper';
+import { NullWordWrapper } from './Structures/WordWrappers/NullWordWrapper';
+import { ApplyOverrides } from './Overrides/_Apply';
+import { NullOverflowFinder } from './Structures/OverflowFinders/NullOverflowFinder';
+import { SpacialOverflowFinder } from './Structures/OverflowFinders/SpacialOverflowFinder';
 import * as Shared from './Shared/_All';
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
@@ -80,3 +80,5 @@ function OnWrapModeChanged(oldMode: string, newMode: string)
 {
     WWCore.UpdateActiveWrapper();
 }
+
+ApplyOverrides(WWCore.Params);

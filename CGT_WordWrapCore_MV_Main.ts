@@ -17,7 +17,7 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 
 @param NametagFormats
 @type string[]
-@default ["^[a-zA-Z ]+:", "^\\[[a-zA-Z ]+]:", "^\\n<[a-zA-Z ]+>"]
+@default ["^[a-zA-Z \\?\\!\\(\\)\\[\\]<>\\/]+:", "^\\[[a-zA-Z \\?\\!\\(\\)\\[\\]<>\\/]]+:", "^\\n<[a-zA-Z \\?\\!\\(\\)\\[\\]<>\\/]+"]
 @desc Formats that nametags in your game follow, as regex strings.
 
 @param LineBreakMarkers
@@ -39,6 +39,16 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 @type boolean
 @default false
 @desc Whether or not to have words split between lines when they'd otherwise cause overflow.
+
+@param EmptyText
+@type string[]
+@default ["\u001bC\\[[0-9]+\\]", "V\\[[0-9]+\\]", "\\$", ".\u001b", "\\."]
+@desc Regexes that define text that should be treated as not taking up space in the textbox.
+
+@param BoldItalicWidthModifier
+@type number
+@default 1.2
+@desc How much wider than usual this treats bolded or italicized letters as being.
 
 */
 

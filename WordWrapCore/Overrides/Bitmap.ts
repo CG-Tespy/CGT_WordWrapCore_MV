@@ -1,27 +1,81 @@
-// Altering the measureTextWidth so it doesn't count color codes,
-// and it handles \V correctly
+import { emptyString } from '../Shared/_Strings';
+import { CoreWrapParams } from '../Structures/CoreWrapParams';
+
 var oldMeasureTextWidth = Bitmap.prototype.measureTextWidth;
-var colorCodeRegex = /C\[[0-9]+\]/gm;
-var varCodeRegex = /V\[[0-9]+\]/gm;
 
-/**
- * 
- * @param {string} text 
- */
-function NewMeasureTextWidth(text)
+export function ApplyBitmapOverrides(coreParams: CoreWrapParams)
 {
-    text = text.replace(colorCodeRegex, "");
-    text = text.replace(varCodeRegex, GetVariableValue);
-    return oldMeasureTextWidth.call(this, text);
+    OverrideMeasureTextWidth(coreParams);
 }
 
-/**
- * @param {string} varTag 
- */
-function GetVariableValue(varTag)
+function OverrideMeasureTextWidth(coreParams: CoreWrapParams)
 {
-    var varIndex = parseInt(varTag.match(/[0-9]+/)[0]);
-    return $gameVariables[varIndex] + "";
+    var oldMeasureTextWidth = Bitmap.prototype.measureTextWidth;
+
+    function NewMeasureTextWidth(text: string)
+    {
+        let trimmed: string = WithoutEmptyText(text);
+        let boldText = GetBoldedTextFrom(trimmed);
+        let normalText = GetNormalTextFrom(trimmed);
+
+        let boldTextWidth = oldMeasureTextWidth.call(this, boldText);
+        let normalTextWidth = oldMeasureTextWidth.call(this, normalText);
+
+        return boldTextWidth + normalTextWidth;
+    }
+
+    function WithoutEmptyText(text: string): string
+    {
+        for (const pattern of coreParams.EmptyText)
+        {
+            text = text.replace(pattern, emptyString);
+        }
+
+        return text;
+    }
+
+    function GetBoldedTextFrom(text: string)
+    {
+        let withBoldMarkers: string[] = text.match(boldedTextRegex);
+        let allWithBoldMarkers = withBoldMarkers.join(emptyString);
+        let withoutBoldMarkers = allWithBoldMarkers.replace(boldMarker, emptyString);
+
+        return withoutBoldMarkers;
+
+    }
+
+    let boldedTextRegex: RegExp = /MSGCORE\[1\][A-Za-z \?\!\(\)\[\]<>:]+MSGCORE\[1\]/gm;
+    let boldMarker = /MSGCORE\[1\]/;
+    
+    function GetNormalTextFrom(text: string)
+    {
+
+    }
+
+
+    Bitmap.prototype.measureTextWidth = NewMeasureTextWidth;
 }
 
-Bitmap.prototype.measureTextWidth = NewMeasureTextWidth;
+
+
+function HaveWidthlessTextIgnored(coreParams: CoreWrapParams)
+{
+    function NewMeasureTextWidth(text: string)
+    {
+        let trimmed: string = WithoutWidthlessText(text);
+        return oldMeasureTextWidth.call(this, trimmed);
+    }
+
+    function WithoutWidthlessText(text: string): string
+    {
+        for (const pattern of coreParams.EmptyText)
+        {
+            text = text.replace(pattern, emptyString);
+        }
+
+        return text;
+    }
+    
+    Bitmap.prototype.measureTextWidth = NewMeasureTextWidth;
+}
+
