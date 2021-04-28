@@ -42,13 +42,34 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 
 @param EmptyText
 @type string[]
-@default ["\u001bC\\[[0-9]+\\]", "V\\[[0-9]+\\]", "\\$", ".\u001b", "\\."]
+@default ["\u001bC\\[[0-9]+\\]", "\\$", ".\u001b"]
 @desc Regexes that define text that should be treated as not taking up space in the textbox.
 
-@param BoldItalicWidthModifier
+@param BoldItalicSubstitute
+@type string
+@default AA
+@desc When calculating the width of text with bold or italics markers, this is what they're treated as
+
+@param Spacing
+
+@param MugshotWidth
+@parent Spacing
 @type number
-@default 1.2
-@desc How much wider than usual this treats bolded or italicized letters as being.
+@default 144
+@desc How wide mugshots are treated as being, in a unit decided by the active wrapper.
+
+@param MugshotPadding
+@parent Spacing
+@type number
+@default 25
+@desc How much space there is between the mugshot and the text, in a unit decided by the active wrapper.
+
+@param SidePadding
+@parent Spacing
+@type number
+@default 5
+@desc For the message box sides, helping prevent overflow while making sure the wrapping isn't too tight.
+
 
 */
 

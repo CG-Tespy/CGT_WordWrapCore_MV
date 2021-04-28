@@ -67,9 +67,28 @@ export class CoreWrapParams
         this.emptyText = this.emptyText.concat(value); 
     }
 
-    get BoldItalicWidthModifier(): number { return this.boldItalicWidthModifier; }
-    private boldItalicWidthModifier: number = 1.2;
-    set BoldItalicWidthModifier(value) { this.boldItalicWidthModifier = value; }
+    get BoldItalicSubstitute(): string { return this.boldItalicSubstitute; }
+    private boldItalicSubstitute: string = "A";
+    set BoldItalicSubstitute(value) { this.boldItalicSubstitute = value; }
+
+    // Spacing
+    
+    /** How many pixels wide we treat the mugshots as being. */
+    get MugshotWidth(): number { return this.mugshotWidth; };
+    private mugshotWidth = 144; 
+    set MugshotWidth(value) { this.mugshotWidth = value; }
+
+    /** 
+     * How many pixels wide we treat the space between the mugshot and the
+     * text as being.
+     */
+    get MugshotPadding(): number { return this.mugshotPadding; }
+    private mugshotPadding = 20;
+    set MugshotPadding(value) { this.mugshotPadding = value; }
+
+    get SidePadding(): number { return this.sidePadding; }
+    private sidePadding: number = 5;
+    set SidePadding(value) { this.sidePadding = value; }
 
 }
 
@@ -90,18 +109,21 @@ export class WrapParamsFactory
     protected static SetStringsFromParams(baseParams: object, wrapParams: CoreWrapParams)
     {
         wrapParams.WrapMode = baseParams[names.WrapMode];
+        wrapParams.BoldItalicSubstitute = baseParams[names.BoldItalicSubstitute];
     }
 
     protected static SetNumbersFromParams(baseParams: object, wrapParams: CoreWrapParams)
     {
         wrapParams.LineMinWordCount = Number(baseParams[names.LineMinWordCount]);
-        wrapParams.BoldItalicWidthModifier = Number(baseParams[names.boldItalicWidthModifier]);
+        wrapParams.SidePadding = Number(baseParams[names.SidePadding]);
+        wrapParams.MugshotPadding = Number(baseParams[names.MugshotPadding]);
+        wrapParams.MugshotWidth = Number(baseParams[names.MugshotWidth]);
     }
 
     protected static SetRegexesFromParams(baseParams: object, wrapParams: CoreWrapParams)
     {
         this.SetNametagFormats(baseParams, wrapParams);
-        this.SetWidthlessText(baseParams, wrapParams);
+        this.SetEmptyText(baseParams, wrapParams);
     }
 
     protected static SetNametagFormats(baseParams: object, wrapParams: CoreWrapParams)
@@ -125,7 +147,7 @@ export class WrapParamsFactory
         return regexes;
     }
 
-    protected static SetWidthlessText(baseParams: object, wrapParams: CoreWrapParams)
+    protected static SetEmptyText(baseParams: object, wrapParams: CoreWrapParams)
     {
         let patternsAsStrings: string[] = JSON.parse(baseParams[names.EmptyText]);
         let regexes: RegExp[] = this.StringPatternsToRegexes(patternsAsStrings);
@@ -156,5 +178,8 @@ export let names =
     SplitWordsBetweenLines: "SplitWordsBetweenLines",
     LineBreakMarkers: "LineBreakMarkers",
     EmptyText: "EmptyText",
-    boldItalicWidthModifier: "BoldItalicWidthModifier",
+    BoldItalicSubstitute: "BoldItalicSubstitute",
+    SidePadding: "SidePadding",
+    MugshotPadding: "MugshotPadding",
+    MugshotWidth: "MugshotWidth",
 };

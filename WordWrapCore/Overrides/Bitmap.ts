@@ -14,14 +14,39 @@ function OverrideMeasureTextWidth(coreParams: CoreWrapParams)
 
     function NewMeasureTextWidth(text: string)
     {
-        let trimmed: string = WithoutEmptyText(text);
-        let boldText = GetBoldedTextFrom(trimmed);
-        let normalText = GetNormalTextFrom(trimmed);
+        // By the end of this, we want the normal text to be just that: the
+        // normal text without bolding or italicising. 
+        let normalText: string = WithoutEmptyText(text);
 
-        let boldTextWidth = oldMeasureTextWidth.call(this, boldText);
+        // We want the bold and italics markers each treated as whatever
+        // substitute the user set, to lessen the chance of said markers
+        // causing overflow
+        normalText = normalText.replace(boldMarkers, coreParams.BoldItalicSubstitute);
+        normalText = normalText.replace(italicsMarkers, coreParams.BoldItalicSubstitute);
+
+        /*
+        let boldTextStrings: string[] = GetBoldedTextFrom(normalText);
+        normalText = RemoveArrElemsFromString(boldTextStrings, normalText);
+
+        let italicsTextStrings: string[] = GetItalicisedTextFrom(normalText);
+        normalText = RemoveArrElemsFromString(italicsTextStrings, normalText);
+
+        // We don't want the bold and italics markers to skew the results
+        let allBoldText = boldTextStrings.join("");
+        allBoldText.replace(boldMarkers, emptyString);
+
+        let allItalicsText = italicsTextStrings.join("");
+        allItalicsText.replace(italicsMarkers, emptyString);
+
+        // NOW normalText should actually only have the normal text
         let normalTextWidth = oldMeasureTextWidth.call(this, normalText);
+        let boldTextWidth = oldMeasureTextWidth.call(this, allBoldText);
+        boldTextWidth *= coreParams.BoldItalicWidthModifier;
+        let italicsTextWidth = oldMeasureTextWidth.call(this, allItalicsText);
+        italicsTextWidth *= coreParams.BoldItalicWidthModifier;
+        */
 
-        return boldTextWidth + normalTextWidth;
+        return oldMeasureTextWidth.call(this, normalText);
     }
 
     function WithoutEmptyText(text: string): string
@@ -34,48 +59,37 @@ function OverrideMeasureTextWidth(coreParams: CoreWrapParams)
         return text;
     }
 
-    function GetBoldedTextFrom(text: string)
+    /** Includes the bold markers */
+    function GetBoldedTextFrom(text: string): string[]
     {
-        let withBoldMarkers: string[] = text.match(boldedTextRegex);
-        let allWithBoldMarkers = withBoldMarkers.join(emptyString);
-        let withoutBoldMarkers = allWithBoldMarkers.replace(boldMarker, emptyString);
-
-        return withoutBoldMarkers;
-
+        let withBoldMarkers: string[] = text.match(boldedTextRegex) || [""];
+        return withBoldMarkers;
     }
 
-    let boldedTextRegex: RegExp = /MSGCORE\[1\][A-Za-z \?\!\(\)\[\]<>:]+MSGCORE\[1\]/gm;
-    let boldMarker = /MSGCORE\[1\]/;
-    
-    function GetNormalTextFrom(text: string)
+    let boldedTextRegex: RegExp = /MSGCORE\[1\](.*)MSGCORE\[1\]/gm;
+    let boldMarkers: RegExp = /\u001bMSGCORE\[1\]/gm;
+
+    function RemoveArrElemsFromString(elemsToRemove: string[], toRemoveFrom: string)
     {
+        let result: string = toRemoveFrom;
 
-    }
-
-
-    Bitmap.prototype.measureTextWidth = NewMeasureTextWidth;
-}
-
-
-
-function HaveWidthlessTextIgnored(coreParams: CoreWrapParams)
-{
-    function NewMeasureTextWidth(text: string)
-    {
-        let trimmed: string = WithoutWidthlessText(text);
-        return oldMeasureTextWidth.call(this, trimmed);
-    }
-
-    function WithoutWidthlessText(text: string): string
-    {
-        for (const pattern of coreParams.EmptyText)
+        for (const currentElem of elemsToRemove)
         {
-            text = text.replace(pattern, emptyString);
+            result = result.replace(currentElem, emptyString);
         }
 
-        return text;
+        return result;
     }
-    
+
+    /** Includes the italics markers */
+    function GetItalicisedTextFrom(text: string): string[]
+    {
+        let withItalicsMarkers = text.match(italicsTextRegex) || [""];
+        return withItalicsMarkers;
+    }
+
+    let italicsTextRegex: RegExp = /MSGCORE\[2\](.*)MSGCORE\[2\]/gm;
+    let italicsMarkers: RegExp = /\u001bMSGCORE\[2\]/gm;
+
     Bitmap.prototype.measureTextWidth = NewMeasureTextWidth;
 }
-

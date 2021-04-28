@@ -4,6 +4,8 @@ import { newlines, doubleSpaces } from '../../Shared/_Regexes';
 import { WrapRule } from '../WrapRules/WrapRule';
 import { MinWordPerLineEnforcer } from '../WrapRules/MinWordPerLineEnforcer';
 import { ParenthesisAlignmentEnforcer } from '../WrapRules/ParenthesisAlignmentEnforcer';
+import { WordWrapArgs } from './WordWrapArgs/WordWrapArgs';
+import { IWordWrapArgValidator, WordWrapArgValidator } from './WordWrapArgs/WordWrapArgValidator';
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
@@ -16,10 +18,10 @@ export abstract class WordWrapper implements IWordWrapper
 {
     get WrapCode(): string { return emptyString; }
 
-    Wrap(textField: Bitmap, text: string): string
+    Wrap(args: WordWrapArgs): string
     {
-        this.EnsureTextFieldValidity(textField);
-        this.EnsureTextValidity(text);
+        this.argValidator.Validate(args);
+        let text = args.textToWrap;
 
         if (this.HasAlreadyWrapped(text)) 
             return this.WrapResultFor(text);
@@ -36,7 +38,7 @@ export abstract class WordWrapper implements IWordWrapper
         // nametag
         nametag = this.WithNewlineAsNeeded(nametag);
 
-        let wrappedLines = this.AsWrappedLines(textField, withoutNametag);
+        let wrappedLines = this.AsWrappedLines(args.textField, withoutNametag);
         wrappedLines = this.WithWrapRulesApplied(wrappedLines);
 
         let result = nametag + wrappedLines.join(singleNewline);
@@ -45,25 +47,8 @@ export abstract class WordWrapper implements IWordWrapper
         return result;
     }
 
-    protected EnsureTextFieldValidity(textField: Bitmap)
-    {
-        if (textField == null)
-        {
-            let message = 'Cannot wrap for a null bitmap/text field!';
-            alert(message);
-            throw new Error(message);
-        }
-    }
+    protected argValidator: IWordWrapArgValidator = new WordWrapArgValidator();
 
-    protected EnsureTextValidity(text: string)
-    {
-        if (text == null)
-        {
-            let message = "Cannot wrap null text!";
-            alert(message);
-            throw new Error(message);
-        }
-    }
 
     protected HasAlreadyWrapped(text: string): boolean
     {
@@ -200,5 +185,3 @@ export abstract class WordWrapper implements IWordWrapper
 }
 
 type IOverflowFinder = CGT.WWCore.IOverflowFinder;
-
-
