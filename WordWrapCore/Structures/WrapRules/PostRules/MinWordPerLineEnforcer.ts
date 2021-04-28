@@ -1,15 +1,16 @@
-import { WrapRule } from './WrapRule';
-import { singleSpace } from '../../Shared/_Strings';
+import { singleSpace } from '../../../Shared/_Strings';
+import { LineWrapRule } from "./LineWrapRule";
 
-export class MinWordPerLineEnforcer extends WrapRule
+export class MinWordPerLineEnforcer extends LineWrapRule
 {
 
     CanApplyTo(lines: string[]): boolean
     {
-        return lines.length > 1;
+        let baseRequirements = super.CanApplyTo(lines);
+        return baseRequirements && lines.length > 1;
     }
 
-    ProcessText(linesCopy: string[]): string[]
+    ProcessInput(linesCopy: string[]): string[]
     {
         let lastLineIndex = linesCopy.length - 1;
         let secondToLastLineIndex = lastLineIndex - 1;

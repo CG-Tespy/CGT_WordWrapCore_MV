@@ -1,5 +1,6 @@
 import { singleSpace } from '../Shared/_Strings';
 import { CoreWrapParams } from '../Structures/CoreWrapParams';
+import { IWordWrapArgs } from '../Structures/WordWrappers/WordWrapArgs/IWordWrapArgs';
 
 export function ApplyWindowMessageOverrides(coreParams: CoreWrapParams)
 {
@@ -33,10 +34,23 @@ function OverrideStartMessage()
         type WordWrapper = CGT.WWCore.WordWrapper;
         var activeWrapper: Readonly<WordWrapper> = CGT.WWCore.ActiveWrapper;
         
-        var rawText = this._textState.text;
-        let textField = this.contents;
-        var wrappedText = activeWrapper.Wrap(textField, rawText);
+        var wrapArgs: IWordWrapArgs = GetInfoForWrapper.call(this);
+        var wrappedText = activeWrapper.Wrap(wrapArgs);
+
         this._textState.text = wrappedText;
+    }
+
+    function GetInfoForWrapper(this: Window_Message): IWordWrapArgs
+    {
+        let rawText = this._textState.text;
+        let textField = this.contents;
+        let wrapArgs: IWordWrapArgs = 
+        {
+            textField: textField,
+            textToWrap: rawText,
+        };
+
+        return wrapArgs;
     }
 
     Window_Message.prototype.startMessage = NewStartMessage;

@@ -1,32 +1,20 @@
-/**
- * Encapsulates algorithms that ensure that text follows a certain rule, like
- * making sure each line follows a word count minimum.
- */
-export interface IWrapRuleApplier
-{
-    /**
-     * Returns a copy of the text with this rule applied.
-     * @param lines 
-     */
-    AppliedTo(lines: string[]): string[];
+import { IWrapRule } from './IWrapRule';
 
-    CanApplyTo(lines: string[]): boolean;
-}
-
-export abstract class WrapRule implements IWrapRuleApplier
+export abstract class WrapRule<TInput> implements IWrapRule<TInput>
 {
-    AppliedTo(lines: string[]): string[] 
+    AppliedTo(input: TInput): TInput
     {
-        if (!this.CanApplyTo(lines))
-            return lines;
+        if (!this.CanApplyTo(input))
+            return input;
 
-        lines = lines.slice(); // So we don't modify the original input
-        return this.ProcessText(lines);
+        return this.ProcessInput(input);
     }
 
-    abstract CanApplyTo(lines: string[]): boolean
+    CanApplyTo(input: TInput): boolean
+    {
+        return input != null;
+    }
 
     /** Where the actual applying happens. */
-    protected abstract ProcessText(linesCopy: string[]): string[]
-    
+    protected abstract ProcessInput(input: TInput): TInput
 }

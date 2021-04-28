@@ -1,5 +1,5 @@
 /** Context for word-wrappers to do their thing. */
-export class WordWrapArgs
+export interface IWordWrapArgs
 {
     textField: Bitmap;
     textToWrap: string;

@@ -29,7 +29,7 @@ declare namespace CGT
 
         interface IWordWrapper
         {
-            Wrap(textField: Bitmap, text: string): string;
+            Wrap(args: IWordWrapArgs): string;
             OverflowFinder: IOverflowFinder;
         }
       
@@ -73,15 +73,11 @@ declare namespace CGT
          * */
         class WordWrapper implements IWordWrapper
         {
-            Wrap(textField: Bitmap, text: string): string;
-            get NametagFormats(): RegExp[];
+            /** A unique code for this particular wrapper class. */
+            get WrapCode(): string;
 
-            // These are the hooks you may want to override
-            /**
-             * For when you need to make any alterations to the text before wrapping it.
-             * @param text 
-             */
-            protected PreparedForWrapping(text: string): string
+            Wrap(args: IWordWrapArgs): string;
+            get NametagFormats(): RegExp[];
 
             /**
              * Wraps the (nametagless) text into a string array holding the lines.
@@ -97,10 +93,14 @@ declare namespace CGT
             get OverflowFinder(): IOverflowFinder;
             set OverflowFinder(value);
 
-            /** A unique code for this particular wrapper class. */
-            get WrapCode(): string;
-
             constructor(overflowFinder?: IOverflowFinder);
+        }
+
+        /** Context for word-wrappers to do their thing. */
+        export class IWordWrapArgs
+        {
+            textField: Bitmap;
+            textToWrap: string;
         }
 
         /**

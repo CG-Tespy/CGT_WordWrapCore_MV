@@ -1,13 +1,14 @@
 import { IWordWrapper } from './IWordWrapper';
-import { singleSpace, emptyString, singleNewline } from '../../Shared/_Strings';
-import { newlines, doubleSpaces } from '../../Shared/_Regexes';
-import { WrapRule } from '../WrapRules/WrapRule';
-import { MinWordPerLineEnforcer } from '../WrapRules/MinWordPerLineEnforcer';
-import { ParenthesisAlignmentEnforcer } from '../WrapRules/ParenthesisAlignmentEnforcer';
-import { WordWrapArgs } from './WordWrapArgs/WordWrapArgs';
+import { emptyString, singleNewline } from '../../Shared/_Strings';
+import { MinWordPerLineEnforcer } from '../WrapRules/PostRules/MinWordPerLineEnforcer';
+import { EnforceParenthesisAlignment } from '../WrapRules/PostRules/EnforceParenthesisAlignment';
+import { IWordWrapArgs } from './WordWrapArgs/IWordWrapArgs';
 import { IWordWrapArgValidator, WordWrapArgValidator } from './WordWrapArgs/WordWrapArgValidator';
+import { WrapRuleApplier } from '../WrapRules/WrapRuleApplier';
+import { WithoutExtraSpaces } from '../WrapRules/PreRules/WithoutExtraSpaces';
+import { WithoutBaseNewlines } from '../WrapRules/PreRules/WithoutBaseNewlines';
 
-let ArrayEx = CGT.Core.Extensions.ArrayEx;
+type IOverflowFinder = CGT.WWCore.IOverflowFinder;
 
 /** 
  * Encapsulates an algorithm for doing word-wrapping. 
@@ -18,37 +19,17 @@ export abstract class WordWrapper implements IWordWrapper
 {
     get WrapCode(): string { return emptyString; }
 
-    Wrap(args: WordWrapArgs): string
+    Wrap(args: IWordWrapArgs): string
     {
         this.argValidator.Validate(args);
-        let text = args.textToWrap;
 
-        if (this.HasAlreadyWrapped(text)) 
-            return this.WrapResultFor(text);
+        let shouldFetchFromCache: boolean = this.HasAlreadyWrapped(args.textToWrap);
+        let getOutput = this.wrapResultFetchers.get(shouldFetchFromCache);
 
-        let originalText: string = text.slice(); 
-        // ^To register the input and output later in the cache, potentially saving work
-        // later in runtime
-        
-        let alteredText = this.PreparedForWrapping(text);
-        let nametag = this.GetNametagFrom(alteredText);
-        let withoutNametag = alteredText.replace(nametag, emptyString);
-        withoutNametag = withoutNametag.trim(); 
-        // ^For when there are any extra spaces left over from extracting the
-        // nametag
-        nametag = this.WithNewlineAsNeeded(nametag);
-
-        let wrappedLines = this.AsWrappedLines(args.textField, withoutNametag);
-        wrappedLines = this.WithWrapRulesApplied(wrappedLines);
-
-        let result = nametag + wrappedLines.join(singleNewline);
-        
-        this.RegisterAsWrapped(originalText, result);
-        return result;
+        return getOutput(args);
     }
 
     protected argValidator: IWordWrapArgValidator = new WordWrapArgValidator();
-
 
     protected HasAlreadyWrapped(text: string): boolean
     {
@@ -61,81 +42,104 @@ export abstract class WordWrapper implements IWordWrapper
      */
     protected wrapResults: Map<string, string> = new Map<string, string>();
 
-    protected WrapResultFor(text: string): string
+    /** 
+     * Wrappers do their thing two ways: by either going through a conversion process,
+     * or fetching from a cache said process maintains.
+     * This is a map containing the methods that do those two things, with the key
+     * being whether or not the input has already been wrapped.
+    */
+    protected wrapResultFetchers: Map<boolean, Function> = new Map<boolean, Function>();
+
+    constructor(private overflowFinder?: IOverflowFinder) 
     {
-        this.EnsureWeAlreadyWrapped(text);
-        return this.wrapResults.get(text);
+        this.InitSubmodules();
     }
 
-    protected EnsureWeAlreadyWrapped(text: string)
+    protected InitSubmodules()
     {
-        if (!this.HasAlreadyWrapped(text))
-        {
-            let message = `There is no wrap result for input: ${text}`;
-            alert(message);
-            throw new Error(message);
-        }
+        this.InitRuleApplier();
+        this.InitWrapResultFetchers();
     }
 
-    /**
-     * For when you need to make any alterations to the text before wrapping it.
-     * @param text 
-     */
-    protected PreparedForWrapping(text: string): string
+    protected InitRuleApplier()
     {
-        // By default, we want to ensure a couple things here:
-        // 1. All spaces follow proper English grammar
-        // 2. This wrapper decides where newlines go
-        text = this.WithoutBaseNewlines(text);
-        text = this.TrimExtraSpaces(text);
+        // The order of these rules matter
+        this.ruleApplier.RegisterPreRule(new WithoutBaseNewlines());
+        this.ruleApplier.RegisterPreRule(new WithoutExtraSpaces());
 
-        return text;
+        this.ruleApplier.RegisterPostRule(new MinWordPerLineEnforcer());
+        this.ruleApplier.RegisterPostRule(new EnforceParenthesisAlignment());
     }
 
-    protected WithoutBaseNewlines(text: string)
+    protected InitWrapResultFetchers()
     {
-        return text.replace(newlines, singleSpace);
+        let inputAlreadyWrapped = true;
+
+        this.wrapResultFetchers.set(inputAlreadyWrapped, this.ReturnFromCache);
+        this.wrapResultFetchers.set(!inputAlreadyWrapped, this.ApplyWrapOperations);
     }
 
-    protected TrimExtraSpaces(text: string)
+    protected ReturnFromCache(args: IWordWrapArgs): string
     {
-        return text.replace(doubleSpaces, singleSpace);
+        return this.wrapResults.get(args.textToWrap);
+    }
+
+    protected ApplyWrapOperations(args: IWordWrapArgs): string
+    {
+        let originalText: string = args.textToWrap.slice(); 
+        // ^Used as a key for caching the result when this is done
+
+        let beforeLineWrapping = this.ruleApplier.ApplyPreRulesTo(originalText);
+        let nametag = this.GetNametagFrom(beforeLineWrapping);
+        let dialogueOnly = beforeLineWrapping.replace(nametag, emptyString);
+        dialogueOnly = dialogueOnly.trim(); 
+        // ^For when there are any extra spaces left over from extracting the
+        // nametag
+        nametag = this.WithNewlineAsNeeded(nametag);
+
+        let wrappedLines = this.AsWrappedLines(args.textField, dialogueOnly);
+        wrappedLines = this.ruleApplier.ApplyPostRulesTo(wrappedLines);
+
+        let result = nametag + wrappedLines.join(singleNewline);
+        
+        this.RegisterAsWrapped(originalText, result);
+        return result;
     }
 
     /**
      * Returns the first nametag found in the text, based on the formats
-     * set in the params. If none is found, an empty string is returned.
+     * set in the params. If nothing is found, an empty string is returned.
      * @param text 
      */
-    protected GetNametagFrom(text: string): string
-    {
-        let nametagsFound: RegExpMatchArray = [];
-
-        for (const format of this.NametagFormats)
-        {
-            let matchesFound = text.match(format) || [];
-            nametagsFound = nametagsFound.concat(matchesFound);
-        }
-
-        nametagsFound.push(emptyString); // So we return this when no matches were found
-
-        return nametagsFound[0];
-    }
-
-    get NametagFormats(): RegExp[] 
-    { 
-        // @ts-ignore
-        return CGT.WWCore.Params.NametagFormats; 
-    }
-
-    protected WithNewlineAsNeeded(nametag: string): string
-    {
-        if (nametag.length > 0)
-            nametag += singleNewline;
-        
-        return nametag;
-    }
-
+     protected GetNametagFrom(text: string): string
+     {
+         let nametagsFound: RegExpMatchArray = [];
+ 
+         for (const format of this.NametagFormats)
+         {
+             let matchesFound = text.match(format) || [];
+             nametagsFound = nametagsFound.concat(matchesFound);
+         }
+ 
+         nametagsFound.push(emptyString); // For when no matches were found
+         let firstMatch = 0;
+         return nametagsFound[firstMatch];
+     }
+ 
+     get NametagFormats(): RegExp[] 
+     { 
+         // @ts-ignore
+         return CGT.WWCore.Params.NametagFormats; 
+     }
+ 
+     protected WithNewlineAsNeeded(nametag: string): string
+     {
+         if (nametag.length > 0)
+             nametag += singleNewline;
+         
+         return nametag;
+     }
+ 
     /**
      * Wraps the (nametagless) text into a string array holding the lines.
      * @param text 
@@ -144,44 +148,15 @@ export abstract class WordWrapper implements IWordWrapper
 
     protected abstract WouldCauseOverflow(currentWord: string, currentLine: string): boolean
 
-    get WrapRules(): WrapRule[] { return this.wrapRules.slice(); }
-    // ^ We return a copy so clients can't modify them directly
-    private wrapRules: WrapRule[] = [
-        new MinWordPerLineEnforcer(),
-        new ParenthesisAlignmentEnforcer(),
-    ];
+    protected ruleApplier: WrapRuleApplier = new WrapRuleApplier();
 
-    protected WithWrapRulesApplied(lines: string[]): string[]
-    {
-        for (let rule of this.wrapRules)
-        {
-            lines = rule.AppliedTo(lines);
-        }
-
-        return lines;
-    }
-
-    constructor(private overflowFinder?: IOverflowFinder) {}
-
-    get OverflowFinder() : IOverflowFinder { return this.overflowFinder; };
+    get OverflowFinder(): IOverflowFinder { return this.overflowFinder; };
     set OverflowFinder(value) { this.overflowFinder = value; }
 
-    protected RegisterAsWrapped(originalInput: string, output: string): void
+    protected RegisterAsWrapped(originalInput: string, wrappedOutput: string): void
     {
-        this.wrapResults.set(originalInput, output);
+        this.wrapResults.set(originalInput, wrappedOutput);
     }
 
-    RegisterWrapRule(newRule: WrapRule): void
-    {
-        if (!ArrayEx.Includes(this.wrapRules, newRule)) // Avoid duplicates
-            this.wrapRules.push(newRule);
-    }
-
-    UnregisterWrapRule(rule: WrapRule): void
-    {
-        ArrayEx.Remove(this.wrapRules, rule);
-    }
-    
 }
 
-type IOverflowFinder = CGT.WWCore.IOverflowFinder;

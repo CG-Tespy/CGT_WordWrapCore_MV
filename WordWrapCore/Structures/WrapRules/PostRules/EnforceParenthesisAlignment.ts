@@ -1,14 +1,15 @@
-import { WrapRule } from './WrapRule';
-import { emptyString, openingParenthesis, closingParenthesis, singleSpace } from '../../Shared/_Strings';
+import { LineWrapRule } from "./LineWrapRule";
+import { emptyString, openingParenthesis, closingParenthesis, singleSpace } from '../../../Shared/_Strings';
 
-export class ParenthesisAlignmentEnforcer extends WrapRule
+export class EnforceParenthesisAlignment extends LineWrapRule
 {
     CanApplyTo(linesCopy: string[]): boolean 
     {
-        let enoughLines: boolean = linesCopy.length > 1;
-        let openingParenIndex = this.FirstOpeningParenIndex(linesCopy);
-        let parenthesisIsThere = openingParenIndex >= 0;
-        let thatLineNotAtLast = openingParenIndex != linesCopy.length - 1;
+        let baseRequirements = super.CanApplyTo(linesCopy);
+        let enoughLines: boolean = baseRequirements && linesCopy.length > 1;
+        let openingParenIndex = baseRequirements && this.FirstOpeningParenIndex(linesCopy);
+        let parenthesisIsThere = baseRequirements && openingParenIndex >= 0;
+        let thatLineNotAtLast = baseRequirements && openingParenIndex != linesCopy.length - 1;
 
         return enoughLines && parenthesisIsThere && thatLineNotAtLast && this.AllowedToAct;
     }
@@ -26,7 +27,7 @@ export class ParenthesisAlignmentEnforcer extends WrapRule
 
     get AllowedToAct(): boolean { return CGT.WWCore.Params.ParenthesesAlignment; }
 
-    protected ProcessText(linesCopy: string[]): string[] 
+    protected ProcessInput(linesCopy: string[]): string[] 
     {
         // Find the first line that starts with a parenthesis
         let hasParenthesis = this.FirstLineWithParenthesisIn(linesCopy);
@@ -49,7 +50,6 @@ export class ParenthesisAlignmentEnforcer extends WrapRule
 
         return emptyString;
     }
-
 
     protected WithLeadingSpacesApplied(linesCopy: string[], startingIndex: number): string[]
     {

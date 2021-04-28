@@ -1,15 +1,15 @@
-import { WordWrapArgs } from './WordWrapArgs';
+import { IWordWrapArgs } from './IWordWrapArgs';
 
 export interface IWordWrapArgValidator
 {
     /** Throws an error is any of the args are not valid. */
-    Validate(args: WordWrapArgs);
+    Validate(args: IWordWrapArgs);
 }
 
 export class WordWrapArgValidator implements IWordWrapArgValidator
 {
     
-    Validate(args: WordWrapArgs): void
+    Validate(args: IWordWrapArgs): void
     {
         let textField = args.textField;
 
