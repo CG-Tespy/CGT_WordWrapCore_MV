@@ -2,9 +2,11 @@ import { ITextMeasurer } from './ITextMeasurer';
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
+// TODO: Have this class set up to work with bolded and italicised text
+
 /**
  * Measures text based on the space they take up in pixels on screen, with
- * a history to inform its decisions.
+ * a history to inform its decisions when needed.
  */ 
  export class TextMeasurer implements ITextMeasurer
  {

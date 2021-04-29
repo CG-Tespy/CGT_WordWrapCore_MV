@@ -65,7 +65,9 @@ SetDefaultWrapper();
 function SetDefaultWrapper()
 {
     let overflowFinder = new NullOverflowFinder();
+    // @ts-ignore
     let defaultWrapper = new NullWordWrapper(overflowFinder);
+
     WWCore.RegisterWrapper(defaultWrapper);
     WWCore.SetActiveWrapper(defaultWrapper.WrapCode);
 }

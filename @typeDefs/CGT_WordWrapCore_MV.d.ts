@@ -44,7 +44,14 @@ declare namespace CGT
                  * Returns whether or not the line would get too long if the text
                  * were added.
                  */
-                FindFor(text: string, line: string): boolean;
+                Find(args: IOverflowFindArgs): boolean;
+            }
+
+            interface IOverflowFindArgs
+            {
+                word: string;
+                line: string;
+                wordWrapArgs: IWordWrapArgs;
             }
 
             /**
@@ -56,7 +63,7 @@ declare namespace CGT
                 constructor(textField?: Bitmap);
                 get TextField(): Bitmap;
                 set TextField(value);
-                FindFor(text: string, line: string): boolean;
+                Find(args: IOverflowFindArgs): boolean;
             }
 
             /**
@@ -98,22 +105,23 @@ declare namespace CGT
         class WordWrapper implements IWordWrapper
         {
             /** A unique code for this particular wrapper class. */
+            static get WrapCode(): string;
             get WrapCode(): string;
 
             Wrap(args: IWordWrapArgs): string;
             get NametagFormats(): RegExp[];
-
-            /**
-             * Wraps the (nametagless) text into a string array holding the lines.
-             * @param text 
-             */
-            protected AsWrappedLines(textField: Bitmap, text: string): string[]
 
             get OverflowFinder(): OverflowFinding.IOverflowFinder;
             set OverflowFinder(value);
 
             constructor(overflowFinder?: OverflowFinding.IOverflowFinder);
         }
+
+        /**
+         *  Default wrapper that just returns the input as given... In other words, 
+         * a false wrapper.
+         * */
+        class NullWordWrapper extends WordWrapper {}
 
         /** Context for word-wrappers to do their thing. */
         interface IWordWrapArgs
@@ -144,12 +152,11 @@ declare namespace CGT
             get NametagFormats(): RegExp[];
 
             /** 
-             * Whether or not this aligns parentheses a certain way.
+             * You put these in the text where you want to guarantee a line break.
              */
-            get ParenthesesAlignment(): boolean;
-            set ParenthesesAlignment(value);
+             get LineBreakMarkers(): string[];
 
-            /**
+             /**
              * How many words this makes sure each line has, when the text
              * besides the nametag has enough.
              */
@@ -157,18 +164,38 @@ declare namespace CGT
             set LineMinWordCount(value);
 
             /** 
-             * You'll want this to be set to true if your game's text is all in Japanese,
-             * or some other language that doesn't use English spaces.
+             * Whether or not this aligns parentheses a certain way.
              */
-            get SplitWordsBetweenLines(): boolean;
-            set SplitWordsBetweenLines(value);
-            
+            get ParenthesesAlignment(): boolean;
+            set ParenthesesAlignment(value);
+
+            /** What the wrapper should look for to tell words apart. */
+            get WordSeparator(): string;
+
+            /** Whether or not the output should include the WordSeparator. */
+            get SeparateWithSeparator(): boolean;
+
             /** 
-             * You put these in the text where you want to guarantee a line break.
-             */
-            get LineBreakMarkers(): string[];
+             * Regexes (in string form) that define text that should NOT be treated as
+             * taking up space in the textbox. 
+             * */
+            get EmptyText(): string[];
 
+            /** How wide mugshots are treated as being, in a unit decided by the active wrapper. */
+            get MugshotWidth(): number;
 
+            /** 
+             * How much space there is between the mugshot and the text, in a unit 
+             * decided by the active wrapper. 
+             * */
+            get MugshotPadding(): number;
+
+            /** 
+             * For the message box sides, helping prevent overflow while making sure the 
+             * wrapping isn't too tight. Also in a unit decided by the active wrapper.
+             *  */
+            get SidePadding(): number;
+            
         }
 
         let Params: CoreWrapParams;

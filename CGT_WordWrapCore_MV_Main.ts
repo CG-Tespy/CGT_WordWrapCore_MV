@@ -23,32 +23,38 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 @param LineBreakMarkers
 @type string[]
 @default ["<br>", "<br2>", "<line-break>"]
-@desc You put these in the text when you want to guarantee a line break.
+@desc You put these in the text where you want to guarantee a line break.
+
+@param SpecialRules
 
 @param LineMinWordCount
+@parent SpecialRules
 @type number
 @default 3
 @desc Minimum amount of words a line can hold.
 
 @param ParenthesisAlignment
+@parent SpecialRules
 @type boolean
 @default true
 @desc Whether or not this aligns text based on parentheses.
 
-@param SplitWordsBetweenLines
+@param WordSeparator
+@parent SpecialRules
+@type string
+@default  
+@desc What a wrapper should look for to tell words apart.
+
+@param SeparateWithSeparator
+@parent SpecialRules
 @type boolean
-@default false
-@desc Whether or not to have words split between lines when they'd otherwise cause overflow.
+@default true
+@desc Whether or not the WordSeparator should be included in the output, doing its thing.
 
 @param EmptyText
 @type string[]
 @default ["\u001bC\\[[0-9]+\\]", "\\$", ".\u001b"]
-@desc Regexes that define text that should be treated as not taking up space in the textbox.
-
-@param BoldItalicSubstitute
-@type string
-@default AA
-@desc When calculating the width of text with bold or italics markers, this is what they're treated as
+@desc Regexes that define text that should NOT be treated as taking up space in the textbox.
 
 @param Spacing
 

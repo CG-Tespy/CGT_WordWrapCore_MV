@@ -47,7 +47,7 @@ function OverrideStartMessage()
         let wrapArgs: IWordWrapArgs = 
         {
             textField: textField,
-            textToWrap: rawText,
+            rawTextToWrap: rawText,
         };
 
         return wrapArgs;

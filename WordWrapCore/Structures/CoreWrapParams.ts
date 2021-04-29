@@ -43,14 +43,6 @@ export class CoreWrapParams
     private lineMinWordCount: number = 3;
     set LineMinWordCount(value: number) { this.lineMinWordCount = value; }
 
-    /** 
-     * You'll want this to be set to true if your game's text is all in Japanese,
-     * or some other language that doesn't use English spaces.
-     */
-    get SplitWordsBetweenLines(): boolean { return this.splitWordsBetweenLines; }
-    private splitWordsBetweenLines: boolean = false;
-    set SplitWordsBetweenLines(value) { this.splitWordsBetweenLines = value; }
-
     get LineBreakMarkers(): string[] { return this.lineBreakMarkers; }
     private lineBreakMarkers: string[] = [];
     set LineBreakMarkers(value) 
@@ -67,9 +59,13 @@ export class CoreWrapParams
         this.emptyText = this.emptyText.concat(value); 
     }
 
-    get BoldItalicSubstitute(): string { return this.boldItalicSubstitute; }
-    private boldItalicSubstitute: string = "A";
-    set BoldItalicSubstitute(value) { this.boldItalicSubstitute = value; }
+    get WordSeparator(): string { return this.wordSeparator; }
+    private wordSeparator: string = " ";
+    set WordSeparator(value) { this.wordSeparator = value; }
+
+    get SeparateWithSeparator(): boolean { return this.separateWithSeparator; }
+    private separateWithSeparator: boolean = true;
+    set SeparateWithSeparator(value) { this.separateWithSeparator; }
 
     // Spacing
     
@@ -109,7 +105,7 @@ export class WrapParamsFactory
     protected static SetStringsFromParams(baseParams: object, wrapParams: CoreWrapParams)
     {
         wrapParams.WrapMode = baseParams[names.WrapMode];
-        wrapParams.BoldItalicSubstitute = baseParams[names.BoldItalicSubstitute];
+        wrapParams.WordSeparator = baseParams[names.WordSeparator];
     }
 
     protected static SetNumbersFromParams(baseParams: object, wrapParams: CoreWrapParams)
@@ -158,7 +154,7 @@ export class WrapParamsFactory
     protected static SetBooleansFromParams(baseParams: object, wrapParams: CoreWrapParams)
     {
         wrapParams.ParenthesesAlignment = baseParams[names.ParenthesisAlignment] === 'true';
-        wrapParams.SplitWordsBetweenLines = baseParams[names.SplitWordsBetweenLines] === 'true';
+        wrapParams.SeparateWithSeparator = baseParams[names.SeparateWithSeparator] === 'true';
     }
 
     protected static SetArraysFromParams(baseParams: object, wrapParams: CoreWrapParams)
@@ -178,7 +174,9 @@ export let names =
     SplitWordsBetweenLines: "SplitWordsBetweenLines",
     LineBreakMarkers: "LineBreakMarkers",
     EmptyText: "EmptyText",
-    BoldItalicSubstitute: "BoldItalicSubstitute",
+    WordSeparator: "WordSeparator",
+    SeparateWithSeparator: "SeparateWithSeparator",
+
     SidePadding: "SidePadding",
     MugshotPadding: "MugshotPadding",
     MugshotWidth: "MugshotWidth",

@@ -20,7 +20,7 @@ export class WordWrapArgValidator implements IWordWrapArgValidator
             throw new Error(message);
         }
 
-        let text = args.textToWrap;
+        let text = args.rawTextToWrap;
 
         if (text == null)
         {

@@ -2,5 +2,5 @@
 export interface IWordWrapArgs
 {
     textField: Bitmap;
-    textToWrap: string;
+    rawTextToWrap: string;
 }

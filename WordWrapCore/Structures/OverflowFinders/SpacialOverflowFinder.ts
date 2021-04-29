@@ -1,9 +1,12 @@
 import { ISpacialOverflowFinder } from './ISpacialOverflowFinder';
+import { OverflowFinder } from './OverflowFinder';
 
-export class SpacialOverflowFinder implements ISpacialOverflowFinder
+export abstract class SpacialOverflowFinder extends OverflowFinder
+implements ISpacialOverflowFinder
 {
     constructor(textField?: Bitmap)
     {
+        super();
         this.textField = textField;
     }
 
@@ -11,8 +14,4 @@ export class SpacialOverflowFinder implements ISpacialOverflowFinder
     private textField: Bitmap;
     set TextField(value) { this.textField = value; }
 
-    FindFor(text: string, line: string): boolean
-    {
-        throw 'must be implemented in subclass!';
-    }
 }

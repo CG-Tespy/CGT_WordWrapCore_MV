@@ -9,7 +9,7 @@ import { WithoutExtraSpaces } from '../WrapRules/PreRules/WithoutExtraSpaces';
 import { WithoutBaseNewlines } from '../WrapRules/PreRules/WithoutBaseNewlines';
 import { ILineWrapper } from './LineWrappers/ILineWrapper';
 
-type IOverflowFinder = CGT.WWCore.IOverflowFinder;
+type IOverflowFinder = CGT.WWCore.OverflowFinding.IOverflowFinder;
 
 /** 
  * Encapsulates an algorithm for doing word-wrapping. 
@@ -19,12 +19,13 @@ type IOverflowFinder = CGT.WWCore.IOverflowFinder;
 export abstract class WordWrapper implements IWordWrapper
 {
     get WrapCode(): string { return emptyString; }
+    static get WrapCode(): string { return this.prototype.WrapCode; }
 
     Wrap(args: IWordWrapArgs): string
     {
         this.argValidator.Validate(args);
 
-        let shouldFetchFromCache: boolean = this.HasAlreadyWrapped(args.textToWrap);
+        let shouldFetchFromCache: boolean = this.HasAlreadyWrapped(args.rawTextToWrap);
         let getOutput = this.wrapResultFetchers.get(shouldFetchFromCache);
 
         return getOutput(args);
@@ -82,12 +83,12 @@ export abstract class WordWrapper implements IWordWrapper
 
     protected ReturnFromCache(args: IWordWrapArgs): string
     {
-        return this.wrapResults.get(args.textToWrap);
+        return this.wrapResults.get(args.rawTextToWrap);
     }
 
     protected ApplyWrapOperations(args: IWordWrapArgs): string
     {
-        let originalText: string = args.textToWrap.slice(); 
+        let originalText: string = args.rawTextToWrap.slice(); 
         // ^Used as a key for caching the result when this is done
 
         let beforeLineWrapping = this.ruleApplier.ApplyPreRulesTo(originalText);
@@ -98,7 +99,7 @@ export abstract class WordWrapper implements IWordWrapper
         // nametag
         nametag = this.WithNewlineAsNeeded(nametag);
 
-        let wrappedLines = this.lineWrapper.WrapIntoLines(args.textField, dialogueOnly);
+        let wrappedLines = this.lineWrapper.WrapIntoLines(args, dialogueOnly);
         wrappedLines = this.ruleApplier.ApplyPostRulesTo(wrappedLines);
 
         let result = nametag + wrappedLines.join(singleNewline);

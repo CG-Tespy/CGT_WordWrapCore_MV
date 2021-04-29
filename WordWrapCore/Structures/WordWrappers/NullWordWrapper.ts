@@ -13,6 +13,6 @@ export class NullWordWrapper extends WordWrapper
 
     Wrap(args: IWordWrapArgs): string
     {
-        return args.textToWrap;
+        return args.rawTextToWrap;
     }
 }

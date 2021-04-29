@@ -1,6 +1,8 @@
-import { IOverflowFinder } from './IOverflowFinder';
+import { OverflowFinder } from './OverflowFinder';
+import { IOverflowFindArgs } from './IOverflowFindArgs';
 
-export class NullOverflowFinder implements IOverflowFinder
+export class NullOverflowFinder extends OverflowFinder
 {
-    FindFor(word: string, line: string): boolean { return false; }
+    Find(args: IOverflowFindArgs): boolean { return false; }
+
 }
