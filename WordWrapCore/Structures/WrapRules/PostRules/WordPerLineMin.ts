@@ -1,7 +1,7 @@
 import { singleSpace } from '../../../Shared/_Strings';
 import { LineWrapRule } from "./LineWrapRule";
 
-export class MinWordPerLineEnforcer extends LineWrapRule
+export class WordPerLineMin extends LineWrapRule
 {
 
     CanApplyTo(lines: string[]): boolean

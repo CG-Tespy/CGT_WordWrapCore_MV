@@ -1,8 +1,8 @@
 import { IWrapRule } from './IWrapRule';
 
-export abstract class WrapRule<TInput> implements IWrapRule<TInput>
+export abstract class WrapRule<TInputOutput> implements IWrapRule<TInputOutput>
 {
-    AppliedTo(input: TInput): TInput
+    AppliedTo(input: TInputOutput): TInputOutput
     {
         if (!this.CanApplyTo(input))
             return input;
@@ -10,11 +10,11 @@ export abstract class WrapRule<TInput> implements IWrapRule<TInput>
         return this.ProcessInput(input);
     }
 
-    CanApplyTo(input: TInput): boolean
+    protected CanApplyTo(input: TInputOutput): boolean
     {
         return input != null;
     }
 
     /** Where the actual applying happens. */
-    protected abstract ProcessInput(input: TInput): TInput
+    protected abstract ProcessInput(input: TInputOutput): TInputOutput
 }

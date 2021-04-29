@@ -7,12 +7,14 @@ import { ApplyOverrides } from './Overrides/_Apply';
 import { NullOverflowFinder } from './Structures/OverflowFinders/NullOverflowFinder';
 import { SpacialOverflowFinder } from './Structures/OverflowFinders/SpacialOverflowFinder';
 import * as Shared from './Shared/_All';
+import * as WrapRules from "./Structures/WrapRules/_WrapRulesSetup";
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
 export let WWCore = 
 {
     Params: pluginParams,
+    WrapRules: WrapRules,
     CoreWrapParams: CoreWrapParams,
     WordWrapper: WordWrapper,
     SpacialOverflowFinder: SpacialOverflowFinder,

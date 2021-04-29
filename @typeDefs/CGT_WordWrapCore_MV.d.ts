@@ -30,40 +30,64 @@ declare namespace CGT
         interface IWordWrapper
         {
             Wrap(args: IWordWrapArgs): string;
-            OverflowFinder: IOverflowFinder;
-        }
-      
-        /**
-         * What WordWrappers use to see when overflow would happen. 
-         * Must be subclassed.
-         */
-        class SpacialOverflowFinder implements ISpacialOverflowFinder
-        {
-            constructor(textField?: Bitmap);
-            get TextField(): Bitmap;
-            set TextField(value);
-            FindFor(text: string, line: string): boolean;
+            OverflowFinder: OverflowFinding.IOverflowFinder;
         }
 
-        /**
-         * Takes the space inside a message box (usually within a Bitmap)
-         * into account when finding overflow.
-         */
-        interface ISpacialOverflowFinder extends IOverflowFinder
+        namespace OverflowFinding
         {
-            TextField: Bitmap;
-        }
-
-        /**
-         * What WordWrappers use to see when overflow would happen.
-         */
-        interface IOverflowFinder
-        {
-            /** 
-             * Returns whether or not the line would get too long if the text
-             * were added.
+            /**
+             * What LineWrappers use to see when overflow would happen.
              */
-            FindFor(text: string, line: string): boolean;
+            interface IOverflowFinder
+            {
+                /** 
+                 * Returns whether or not the line would get too long if the text
+                 * were added.
+                 */
+                FindFor(text: string, line: string): boolean;
+            }
+
+            /**
+             * What WordWrappers use to see when overflow would happen on a physical basis.
+             * Must be subclassed.
+             */
+            class SpacialOverflowFinder implements ISpacialOverflowFinder
+            {
+                constructor(textField?: Bitmap);
+                get TextField(): Bitmap;
+                set TextField(value);
+                FindFor(text: string, line: string): boolean;
+            }
+
+            /**
+             * Takes the space inside a message box (usually within a Bitmap)
+             * into account when finding overflow.
+             */
+            interface ISpacialOverflowFinder extends IOverflowFinder
+            {
+                TextField: Bitmap;
+            }
+
+            /**
+             * Helper for OverflowFinders to detect overflow
+             */
+            interface ITextMeasurer
+            {
+                MeasureFor(text: string): number
+            }
+
+            /**
+             * Measures text based on the space they take up in pixels on screen, with
+             * a history to inform its decisions.
+             */ 
+            class TextMeasurer implements ITextMeasurer
+            {
+                get History(): string[];
+            
+                MeasureFor(text: string): number;
+                RegisterInHistory(text: string);
+                ClearHistory();
+            }
         }
 
         /** 
@@ -85,19 +109,14 @@ declare namespace CGT
              */
             protected AsWrappedLines(textField: Bitmap, text: string): string[]
 
-            /**
-             * Used to help decide where newlines should go to prevent overflow
-             */
-            protected WouldCauseOverflow(currentWord: string, currentLine: string): boolean
-
-            get OverflowFinder(): IOverflowFinder;
+            get OverflowFinder(): OverflowFinding.IOverflowFinder;
             set OverflowFinder(value);
 
-            constructor(overflowFinder?: IOverflowFinder);
+            constructor(overflowFinder?: OverflowFinding.IOverflowFinder);
         }
 
         /** Context for word-wrappers to do their thing. */
-        export class IWordWrapArgs
+        interface IWordWrapArgs
         {
             textField: Bitmap;
             textToWrap: string;
@@ -153,6 +172,104 @@ declare namespace CGT
         }
 
         let Params: CoreWrapParams;
+
+        interface ILineWrapper
+        {
+            WrapIntoLines(textField: Bitmap, nametaglessText: string): string[];
+        }
+
+        namespace WrapRules
+        {
+            /**
+             * Encapsulates algorithms that ensure that text follows a certain rule, like
+             * making sure each line follows a word count minimum.
+             */
+            interface IWrapRule<TInputOutput>
+            {
+                /**
+                 * Returns a copy of the input with this rule applied.
+                 */
+                AppliedTo(input: TInputOutput): TInputOutput;
+
+            }
+
+            /** 
+             * Contains default implementations of wrap rules. Best inherit from this and 
+             * override the hooks for your own custom rules.
+             */
+            abstract class WrapRule<TInputOutput> implements IWrapRule<TInputOutput> 
+            {
+                AppliedTo(input: TInputOutput): TInputOutput;
+
+                /** Override this to dictate whether this rule can apply to the input. */
+                protected CanApplyTo(input: TInputOutput): boolean;
+
+                /** Override this to handle the actual rule-applying */
+                protected ProcessInput(input: TInputOutput): TInputOutput;
+            }
+
+            /** 
+             * WrapRule that works with and returns arrays of strings. Meant to do their thing to 
+             * the results of the initial line-wrapping process.
+             * */
+            class LineWrapRule extends WrapRule<string[]> {}
+
+            /** Default post-rule for enforcing a minimum-words-per-line rule */
+            class WordPerLineMin extends LineWrapRule {}
+
+            /** Default post-rule for having certain parenthesis-having text aligned with spaces when needed */
+            class ParenthesisAlignment extends LineWrapRule {}
+
+            /** 
+             * WrapRule that works with and returns strings. Meant to do their thing to text
+             * BEFORE it goes through the initial line-wrapping process.
+             * */
+            class StringWrapRule extends WrapRule<string> {}
+
+            /** 
+             * Default pre-rule for removing all newlines from the input; the initial
+             * line-wrapping process should decide how lines are split
+             */
+            class WithoutBaseNewlines extends StringWrapRule {}
+
+            /** 
+             * Default pre-rule for removing trailing, leading, and consecutive spaces
+             * from the input.
+             */ 
+            class WithoutExtraSpaces extends StringWrapRule {}
+
+            interface IWrapRuleApplier
+            {
+                /** Applies rules meant for the text before it gets wrapped into lines. */
+                ApplyPreRulesTo(text: string): string;
+                /** Applies rules means for the text after the initial line-wrapping. */
+                ApplyPostRulesTo(lines: string[]): string[];
+
+            }
+
+            class WrapRuleApplier implements IWrapRuleApplier
+            {
+                protected preWrapRules: Set<StringWrapRule>;
+                protected postWrapRules: Set<LineWrapRule>;
+
+                ApplyPreRulesTo(text: string): string;
+
+                /** Exists to cut down on boilerplate code */
+                protected ApplyRules<TInput, TRuleType extends WrapRule<TInput>>(rules: Set<TRuleType>, 
+                    input: TInput): TInput;
+                
+                ApplyPostRulesTo(lines: string[]): string[];
+
+                RegisterPreRule(rule: StringWrapRule);
+
+                RegisterPostRule(rule: LineWrapRule);
+
+                RemovePreRule(rule: StringWrapRule);
+
+                RemovePostRule(rule: LineWrapRule);
+            
+            }
+        }
 
         /** 
          * Sets the active wrapper that matches the passed wrap mode. 

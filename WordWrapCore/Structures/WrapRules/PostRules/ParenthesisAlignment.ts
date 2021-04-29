@@ -1,7 +1,7 @@
 import { LineWrapRule } from "./LineWrapRule";
 import { emptyString, openingParenthesis, closingParenthesis, singleSpace } from '../../../Shared/_Strings';
 
-export class EnforceParenthesisAlignment extends LineWrapRule
+export class ParenthesisAlignment extends LineWrapRule
 {
     CanApplyTo(linesCopy: string[]): boolean 
     {

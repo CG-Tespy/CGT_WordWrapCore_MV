@@ -1,7 +1,4 @@
-import { LineWrapArgs } from './LineWrapArgs';
-
 export interface ILineWrapper
 {
-    WrapIntoLines(context: LineWrapArgs);
+    WrapIntoLines(textField: Bitmap, text: string): string[];
 }
-

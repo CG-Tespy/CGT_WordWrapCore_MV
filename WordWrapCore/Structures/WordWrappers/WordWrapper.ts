@@ -1,12 +1,13 @@
 import { IWordWrapper } from './IWordWrapper';
 import { emptyString, singleNewline } from '../../Shared/_Strings';
-import { MinWordPerLineEnforcer } from '../WrapRules/PostRules/MinWordPerLineEnforcer';
-import { EnforceParenthesisAlignment } from '../WrapRules/PostRules/EnforceParenthesisAlignment';
+import { WordPerLineMin } from '../WrapRules/PostRules/WordPerLineMin';
+import { ParenthesisAlignment } from '../WrapRules/PostRules/ParenthesisAlignment';
 import { IWordWrapArgs } from './WordWrapArgs/IWordWrapArgs';
 import { IWordWrapArgValidator, WordWrapArgValidator } from './WordWrapArgs/WordWrapArgValidator';
 import { WrapRuleApplier } from '../WrapRules/WrapRuleApplier';
 import { WithoutExtraSpaces } from '../WrapRules/PreRules/WithoutExtraSpaces';
 import { WithoutBaseNewlines } from '../WrapRules/PreRules/WithoutBaseNewlines';
+import { ILineWrapper } from './LineWrappers/ILineWrapper';
 
 type IOverflowFinder = CGT.WWCore.IOverflowFinder;
 
@@ -67,8 +68,8 @@ export abstract class WordWrapper implements IWordWrapper
         this.ruleApplier.RegisterPreRule(new WithoutBaseNewlines());
         this.ruleApplier.RegisterPreRule(new WithoutExtraSpaces());
 
-        this.ruleApplier.RegisterPostRule(new MinWordPerLineEnforcer());
-        this.ruleApplier.RegisterPostRule(new EnforceParenthesisAlignment());
+        this.ruleApplier.RegisterPostRule(new WordPerLineMin());
+        this.ruleApplier.RegisterPostRule(new ParenthesisAlignment());
     }
 
     protected InitWrapResultFetchers()
@@ -97,7 +98,7 @@ export abstract class WordWrapper implements IWordWrapper
         // nametag
         nametag = this.WithNewlineAsNeeded(nametag);
 
-        let wrappedLines = this.AsWrappedLines(args.textField, dialogueOnly);
+        let wrappedLines = this.lineWrapper.WrapIntoLines(args.textField, dialogueOnly);
         wrappedLines = this.ruleApplier.ApplyPostRulesTo(wrappedLines);
 
         let result = nametag + wrappedLines.join(singleNewline);
@@ -111,40 +112,36 @@ export abstract class WordWrapper implements IWordWrapper
      * set in the params. If nothing is found, an empty string is returned.
      * @param text 
      */
-     protected GetNametagFrom(text: string): string
-     {
-         let nametagsFound: RegExpMatchArray = [];
+    protected GetNametagFrom(text: string): string
+    {
+        let nametagsFound: RegExpMatchArray = [];
+
+        for (const format of this.NametagFormats)
+        {
+            let matchesFound = text.match(format) || [];
+            nametagsFound = nametagsFound.concat(matchesFound);
+        }
+
+        nametagsFound.push(emptyString); // For when no matches were found
+        let firstMatch = 0;
+        return nametagsFound[firstMatch];
+    }
  
-         for (const format of this.NametagFormats)
-         {
-             let matchesFound = text.match(format) || [];
-             nametagsFound = nametagsFound.concat(matchesFound);
-         }
+    get NametagFormats(): RegExp[] 
+    { 
+        // @ts-ignore
+        return CGT.WWCore.Params.NametagFormats; 
+    }
  
-         nametagsFound.push(emptyString); // For when no matches were found
-         let firstMatch = 0;
-         return nametagsFound[firstMatch];
-     }
- 
-     get NametagFormats(): RegExp[] 
-     { 
-         // @ts-ignore
-         return CGT.WWCore.Params.NametagFormats; 
-     }
- 
-     protected WithNewlineAsNeeded(nametag: string): string
-     {
-         if (nametag.length > 0)
-             nametag += singleNewline;
-         
-         return nametag;
-     }
- 
-    /**
-     * Wraps the (nametagless) text into a string array holding the lines.
-     * @param text 
-     */
-    protected abstract AsWrappedLines(textField: Bitmap, text: string): string[]
+    protected WithNewlineAsNeeded(nametag: string): string
+    {
+        if (nametag.length > 0)
+            nametag += singleNewline;
+        
+        return nametag;
+    }
+
+    protected lineWrapper: ILineWrapper;
 
     protected abstract WouldCauseOverflow(currentWord: string, currentLine: string): boolean
 
@@ -159,4 +156,3 @@ export abstract class WordWrapper implements IWordWrapper
     }
 
 }
-

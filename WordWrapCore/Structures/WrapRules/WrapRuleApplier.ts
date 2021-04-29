@@ -19,12 +19,12 @@ export class WrapRuleApplier implements IWrapRuleApplier
     protected preWrapRules: Set<StringWrapRule> = new Set<StringWrapRule>();
     protected postWrapRules: Set<LineWrapRule> = new Set<LineWrapRule>();
 
-    
     ApplyPreRulesTo(text: string): string
     {
         return this.ApplyRules(this.preWrapRules, text);
     }
 
+    /** Exists to cut down on boilerplate code */
     protected ApplyRules<TInput, TRuleType extends WrapRule<TInput>>(rules: Set<TRuleType>, 
         input: TInput): TInput
     {
@@ -36,7 +36,6 @@ export class WrapRuleApplier implements IWrapRuleApplier
         return input;
     }
 
-    
     ApplyPostRulesTo(lines: string[]): string[]
     {
         return this.ApplyRules(this.postWrapRules, lines);
