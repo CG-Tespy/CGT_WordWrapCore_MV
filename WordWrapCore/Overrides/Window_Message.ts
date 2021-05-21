@@ -42,7 +42,7 @@ function OverrideStartMessage()
 
     function GetInfoForWrapper(this: Window_Message): IWordWrapArgs
     {
-        let rawText = this._textState.text;
+        let rawText = this._textState.text + "";
         let textField = this.contents;
         let wrapArgs: IWordWrapArgs = 
         {

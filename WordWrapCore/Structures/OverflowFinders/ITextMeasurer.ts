@@ -3,6 +3,6 @@
  */
 export interface ITextMeasurer
 {
-    MeasureFor(text: string): number
+    MeasureFor(text: string, textField: Bitmap): number
 }
 

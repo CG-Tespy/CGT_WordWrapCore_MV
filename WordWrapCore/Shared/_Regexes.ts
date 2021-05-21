@@ -6,3 +6,4 @@ export let yanflyNametag: RegExp = /^\\n<\S+>/gm;
 export let basicNametag: RegExp = /^\S+:/gm;
 export let bracketNametag: RegExp = /^\[\S+\]:/gm;
 export let bracketNametagNoColon: RegExp = /^\[\S+\]/gm;
+export let doubleQuotes: RegExp = /"/gm;

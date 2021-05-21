@@ -18549,6 +18549,11 @@ declare class Window_HorzCommand extends Window_Command {
  * @extends {Window_Base}
  */
 declare class Window_Help extends Window_Base {
+
+    wordWrapArgs: { textField: Bitmap, rawTextToWrap: string };
+
+    refresh(): void;
+
   /**
    * The text that is displayed within the window.
    * 

@@ -7,9 +7,11 @@ export default {
 		file: "./CGT_WordWrapCore_MV.js",
 		format: 'iife',
 		freeze: false,
+        
+        
 	},
 
-	
+    
 	plugins: [
 		resolve({
 		  jsnext: true,

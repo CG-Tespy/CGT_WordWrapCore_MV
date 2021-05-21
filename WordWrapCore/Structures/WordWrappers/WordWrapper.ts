@@ -8,6 +8,8 @@ import { WrapRuleApplier } from '../WrapRules/WrapRuleApplier';
 import { WithoutExtraSpaces } from '../WrapRules/PreRules/WithoutExtraSpaces';
 import { WithoutBaseNewlines } from '../WrapRules/PreRules/WithoutBaseNewlines';
 import { ILineWrapper } from './LineWrappers/ILineWrapper';
+import { OverflowFinder } from '../OverflowFinders/OverflowFinder';
+import { LineWrapper } from './LineWrappers/LineWrapper';
 
 type IOverflowFinder = CGT.WWCore.OverflowFinding.IOverflowFinder;
 
@@ -52,7 +54,7 @@ export abstract class WordWrapper implements IWordWrapper
     */
     protected wrapResultFetchers: Map<boolean, Function> = new Map<boolean, Function>();
 
-    constructor(private overflowFinder?: IOverflowFinder) 
+    constructor(private overflowFinder?: OverflowFinder) 
     {
         this.InitSubmodules();
     }
@@ -88,7 +90,7 @@ export abstract class WordWrapper implements IWordWrapper
 
     protected ApplyWrapOperations(args: IWordWrapArgs): string
     {
-        let originalText: string = args.rawTextToWrap.slice(); 
+        let originalText: string = args.rawTextToWrap; 
         // ^Used as a key for caching the result when this is done
 
         let beforeLineWrapping = this.ruleApplier.ApplyPreRulesTo(originalText);
@@ -105,6 +107,7 @@ export abstract class WordWrapper implements IWordWrapper
         let result = nametag + wrappedLines.join(singleNewline);
         
         this.RegisterAsWrapped(originalText, result);
+        this.OverflowFinder.Refresh();
         return result;
     }
 
@@ -142,14 +145,15 @@ export abstract class WordWrapper implements IWordWrapper
         return nametag;
     }
 
-    protected lineWrapper: ILineWrapper;
+    protected lineWrapper: ILineWrapper = new LineWrapper();
 
     protected abstract WouldCauseOverflow(currentWord: string, currentLine: string): boolean
 
     protected ruleApplier: WrapRuleApplier = new WrapRuleApplier();
 
-    get OverflowFinder(): IOverflowFinder { return this.overflowFinder; };
-    set OverflowFinder(value) { this.overflowFinder = value; }
+    get OverflowFinder(): OverflowFinder { return this.overflowFinder; };
+
+    set OverflowFinder(value: OverflowFinder) { this.overflowFinder = value; }
 
     protected RegisterAsWrapped(originalInput: string, wrappedOutput: string): void
     {

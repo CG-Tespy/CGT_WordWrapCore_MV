@@ -127,7 +127,7 @@ declare namespace CGT
         interface IWordWrapArgs
         {
             textField: Bitmap;
-            textToWrap: string;
+            rawTextToWrap: string;
         }
 
         /**
@@ -149,12 +149,20 @@ declare namespace CGT
              * Decides how the wrapper detects nametags.
              * Set to the Yanfly format by default. 
              * */
-            get NametagFormats(): RegExp[];
-
+            
             /** 
              * You put these in the text where you want to guarantee a line break.
              */
              get LineBreakMarkers(): string[];
+
+             /** 
+             * Regexes (in string form) that define text that should NOT be treated as
+             * taking up space in the textbox. 
+             * */
+            get EmptyText(): string[];
+
+
+            // ~~~Special Rules~~~
 
              /**
              * How many words this makes sure each line has, when the text
@@ -175,11 +183,7 @@ declare namespace CGT
             /** Whether or not the output should include the WordSeparator. */
             get SeparateWithSeparator(): boolean;
 
-            /** 
-             * Regexes (in string form) that define text that should NOT be treated as
-             * taking up space in the textbox. 
-             * */
-            get EmptyText(): string[];
+            get WrapDescs(): boolean;
 
             /** How wide mugshots are treated as being, in a unit decided by the active wrapper. */
             get MugshotWidth(): number;

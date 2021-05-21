@@ -1,11 +1,12 @@
 import { ILineWrapper } from './ILineWrapper';
+import { IWordWrapArgs } from '../WordWrapArgs/IWordWrapArgs';
 
 export class NullLineWrapper implements ILineWrapper
 {
 
-    WrapIntoLines(textField: Bitmap, text: string): string[] 
+    WrapIntoLines(wordWrapArgs: IWordWrapArgs, actualTextToWrap: string): string[] 
     {
-        return [text];
+        return [wordWrapArgs.rawTextToWrap];
     }
     
 }
