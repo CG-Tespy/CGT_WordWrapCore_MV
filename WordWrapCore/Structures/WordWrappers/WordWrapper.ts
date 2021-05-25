@@ -10,6 +10,7 @@ import { WithoutBaseNewlines } from '../WrapRules/PreRules/WithoutBaseNewlines';
 import { ILineWrapper } from './LineWrappers/ILineWrapper';
 import { OverflowFinder } from '../OverflowFinders/OverflowFinder';
 import { LineWrapper } from './LineWrappers/LineWrapper';
+import { noWrapTag as noWrapTag } from '../../Shared/_Regexes';
 
 type IOverflowFinder = CGT.WWCore.OverflowFinding.IOverflowFinder;
 
@@ -92,23 +93,41 @@ export abstract class WordWrapper implements IWordWrapper
     {
         let originalText: string = args.rawTextToWrap; 
         // ^Used as a key for caching the result when this is done
+        let result = emptyString;
 
-        let beforeLineWrapping = this.ruleApplier.ApplyPreRulesTo(originalText);
-        let nametag = this.GetNametagFrom(beforeLineWrapping);
-        let dialogueOnly = beforeLineWrapping.replace(nametag, emptyString);
-        dialogueOnly = dialogueOnly.trim(); 
-        // ^For when there are any extra spaces left over from extracting the
-        // nametag
-        nametag = this.WithNewlineAsNeeded(nametag);
+        if (this.ShouldWrap(originalText))
+        {
+            let beforeLineWrapping = this.ruleApplier.ApplyPreRulesTo(originalText);
+            let nametag = this.GetNametagFrom(beforeLineWrapping);
+            let dialogueOnly = beforeLineWrapping.replace(nametag, emptyString);
+            dialogueOnly = dialogueOnly.trim(); 
+            // ^For when there are any extra spaces left over from extracting the
+            // nametag
+            nametag = this.WithNewlineAsNeeded(nametag);
 
-        let wrappedLines = this.lineWrapper.WrapIntoLines(args, dialogueOnly);
-        wrappedLines = this.ruleApplier.ApplyPostRulesTo(wrappedLines);
+            let wrappedLines = this.lineWrapper.WrapIntoLines(args, dialogueOnly);
+            wrappedLines = this.ruleApplier.ApplyPostRulesTo(wrappedLines);
 
-        let result = nametag + wrappedLines.join(singleNewline);
+            result = nametag + wrappedLines.join(singleNewline);
+        }
+        else
+        {
+            result = this.WithoutTag(noWrapTag, originalText);
+        }
         
         this.RegisterAsWrapped(originalText, result);
         this.OverflowFinder.Refresh();
         return result;
+    }
+
+    protected ShouldWrap(text: string)
+    {
+        return text.match(noWrapTag) == null;
+    }
+
+    protected WithoutTag(tagRegex: RegExp, text: string)
+    {
+        return text.replace(tagRegex, emptyString);
     }
 
     /**

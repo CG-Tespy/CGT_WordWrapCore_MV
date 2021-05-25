@@ -45,7 +45,7 @@ export class LineWrapper implements ILineWrapper
 
     protected UpdateSeparatorToInclude()
     {
-        // To cut down on if checks in the part of the algorithm, that adds separators following words.
+        // To cut down on if checks, in the part of the algorithm that adds separators following words.
         if (this.IncludeWordSeparator)
             this.separatorToInclude = this.WordSeparator;
         else

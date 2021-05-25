@@ -1,16 +1,47 @@
-import { singleSpace } from '../../../Shared/_Strings';
+import { singleSpace, emptyString } from '../../../Shared/_Strings';
 import { LineWrapRule } from "./LineWrapRule";
 
+/** 
+ * Applies a minimum words-per-line on the input, or instead removes the tags
+ * that demand that this rule be ignored. 
+ * */
 export class WordPerLineMin extends LineWrapRule
 {
+    protected invalidationTags = [/ <ignoreLmwc>/gmi];
 
     CanApplyTo(lines: string[]): boolean
     {
         let baseRequirements = super.CanApplyTo(lines);
-        return baseRequirements && lines.length > 1;
+        let atLeastTwoLinesToWorkWith = lines.length > 1;
+        return baseRequirements && atLeastTwoLinesToWorkWith;
     }
 
-    ProcessInput(linesCopy: string[]): string[]
+    protected ShouldRemoveTagsFrom(linesCopy: string[]): boolean
+    {
+        for (const line of linesCopy)
+        {
+            for (const tag of this.invalidationTags)
+                if (line.match(tag) != null)
+                    return true;
+        }
+
+        return false;
+    }
+
+    protected WithoutTags(lines: string[]): string[]
+    {
+        for (let i = 0; i < lines.length; i++)
+        {
+            let lineEl = lines[i];
+            for (const tag of this.invalidationTags)
+                lineEl = lineEl.replace(tag, emptyString);
+            lines[i] = lineEl;
+        }
+
+        return lines;
+    }
+
+    protected ProcessNormally(linesCopy: string[]): string[]
     {
         let lastLineIndex = linesCopy.length - 1;
         let secondToLastLineIndex = lastLineIndex - 1;

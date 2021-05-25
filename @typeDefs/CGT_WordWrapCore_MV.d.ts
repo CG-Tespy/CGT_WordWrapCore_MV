@@ -54,6 +54,20 @@ declare namespace CGT
                 wordWrapArgs: IWordWrapArgs;
             }
 
+            abstract class OverflowFinder implements IOverflowFinder
+            {
+                Find(args: IOverflowFindArgs): boolean 
+
+                /** 
+                 * Override this to decide on how much horizontal space this finder
+                 * treats any given textbox as having.
+                 */
+                protected abstract GetWrapWidth(args: IOverflowFindArgs): number;
+
+                /** Call this after you finish a full wrapping session. */
+                Refresh();
+            }
+
             /**
              * What WordWrappers use to see when overflow would happen on a physical basis.
              * Must be subclassed.
@@ -87,10 +101,12 @@ declare namespace CGT
              * Measures text based on the space they take up in pixels on screen, with
              * a history to inform its decisions.
              */ 
-            class TextMeasurer implements ITextMeasurer
+            abstract class TextMeasurer implements ITextMeasurer
             {
-                get History(): string[];
-            
+                get History(): string;
+                
+                protected abstract GetDefaultWidthOf(text: string, textField: Bitmap): number;
+
                 MeasureFor(text: string): number;
                 RegisterInHistory(text: string);
                 ClearHistory();
@@ -232,42 +248,63 @@ declare namespace CGT
             {
                 AppliedTo(input: TInputOutput): TInputOutput;
 
-                /** Override this to dictate whether this rule can apply to the input. */
+                /** 
+                 * Override this to dictate whether this rule can apply to the input. Just
+                 * don't have it take into account invalidation tags.
+                */
                 protected CanApplyTo(input: TInputOutput): boolean;
 
                 /** Override this to handle the actual rule-applying */
-                protected ProcessInput(input: TInputOutput): TInputOutput;
+                protected abstract ProcessNormally(input: TInputOutput): TInputOutput;
             }
 
             /** 
              * WrapRule that works with and returns arrays of strings. Meant to do their thing to 
              * the results of the initial line-wrapping process.
              * */
-            class LineWrapRule extends WrapRule<string[]> {}
+            class LineWrapRule extends WrapRule<string[]> 
+            {
+                protected ProcessNormally(input: string[]): string[];
+            }
 
             /** Default post-rule for enforcing a minimum-words-per-line rule */
-            class WordPerLineMin extends LineWrapRule {}
+            class WordPerLineMin extends LineWrapRule 
+            {
+                protected ProcessNormally(input: string[]): string[];
+            }
 
             /** Default post-rule for having certain parenthesis-having text aligned with spaces when needed */
-            class ParenthesisAlignment extends LineWrapRule {}
+            class ParenthesisAlignment extends LineWrapRule 
+            {
+                protected ProcessNormally(input: string[]): string[]
+            }
 
             /** 
              * WrapRule that works with and returns strings. Meant to do their thing to text
              * BEFORE it goes through the initial line-wrapping process.
              * */
-            class StringWrapRule extends WrapRule<string> {}
+            class StringWrapRule extends WrapRule<string> 
+            {
+                protected ProcessNormally(input: string): string;
+            }
 
             /** 
              * Default pre-rule for removing all newlines from the input; the initial
              * line-wrapping process should decide how lines are split
              */
-            class WithoutBaseNewlines extends StringWrapRule {}
+            class WithoutBaseNewlines extends StringWrapRule 
+            {
+                protected ProcessNormally(input: string): string;
+            }
 
             /** 
              * Default pre-rule for removing trailing, leading, and consecutive spaces
              * from the input.
              */ 
-            class WithoutExtraSpaces extends StringWrapRule {}
+            class WithoutExtraSpaces extends StringWrapRule 
+            {
+                protected ProcessNormally(input: string): string;
+            }
 
             interface IWrapRuleApplier
             {
@@ -302,7 +339,7 @@ declare namespace CGT
             }
         }
 
-        /** 
+        /**
          * Sets the active wrapper that matches the passed wrap mode. 
          * Returns false if there is no wrapper registered with that mode,
          * true otherwise.

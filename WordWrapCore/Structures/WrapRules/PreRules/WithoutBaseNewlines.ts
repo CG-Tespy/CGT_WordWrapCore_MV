@@ -5,7 +5,7 @@ import { emptyString } from '../../../Shared/_Strings';
 /** For removing all newlines that were already in the input it gets given. */
 export class WithoutBaseNewlines extends StringWrapRule
 {
-    ProcessInput(text: string)
+    ProcessNormally(text: string)
     {
         return text.replace(newlines, emptyString);
     }

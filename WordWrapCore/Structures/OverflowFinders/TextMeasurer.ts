@@ -1,30 +1,25 @@
 import { ITextMeasurer } from './ITextMeasurer';
+import { emptyString } from '../../Shared/_Strings';
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
-// TODO: Have this class set up to work with bolded and italicised text
-
 /**
- * Measures text based on the space they take up in pixels on screen, with
- * a history to inform its decisions when needed.
+ * Measures text while using a history to help keep track of what's
+ * bolded or italicised.
  */ 
-export class TextMeasurer implements ITextMeasurer
+export abstract class TextMeasurer implements ITextMeasurer
 {
-
-    protected history: string = "";
-    protected tempHistory: string = "";
-
+    protected history: string = emptyString;
+    protected tempHistory: string = emptyString;
 
     MeasureFor(text: string, textField: Bitmap): number
     {
-        text += ""; // In case a non-string is passed
+        text += emptyString; // In case a non-string is passed
         
-        // Go through each letter, judging the width based on whether it was
-        // bolded or italicised
         this.tempHistory = this.history;
 
-        let totalWidth: number = this.GetBaseWidth(text, textField);
-        totalWidth -= this.MarkerWidths(text, textField);
+        let baseWidth: number = this.GetBaseWidth(text, textField);
+        let totalWidth = baseWidth - this.AllMarkerWidths(text, textField);
 
         return totalWidth;
     }
@@ -35,7 +30,7 @@ export class TextMeasurer implements ITextMeasurer
 
         for (const letter of text)
         {  
-            let widthToAdd = textField.measureTextWidth(letter);
+            let widthToAdd: number = this.GetDefaultWidthOf(letter, textField);
 
             if (this.LetterIsBoldOrItalic())
                 widthToAdd *= TextMeasurer.boldItalicWidthMod;
@@ -48,25 +43,22 @@ export class TextMeasurer implements ITextMeasurer
 
         return totalWidth;
     }
-    
+
+    // Override this to use the units your measurer uses
+    protected abstract GetDefaultWidthOf(text: string, textField: Bitmap): number;
     
     protected LetterIsBoldOrItalic(): boolean
     {
-        return this.MarkerCountIsOdd();
-    }
-
-    protected MarkerCountIsOdd(): boolean
-    {
         // If the marker count for either bold or italics in the history is odd, then
-        // we are now dealing with bold or italicised text.
+        // the next letter to add will be bolded or italicised
         let boldMarkersFound = this.tempHistory.match(TextMeasurer.boldMarkers) || [];
         let italicsMarkersFound = this.tempHistory.match(TextMeasurer.italicsMarkers) || [];
 
         let boldMarkerCount = boldMarkersFound.length;
         let italicsMarkerCount = italicsMarkersFound.length;
 
-        let oddBoldMarkers = boldMarkerCount % 2 != 0;
-        let oddItalicsMarkers = italicsMarkerCount % 2 != 0;
+        let oddBoldMarkers = boldMarkerCount >= 1 && (boldMarkerCount % 2 != 0);
+        let oddItalicsMarkers = italicsMarkerCount >= 1 && (italicsMarkerCount % 2 != 0);
 
         return oddBoldMarkers || oddItalicsMarkers;
     }
@@ -74,29 +66,38 @@ export class TextMeasurer implements ITextMeasurer
     protected static boldMarkers: RegExp = /\u001bMSGCORE\[1\]/gm;
     protected static italicsMarkers: RegExp = /\u001bMSGCORE\[2\]/gm;
 
-    protected static boldItalicWidthMod: number = 1.2;
+    protected static boldItalicWidthMod: number = 1.1;
 
     /** How much space all the markers take up */
-    protected MarkerWidths(text: string, textField: Bitmap): number
+    protected AllMarkerWidths(text: string, textField: Bitmap): number
     {
-        // The markers themselves add a lot of width; we need to find out ho
-        let boldMarkers = text.match(TextMeasurer.boldMarkers) || [""];
-        let italicsMarkers = text.match(TextMeasurer.italicsMarkers) || [""];
-
-        let firstBoldMarker = boldMarkers[0];
-        let firstItalicsMarker = italicsMarkers[0];
-
-        let totalBoldWidth = textField.measureTextWidth(firstBoldMarker) * boldMarkers.length;
-        let totalItalicWidth = textField.measureTextWidth(firstItalicsMarker) * italicsMarkers.length;
-        // ^ Raise these widths to account for the even-numbered markers taking up more space than
-        // usual
+        let combinedBoldWidth = this.MarkerWidth(TextMeasurer.boldMarkers, text, textField);
+        let combinedItalicWidth = this.MarkerWidth(TextMeasurer.italicsMarkers, text, textField);
         
-        
-        totalBoldWidth += Math.floor(boldMarkers.length / 2) * TextMeasurer.boldItalicWidthMod;
-        // ^ Every second marker is treated as even wider than usual
+        let totalWidth = combinedBoldWidth + combinedItalicWidth;
 
+        return totalWidth;
+    }
 
-        let totalWidth = totalBoldWidth + totalItalicWidth;
+    protected MarkerWidth(marker: RegExp, text: string, textField: Bitmap): number
+    {
+        let allMarkersFound: string[] = text.match(marker) || [""];
+        let firstMarker: string = allMarkersFound[0];
+
+        let baseWidth: number = this.GetDefaultWidthOf(firstMarker, textField);
+        let totalWidth = 0;
+
+        for (let i = 0; i < allMarkersFound.length; i++)
+        {
+            let widthToAdd = baseWidth;
+
+            let isSecondMarker = (i + 1) % 2 == 0;
+            // Every second marker is to be treated as wider than usual
+            if (isSecondMarker)
+                widthToAdd *= TextMeasurer.boldItalicWidthMod;
+
+            totalWidth += widthToAdd;
+        }
 
         return totalWidth;
     }

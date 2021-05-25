@@ -3,9 +3,11 @@ import { ITextMeasurer } from './ITextMeasurer';
 import { IOverflowFindArgs } from './IOverflowFindArgs';
 import { TextMeasurer } from './TextMeasurer';
 
-export class OverflowFinder implements IOverflowFinder
+// Best inherit from this, since what defines wrap width
+// can vary between wrapper types
+export abstract class OverflowFinder implements IOverflowFinder
 {
-    protected textMeasurer: TextMeasurer = new TextMeasurer();
+    protected textMeasurer: TextMeasurer;
 
     Find(args: IOverflowFindArgs): boolean 
     {
@@ -16,12 +18,20 @@ export class OverflowFinder implements IOverflowFinder
         this.textMeasurer.RegisterInHistory(text);
         // ^To inform measurements for later inputs
 
-        return totalWidth > this.wrapWidth;
+        this.GetWrapWidth(args);
+
+        return totalWidth > this.WrapWidth;
     }
 
     get WrapWidth(): number { return this.wrapWidth; }
     protected wrapWidth: number = 1;
     set WrapWidth(value) { this.wrapWidth = value; }
+
+    /** 
+     * Override this to decide on how much horizontal space this finder
+     * treats any given textbox as having.
+     */
+    protected abstract GetWrapWidth(args: IOverflowFindArgs): number;
 
     /** Call this after you finish a full wrapping session. */
     Refresh()

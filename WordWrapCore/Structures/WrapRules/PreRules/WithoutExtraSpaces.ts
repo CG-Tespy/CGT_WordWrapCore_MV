@@ -4,7 +4,7 @@ import { singleSpace } from '../../../Shared/_Strings';
 
 export class WithoutExtraSpaces extends StringWrapRule
 {
-    ProcessInput(text: string)
+    ProcessNormally(text: string)
     {
         return text.replace(doubleSpaces, singleSpace)
     }

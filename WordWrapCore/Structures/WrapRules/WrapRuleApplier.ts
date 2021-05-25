@@ -1,6 +1,7 @@
 import { LineWrapRule} from "./PostRules/LineWrapRule";
 import { StringWrapRule } from './PreRules/StringWrapRule';
 import { WrapRule } from './WrapRule';
+import { newlines } from '../../Shared/_Regexes';
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
@@ -60,5 +61,5 @@ export class WrapRuleApplier implements IWrapRuleApplier
     {
         this.postWrapRules.delete(rule);
     }
-   
+
 }
