@@ -1,8 +1,8 @@
 import { ILineWrapper } from './ILineWrapper';
-import { OverflowFinder } from '../../OverflowFinders/OverflowFinder';
+import { OverflowFinder } from '../../Overflow/OverflowFinders/OverflowFinder';
 import { IWordWrapArgs } from '../WordWrapArgs/IWordWrapArgs';
 import { emptyString } from '../../../Shared/_Strings';
-import { IOverflowFindArgs } from '../../OverflowFinders/IOverflowFindArgs';
+import { IOverflowFindArgs } from '../../Overflow/OverflowFinders/IOverflowFindArgs';
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
@@ -77,5 +77,11 @@ export class LineWrapper implements ILineWrapper
     }
 
     get LineBreakMarkers(): string[] { return CGT.WWCore.Params.LineBreakMarkers; }
+
+    /** Call every time you finish a word-wrapping session. */
+    OnWrapJobFinished()
+    {
+        this.overflowFinder.OnWrapJobFinished();
+    }
 
 }

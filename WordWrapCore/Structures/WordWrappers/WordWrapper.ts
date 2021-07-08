@@ -7,22 +7,20 @@ import { IWordWrapArgValidator, WordWrapArgValidator } from './WordWrapArgs/Word
 import { WrapRuleApplier } from '../WrapRules/WrapRuleApplier';
 import { WithoutExtraSpaces } from '../WrapRules/PreRules/WithoutExtraSpaces';
 import { WithoutBaseNewlines } from '../WrapRules/PreRules/WithoutBaseNewlines';
-import { ILineWrapper } from './LineWrappers/ILineWrapper';
-import { OverflowFinder } from '../OverflowFinders/OverflowFinder';
 import { LineWrapper } from './LineWrappers/LineWrapper';
 import { noWrapTag as noWrapTag } from '../../Shared/_Regexes';
-
-type IOverflowFinder = CGT.WWCore.OverflowFinding.IOverflowFinder;
+import { NametagFetcher } from './NametagFetcher';
 
 /** 
  * Encapsulates an algorithm for doing word-wrapping. 
- * You're supposed to inherit from this class and override the hooks;
- * we're using the Template Method pattern here.
+ * Best create instances of this class, passing it the LineWrapper
+ * you want it to use.
  * */
-export abstract class WordWrapper implements IWordWrapper
+export class WordWrapper implements IWordWrapper
 {
-    get WrapCode(): string { return emptyString; }
-    static get WrapCode(): string { return this.prototype.WrapCode; }
+    get WrapCode(): string { return this.wrapCode; }
+    private wrapCode: string = emptyString;
+    set WrapCode(value) { this.wrapCode = value; }
 
     Wrap(args: IWordWrapArgs): string
     {
@@ -55,7 +53,7 @@ export abstract class WordWrapper implements IWordWrapper
     */
     protected wrapResultFetchers: Map<boolean, Function> = new Map<boolean, Function>();
 
-    constructor(private overflowFinder?: OverflowFinder) 
+    constructor(protected lineWrapper?: LineWrapper) 
     {
         this.InitSubmodules();
     }
@@ -80,8 +78,8 @@ export abstract class WordWrapper implements IWordWrapper
     {
         let inputAlreadyWrapped = true;
 
-        this.wrapResultFetchers.set(inputAlreadyWrapped, this.ReturnFromCache);
-        this.wrapResultFetchers.set(!inputAlreadyWrapped, this.ApplyWrapOperations);
+        this.wrapResultFetchers.set(inputAlreadyWrapped, this.ReturnFromCache.bind(this));
+        this.wrapResultFetchers.set(!inputAlreadyWrapped, this.ApplyWrapOperations.bind(this));
     }
 
     protected ReturnFromCache(args: IWordWrapArgs): string
@@ -98,7 +96,7 @@ export abstract class WordWrapper implements IWordWrapper
         if (this.ShouldWrap(originalText))
         {
             let beforeLineWrapping = this.ruleApplier.ApplyPreRulesTo(originalText);
-            let nametag = this.GetNametagFrom(beforeLineWrapping);
+            let nametag = this.nametagFetcher.FetchFrom(beforeLineWrapping);
             let dialogueOnly = beforeLineWrapping.replace(nametag, emptyString);
             dialogueOnly = dialogueOnly.trim(); 
             // ^For when there are any extra spaces left over from extracting the
@@ -116,7 +114,7 @@ export abstract class WordWrapper implements IWordWrapper
         }
         
         this.RegisterAsWrapped(originalText, result);
-        this.OverflowFinder.Refresh();
+        this.lineWrapper.OnWrapJobFinished();
         return result;
     }
 
@@ -125,35 +123,11 @@ export abstract class WordWrapper implements IWordWrapper
         return text.match(noWrapTag) == null;
     }
 
+    private nametagFetcher: NametagFetcher = new NametagFetcher();
+
     protected WithoutTag(tagRegex: RegExp, text: string)
     {
         return text.replace(tagRegex, emptyString);
-    }
-
-    /**
-     * Returns the first nametag found in the text, based on the formats
-     * set in the params. If nothing is found, an empty string is returned.
-     * @param text 
-     */
-    protected GetNametagFrom(text: string): string
-    {
-        let nametagsFound: RegExpMatchArray = [];
-
-        for (const format of this.NametagFormats)
-        {
-            let matchesFound = text.match(format) || [];
-            nametagsFound = nametagsFound.concat(matchesFound);
-        }
-
-        nametagsFound.push(emptyString); // For when no matches were found
-        let firstMatch = 0;
-        return nametagsFound[firstMatch];
-    }
- 
-    get NametagFormats(): RegExp[] 
-    { 
-        // @ts-ignore
-        return CGT.WWCore.Params.NametagFormats; 
     }
  
     protected WithNewlineAsNeeded(nametag: string): string
@@ -164,19 +138,14 @@ export abstract class WordWrapper implements IWordWrapper
         return nametag;
     }
 
-    protected lineWrapper: ILineWrapper = new LineWrapper();
-
-    protected abstract WouldCauseOverflow(currentWord: string, currentLine: string): boolean
-
     protected ruleApplier: WrapRuleApplier = new WrapRuleApplier();
-
-    get OverflowFinder(): OverflowFinder { return this.overflowFinder; };
-
-    set OverflowFinder(value: OverflowFinder) { this.overflowFinder = value; }
 
     protected RegisterAsWrapped(originalInput: string, wrappedOutput: string): void
     {
         this.wrapResults.set(originalInput, wrappedOutput);
     }
+
+    // @ts-ignore
+    get LineWrapper(): LineWrapper { return this.lineWrapper; }
 
 }

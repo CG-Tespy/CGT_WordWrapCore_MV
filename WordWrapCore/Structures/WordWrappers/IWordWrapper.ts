@@ -4,7 +4,7 @@ export interface IWordWrapper
 {
     //Wrap(info: WordWrapArgs): string;
     Wrap(args: IWordWrapArgs): string;
-    OverflowFinder: CGT.WWCore.OverflowFinding.IOverflowFinder;
+    LineWrapper: CGT.WWCore.LineWrapper;
     
     /** Unique code for a particular wrapper. */
     WrapCode: string;

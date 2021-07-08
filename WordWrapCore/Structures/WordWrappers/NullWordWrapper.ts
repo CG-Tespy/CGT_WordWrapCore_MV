@@ -8,8 +8,6 @@ export class NullWordWrapper extends WordWrapper
     {
         return false;
     }
-    
-    get WrapCode(): string { return "null"; }
 
     Wrap(args: IWordWrapArgs): string
     {

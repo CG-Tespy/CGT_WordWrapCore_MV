@@ -76,22 +76,24 @@ export class CoreWrapParams
 
     // Spacing
     
-    /** How many pixels wide we treat the mugshots as being. */
+    /** How wide mugshots are treated as being, in a wrapper-decided unit */
     get MugshotWidth(): number { return this.mugshotWidth; };
     private mugshotWidth = 144; 
     set MugshotWidth(value) { this.mugshotWidth = value; }
 
-    /** 
-     * How many pixels wide we treat the space between the mugshot and the
-     * text as being.
-     */
+    /** The space between the mugshot and the text, in a wrapper-decided unit. */
     get MugshotPadding(): number { return this.mugshotPadding; }
     private mugshotPadding = 20;
     set MugshotPadding(value) { this.mugshotPadding = value; }
 
+    /** For the message box sides, in a wrapper-decided unit. */
     get SidePadding(): number { return this.sidePadding; }
     private sidePadding: number = 5;
     set SidePadding(value) { this.sidePadding = value; }
+
+    get BoldItalicWidthMod(): number { return this.boldItalicWidthMod; }
+    private boldItalicWidthMod: number = 1;
+    set BoldItalicWidthMod(value) { this.boldItalicWidthMod = value; }
 
 }
 
@@ -123,6 +125,9 @@ export class WrapParamsFactory
         wrapParams.SidePadding = Number(baseParams[names.SidePadding]);
         wrapParams.MugshotPadding = Number(baseParams[names.MugshotPadding]);
         wrapParams.MugshotWidth = Number(baseParams[names.MugshotWidth]);
+
+        let basePercent = Number(baseParams[names.BoldItalicWidthMod]);
+        wrapParams.BoldItalicWidthMod = 1 + (basePercent / 100.0);
     }
 
     protected static SetRegexesFromParams(baseParams: object, wrapParams: CoreWrapParams)
@@ -194,5 +199,7 @@ export let names =
     MugshotWidth: "MugshotWidth",
     MugshotPadding: "MugshotPadding",
     SidePadding: "SidePadding",
+
+    BoldItalicWidthMod: "BoldItalicWidthMod",
     
 };

@@ -80,7 +80,14 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 @parent Spacing
 @type number
 @default 3
-@desc For the message box sides. Default: 3
+@desc For the message box sides, in a wrapper-decided unit. Default: 3
+
+@param BoldItalicWidthMod
+@type number
+@default 15
+@min 0
+@desc How much wider-than-usual bold or italicised letters are treated as, in percentage terms. Default: 15
+
 
 
 */

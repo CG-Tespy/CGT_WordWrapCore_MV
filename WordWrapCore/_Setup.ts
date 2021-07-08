@@ -4,10 +4,12 @@ import { CoreWrapParams } from './Structures/CoreWrapParams';
 import { WordWrapper } from './Structures/WordWrappers/WordWrapper';
 import { NullWordWrapper } from './Structures/WordWrappers/NullWordWrapper';
 import { ApplyOverrides } from './Overrides/_Apply';
-import { NullOverflowFinder } from './Structures/OverflowFinders/NullOverflowFinder';
-import { SpacialOverflowFinder } from './Structures/OverflowFinders/SpacialOverflowFinder';
 import * as Shared from './Shared/_All';
 import * as WrapRules from "./Structures/WrapRules/_WrapRulesSetup";
+import { NullLineWrapper } from './Structures/WordWrappers/LineWrappers/NullLineWrapper';
+import * as Overflow from "./Structures/Overflow/_SetupOverflow";
+import { NametagFetcher } from './Structures/WordWrappers/NametagFetcher';
+import { LineWrapper } from './Structures/WordWrappers/LineWrappers/LineWrapper';
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
@@ -15,9 +17,12 @@ export let WWCore =
 {
     Params: pluginParams,
     WrapRules: WrapRules,
+    Overflow: Overflow, 
     CoreWrapParams: CoreWrapParams,
     WordWrapper: WordWrapper,
-    SpacialOverflowFinder: SpacialOverflowFinder,
+    LineWrapper: LineWrapper,
+
+    NametagFetcher: NametagFetcher,
 
     UpdateActiveWrapper(): void
     {
@@ -64,8 +69,9 @@ SetDefaultWrapper();
 
 function SetDefaultWrapper()
 {
-    let overflowFinder = new NullOverflowFinder();
-    let defaultWrapper = new NullWordWrapper(overflowFinder);
+    let lineWrapper = new NullLineWrapper();
+    let defaultWrapper = new NullWordWrapper(lineWrapper);
+    defaultWrapper.WrapCode = "null";
 
     WWCore.RegisterWrapper(defaultWrapper);
     WWCore.SetActiveWrapper(defaultWrapper.WrapCode);

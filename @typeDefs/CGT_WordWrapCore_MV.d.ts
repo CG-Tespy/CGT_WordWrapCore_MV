@@ -30,10 +30,9 @@ declare namespace CGT
         interface IWordWrapper
         {
             Wrap(args: IWordWrapArgs): string;
-            OverflowFinder: OverflowFinding.IOverflowFinder;
         }
 
-        namespace OverflowFinding
+        namespace Overflow
         {
             /**
              * What LineWrappers use to see when overflow would happen.
@@ -56,38 +55,23 @@ declare namespace CGT
 
             abstract class OverflowFinder implements IOverflowFinder
             {
+                protected textMeasurer: TextMeasurer;
+                
                 Find(args: IOverflowFindArgs): boolean 
 
+                /** Returns how much space there is to have text on a single line. */
+                protected GetWrapSpace(args: IOverflowFindArgs): number;
+
                 /** 
-                 * Override this to decide on how much horizontal space this finder
-                 * treats any given textbox as having.
+                 * How much space there is for text in a textbox without a mugshot, in a
+                 * unit decided by the finder.
                  */
-                protected abstract GetWrapWidth(args: IOverflowFindArgs): number;
+                protected abstract FullWrapSpace(args: IOverflowFindArgs): number
 
                 /** Call this after you finish a full wrapping session. */
-                Refresh();
+                OnWrapJobFinished();
             }
 
-            /**
-             * What WordWrappers use to see when overflow would happen on a physical basis.
-             * Must be subclassed.
-             */
-            class SpacialOverflowFinder implements ISpacialOverflowFinder
-            {
-                constructor(textField?: Bitmap);
-                get TextField(): Bitmap;
-                set TextField(value);
-                Find(args: IOverflowFindArgs): boolean;
-            }
-
-            /**
-             * Takes the space inside a message box (usually within a Bitmap)
-             * into account when finding overflow.
-             */
-            interface ISpacialOverflowFinder extends IOverflowFinder
-            {
-                TextField: Bitmap;
-            }
 
             /**
              * Helper for OverflowFinders to detect overflow
@@ -111,6 +95,13 @@ declare namespace CGT
                 RegisterInHistory(text: string);
                 ClearHistory();
             }
+
+            
+        }
+
+        class NametagFetcher
+        {
+            FetchFrom(text: string): string;
         }
 
         /** 
@@ -123,14 +114,14 @@ declare namespace CGT
             /** A unique code for this particular wrapper class. */
             static get WrapCode(): string;
             get WrapCode(): string;
+            set WrapCode(value);
 
             Wrap(args: IWordWrapArgs): string;
             get NametagFormats(): RegExp[];
 
-            get OverflowFinder(): OverflowFinding.IOverflowFinder;
-            set OverflowFinder(value);
+            get LineWrapper(): LineWrapper;
 
-            constructor(overflowFinder?: OverflowFinding.IOverflowFinder);
+            constructor(lineWrapper?: LineWrapper);
         }
 
         /**
@@ -144,6 +135,22 @@ declare namespace CGT
         {
             textField: Bitmap;
             rawTextToWrap: string;
+        }
+
+        interface ILineWrapper
+        {
+            WrapIntoLines(args: IWordWrapArgs, actualTextToWrap: string): string[];
+        }
+
+        class LineWrapper implements ILineWrapper
+        {
+            /** Override this in your custom line wrapper  */
+            protected overflowFinder: Overflow.OverflowFinder;
+
+            WrapIntoLines(args: IWordWrapArgs, actualTextToWrap: string);
+
+            /** Call this after you finish a full wrapping session. */
+            OnWrapJobFinished();
         }
 
         /**
@@ -210,20 +217,22 @@ declare namespace CGT
              * */
             get MugshotPadding(): number;
 
-            /** 
-             * For the message box sides, helping prevent overflow while making sure the 
-             * wrapping isn't too tight. Also in a unit decided by the active wrapper.
-             *  */
+            /** For the message box sides, in a wrapper-decided unit. */
             get SidePadding(): number;
+
+            /** 
+             * Multiplier for how much bigger than usual that bolded or italicised letters
+             * are treated as being. 1.10 = 110% bigger, 1.34 = 134% bigger, etc.
+             */
+            get BoldItalicWidthMod(): number;
             
         }
 
         let Params: CoreWrapParams;
 
-        interface ILineWrapper
-        {
-            WrapIntoLines(textField: Bitmap, nametaglessText: string): string[];
-        }
+        
+
+        
 
         namespace WrapRules
         {

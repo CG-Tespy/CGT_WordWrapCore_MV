@@ -1,5 +1,5 @@
 import { ITextMeasurer } from './ITextMeasurer';
-import { emptyString } from '../../Shared/_Strings';
+import { emptyString } from '../../../Shared/_Strings';
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
@@ -19,13 +19,15 @@ export abstract class TextMeasurer implements ITextMeasurer
         this.tempHistory = this.history;
 
         let baseWidth: number = this.GetBaseWidth(text, textField);
-        let totalWidth = baseWidth - this.AllMarkerWidths(text, textField);
+        let markerWidths = this.AllMarkerWidths(text, textField);
+        let totalWidth = baseWidth - markerWidths;
 
         return totalWidth;
     }
 
     protected GetBaseWidth(text: string, textField: Bitmap)
     {
+        text = this.WithoutColorMarkers(text);
         let totalWidth = 0;
 
         for (const letter of text)
@@ -33,7 +35,7 @@ export abstract class TextMeasurer implements ITextMeasurer
             let widthToAdd: number = this.GetDefaultWidthOf(letter, textField);
 
             if (this.LetterIsBoldOrItalic())
-                widthToAdd *= TextMeasurer.boldItalicWidthMod;
+                widthToAdd *= this.BoldItalicWidthMod;
 
             totalWidth += widthToAdd;
             this.tempHistory += letter; 
@@ -42,6 +44,12 @@ export abstract class TextMeasurer implements ITextMeasurer
         }
 
         return totalWidth;
+    }
+
+    protected WithoutColorMarkers(text: string)
+    {
+        text = text.replace(TextMeasurer.colorMarkers, emptyString);
+        return text;
     }
 
     // Override this to use the units your measurer uses
@@ -65,8 +73,12 @@ export abstract class TextMeasurer implements ITextMeasurer
 
     protected static boldMarkers: RegExp = /\u001bMSGCORE\[1\]/gm;
     protected static italicsMarkers: RegExp = /\u001bMSGCORE\[2\]/gm;
+    protected static colorMarkers: RegExp = /\u001bC\[\d+\]/gm;
 
-    protected static boldItalicWidthMod: number = 1.1;
+    protected get BoldItalicWidthMod(): number 
+    {
+        return CGT.WWCore.Params.BoldItalicWidthMod;
+    }
 
     /** How much space all the markers take up */
     protected AllMarkerWidths(text: string, textField: Bitmap): number
@@ -82,22 +94,11 @@ export abstract class TextMeasurer implements ITextMeasurer
     protected MarkerWidth(marker: RegExp, text: string, textField: Bitmap): number
     {
         let allMarkersFound: string[] = text.match(marker) || [""];
+
         let firstMarker: string = allMarkersFound[0];
-
         let baseWidth: number = this.GetDefaultWidthOf(firstMarker, textField);
-        let totalWidth = 0;
-
-        for (let i = 0; i < allMarkersFound.length; i++)
-        {
-            let widthToAdd = baseWidth;
-
-            let isSecondMarker = (i + 1) % 2 == 0;
-            // Every second marker is to be treated as wider than usual
-            if (isSecondMarker)
-                widthToAdd *= TextMeasurer.boldItalicWidthMod;
-
-            totalWidth += widthToAdd;
-        }
+        let raisedWidth: number = baseWidth * this.BoldItalicWidthMod;
+        let totalWidth = (allMarkersFound.length * raisedWidth);
 
         return totalWidth;
     }

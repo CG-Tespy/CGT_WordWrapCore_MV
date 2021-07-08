@@ -1,4 +1,4 @@
-import { IWordWrapArgs } from '../WordWrappers/WordWrapArgs/IWordWrapArgs';
+import { IWordWrapArgs } from '../../WordWrappers/WordWrapArgs/IWordWrapArgs';
 
 export interface IOverflowFindArgs
 {
