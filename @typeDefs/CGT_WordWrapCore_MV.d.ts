@@ -188,11 +188,11 @@ declare namespace CGT
             // ~~~Special Rules~~~
 
              /**
-             * How many words this makes sure each line has, when the text
+             * How many characters this makes sure each line has, when the text
              * besides the nametag has enough.
              */
-            get LineMinWordCount(): number;
-            set LineMinWordCount(value);
+            get LineMinCharCount(): number;
+            set LineMinCharCount(value);
 
             /** 
              * Whether or not this aligns parentheses a certain way.

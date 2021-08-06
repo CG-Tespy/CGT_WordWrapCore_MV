@@ -1,12 +1,12 @@
 import { SetActiveWrapper } from './SetActiveWrapper';
-import { SetLineMinWordCount } from './SetLineMinWordCount';
+import { SetLineMinCharCount } from './SetLineMinCharCount';
 import { pluginCommandPrefix } from '../Shared/_Strings';
 import { SetParenthesisAlignment } from './SetParenthesisAlignment';
 
 let commands = 
 [
     SetActiveWrapper,
-    SetLineMinWordCount,
+    SetLineMinCharCount,
     SetParenthesisAlignment,
 ];
 

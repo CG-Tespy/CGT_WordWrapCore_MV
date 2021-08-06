@@ -32,11 +32,11 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 
 @param SpecialRules
 
-@param LineMinWordCount
+@param LineMinCharCount
 @parent SpecialRules
 @type number
-@default 3
-@desc Minimum amount of words a line can hold. Default: 3
+@default 8
+@desc Minimum amount of characters a line can hold. Default: 8
 
 @param ParenthesisAlignment
 @parent SpecialRules

@@ -6,5 +6,5 @@ export * from "./PreRules/WithoutBaseNewlines";
 export * from "./PreRules/WithoutExtraSpaces";
 
 export * from "./PostRules/LineWrapRule";
-export * from "./PostRules/WordPerLineMin";
+export * from "./PostRules/CharPerLineMin";
 export * from "./PostRules/ParenthesisAlignment";

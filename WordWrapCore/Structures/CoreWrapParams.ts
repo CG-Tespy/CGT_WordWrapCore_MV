@@ -48,12 +48,12 @@ export class CoreWrapParams
     // ~~~Special Rules~~~
 
     /**
-     * How many words this makes sure each line has, when the text
+     * How many chars this makes sure each line has, when the text
      * besides the nametag has enough.
      */
-    get LineMinWordCount(): number { return this.lineMinWordCount; }
-    private lineMinWordCount: number = 3;
-    set LineMinWordCount(value: number) { this.lineMinWordCount = value; }
+    get LineMinCharCount(): number { return this.lineMinCharCount; }
+    private lineMinCharCount: number = 3;
+    set LineMinCharCount(value: number) { this.lineMinCharCount = value; }
 
     /** 
      * Whether or not this aligns parentheses a certain way.
@@ -121,7 +121,7 @@ export class WrapParamsFactory
 
     protected static SetNumbersFromParams(baseParams: object, wrapParams: CoreWrapParams)
     {
-        wrapParams.LineMinWordCount = Number(baseParams[names.LineMinWordCount]);
+        wrapParams.LineMinCharCount = Number(baseParams[names.LineMinCharCount]);
         wrapParams.SidePadding = Number(baseParams[names.SidePadding]);
         wrapParams.MugshotPadding = Number(baseParams[names.MugshotPadding]);
         wrapParams.MugshotWidth = Number(baseParams[names.MugshotWidth]);
@@ -188,12 +188,11 @@ export let names =
     EmptyText: "EmptyText",
     
     // Special rules
-    LineMinWordCount: "LineMinWordCount",
+    LineMinCharCount: "LineMinCharCount",
     ParenthesisAlignment: "ParenthesisAlignment",
     WordSeparator: "WordSeparator",
     SeparateWithSeparator: "SeparateWithSeparator",
     WrapDescs: "WrapDescs",
-    
     
     // Spacing
     MugshotWidth: "MugshotWidth",

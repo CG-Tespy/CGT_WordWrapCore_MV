@@ -1,6 +1,6 @@
 import { IWordWrapper } from './IWordWrapper';
 import { emptyString, singleNewline } from '../../Shared/_Strings';
-import { WordPerLineMin } from '../WrapRules/PostRules/WordPerLineMin';
+import { CharPerLineMin } from '../WrapRules/PostRules/CharPerLineMin';
 import { ParenthesisAlignment } from '../WrapRules/PostRules/ParenthesisAlignment';
 import { IWordWrapArgs } from './WordWrapArgs/IWordWrapArgs';
 import { IWordWrapArgValidator, WordWrapArgValidator } from './WordWrapArgs/WordWrapArgValidator';
@@ -70,7 +70,7 @@ export class WordWrapper implements IWordWrapper
         this.ruleApplier.RegisterPreRule(new WithoutBaseNewlines());
         this.ruleApplier.RegisterPreRule(new WithoutExtraSpaces());
 
-        this.ruleApplier.RegisterPostRule(new WordPerLineMin());
+        this.ruleApplier.RegisterPostRule(new CharPerLineMin());
         this.ruleApplier.RegisterPostRule(new ParenthesisAlignment());
     }
 
