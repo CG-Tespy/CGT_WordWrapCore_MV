@@ -6,7 +6,7 @@ import { IWordWrapArgs } from './WordWrapArgs/IWordWrapArgs';
 import { IWordWrapArgValidator, WordWrapArgValidator } from './WordWrapArgs/WordWrapArgValidator';
 import { WrapRuleApplier } from '../WrapRules/WrapRuleApplier';
 import { WithoutExtraSpaces } from '../WrapRules/PreRules/WithoutExtraSpaces';
-import { WithoutBaseNewlines } from '../WrapRules/PreRules/WithoutBaseNewlines';
+import { ReplaceBaseNewlinesWithSeparator } from '../WrapRules/PreRules/ReplaceBaseNewlinesWithSeparator';
 import { LineWrapper } from './LineWrappers/LineWrapper';
 import { noWrapTag as noWrapTag } from '../../Shared/_Regexes';
 import { NametagFetcher } from './NametagFetcher';
@@ -67,7 +67,7 @@ export class WordWrapper implements IWordWrapper
     protected InitRuleApplier()
     {
         // The order of these rules matter
-        this.ruleApplier.RegisterPreRule(new WithoutBaseNewlines());
+        this.ruleApplier.RegisterPreRule(new ReplaceBaseNewlinesWithSeparator());
         this.ruleApplier.RegisterPreRule(new WithoutExtraSpaces());
 
         this.ruleApplier.RegisterPostRule(new CharPerLineMin());
@@ -120,7 +120,7 @@ export class WordWrapper implements IWordWrapper
 
     protected ShouldWrap(text: string)
     {
-        return text.match(noWrapTag) == null;
+        return noWrapTag.test(text) == false;
     }
 
     private nametagFetcher: NametagFetcher = new NametagFetcher();

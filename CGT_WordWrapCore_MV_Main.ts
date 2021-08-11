@@ -1,7 +1,7 @@
 /*:
 @plugindesc Needed for the CGT word-wrapping plugins, holding information they can use.
 @author CG-Tespy – https://github.com/CG-Tespy
-@help This is version 2.01.01 of this plugin. Tested with RMMV versions 1.5.1 and 1.6.2.
+@help This is version 2.01.03 of this plugin. Tested with RMMV versions 1.5.1 and 1.6.2.
 
 Needs the CGT CoreEngine 1.01.11+ to work. Make sure this is below that in the Plugin Manager.
 
@@ -17,7 +17,7 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 
 @param NametagFormats
 @type string[]
-@default ["^[a-zA-Z \\d\-\\?\\!\\(\\)\\[\\]<>\\/]+:", "^\\[[a-zA-Z \\d\-\\?\\!\\(\\)\\[\\]<>\\/]]+:", "^\\n<[a-zA-Z \\d\-\\?\\!\\(\\)\\[\\]<>\\/]+"]
+@default ["^[a-zA-Z \\?\\!\\(\\)\\[\\]<>\\/]+:", "^\\[[a-zA-Z \\?\\!\\(\\)\\[\\]<>\\/]]+:", "^\\n<[a-zA-Z \\?\\!\\(\\)\\[\\]<>\\/]+"]
 @desc Formats that nametags in your game follow, as regex strings.
 
 @param LineBreakMarkers
@@ -27,7 +27,7 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 
 @param EmptyText
 @type string[]
-@default ["\u001bC\\[[0-9]+\\]", "\\$", ".\u001b"]
+@default ["\u001bC\\[[0-9]+\\]", "\u001b\\$", "\u001b\\."]
 @desc Regexes that define text that should NOT be treated as taking up space in the textbox.
 
 @param SpecialRules
@@ -35,8 +35,9 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 @param LineMinCharCount
 @parent SpecialRules
 @type number
-@default 8
-@desc Minimum amount of characters a line can hold. Default: 8
+@default 10
+@min 0
+@desc Minimum amount of characters a line can hold. Default: 10
 
 @param ParenthesisAlignment
 @parent SpecialRules
@@ -49,12 +50,6 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 @type string
 @default " "
 @desc What a wrapper should look for to tell words apart. Default: " "
-
-@param SeparateWithSeparator
-@parent SpecialRules
-@type boolean
-@default true
-@desc Whether or not the WordSeparator should be in the output. Default: true
 
 @param WrapDescs
 @parent SpecialRules
@@ -80,6 +75,7 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 @parent Spacing
 @type number
 @default 3
+@min -999
 @desc For the message box sides, in a wrapper-decided unit. Default: 3
 
 @param BoldItalicWidthMod
@@ -87,8 +83,6 @@ building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 @default 15
 @min 0
 @desc How much wider-than-usual bold or italicised letters are treated as, in percentage terms. Default: 15
-
-
 
 */
 

@@ -12,7 +12,6 @@ export class LineWrapper implements ILineWrapper
 
     WrapIntoLines(args: IWordWrapArgs, actualTextToWrap: string): string[] 
     {
-        this.UpdateSeparatorToInclude();
 
         let lines: string[] = [];
         let words: string[] = actualTextToWrap.split(this.WordSeparator);
@@ -43,16 +42,6 @@ export class LineWrapper implements ILineWrapper
         return lines;
     }
 
-    protected UpdateSeparatorToInclude()
-    {
-        // To cut down on if checks, in the part of the algorithm that adds separators following words.
-        if (this.IncludeWordSeparator)
-            this.separatorToInclude = this.WordSeparator;
-        else
-            this.separatorToInclude = "";
-    }
-
-    protected get IncludeWordSeparator(): boolean { return CGT.WWCore.Params.SeparateWithSeparator; }
     protected get WordSeparator(): string { return CGT.WWCore.Params.WordSeparator; }
 
     protected separatorToInclude = " ";

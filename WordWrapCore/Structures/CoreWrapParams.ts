@@ -168,7 +168,6 @@ export class WrapParamsFactory
     protected static SetBooleansFromParams(baseParams: object, wrapParams: CoreWrapParams)
     {
         wrapParams.ParenthesesAlignment = baseParams[names.ParenthesisAlignment] === 'true';
-        wrapParams.SeparateWithSeparator = baseParams[names.SeparateWithSeparator] === 'true';
         wrapParams.WrapDescs = baseParams[names.WrapDescs] === 'true';
     }
 
@@ -191,7 +190,6 @@ export let names =
     LineMinCharCount: "LineMinCharCount",
     ParenthesisAlignment: "ParenthesisAlignment",
     WordSeparator: "WordSeparator",
-    SeparateWithSeparator: "SeparateWithSeparator",
     WrapDescs: "WrapDescs",
     
     // Spacing

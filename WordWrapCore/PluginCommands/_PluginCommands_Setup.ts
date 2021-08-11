@@ -1,13 +1,29 @@
 import { SetActiveWrapper } from './SetActiveWrapper';
+import { SetBoldItalicWidthMod } from './SetBoldItalicWidthMod';
 import { SetLineMinCharCount } from './SetLineMinCharCount';
-import { pluginCommandPrefix } from '../Shared/_Strings';
+import { SetMugshotPadding } from './SetMugshotPadding';
 import { SetParenthesisAlignment } from './SetParenthesisAlignment';
+
+import { pluginCommandPrefix } from '../Shared/_Strings';
+import { SetMugshotWidth } from './SetMugshotWidth';
+import { SetSidePadding } from './SetSidePadding';
+import { SetWordSeparator } from './SetWordSeparator';
+import { SetWrapDescs } from './SetWrapDescs';
 
 let commands = 
 [
     SetActiveWrapper,
+
+    SetBoldItalicWidthMod,
     SetLineMinCharCount,
+
+    SetMugshotPadding,
+    SetMugshotWidth,
+    
     SetParenthesisAlignment,
+    SetSidePadding,
+    SetWordSeparator,
+    SetWrapDescs
 ];
 
 let Register = CGT.Core.PluginCommands.Register;

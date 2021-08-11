@@ -11,7 +11,7 @@ export class ParenthesisAlignment extends LineWrapRule
         let parenthesisIsThere = baseRequirements && openingParenIndex >= 0;
         let thatLineIsntTheLast = baseRequirements && openingParenIndex != linesCopy.length - 1;
 
-        return enoughLines && parenthesisIsThere && thatLineIsntTheLast && this.AllowedToAct;
+        return this.AllowedToAct && enoughLines && parenthesisIsThere && thatLineIsntTheLast;
     }
 
     /**

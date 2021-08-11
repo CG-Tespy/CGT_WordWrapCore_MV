@@ -33,15 +33,21 @@ export abstract class OverflowFinder implements IOverflowFinder
         if (mugshotIsThere)
             return this.SpaceMinusMugshot(args);
         else
-            return this.FullWrapSpace(args);
+            return this.RegularWrapSpace(args);
     }
 
     protected SpaceMinusMugshot(args: IOverflowFindArgs): number
     {
-        let paddingFromBothSides = this.Params.SidePadding * 2;
-        let offset = this.Params.MugshotWidth + this.Params.MugshotPadding + paddingFromBothSides;
-        return this.FullWrapSpace(args) - offset;
+        let offset = this.Params.MugshotWidth + this.Params.MugshotPadding;
+        return this.RegularWrapSpace(args) - offset;
     }
+
+    /**
+     * How much space there is for text in a mugshotless textbox, after taking into
+     * account non-mugshot-related padding params.
+     * @param args 
+     */
+    protected abstract RegularWrapSpace(args: IOverflowFindArgs): number;
 
     /** 
      * How much space there is for text in a textbox without a mugshot, in a

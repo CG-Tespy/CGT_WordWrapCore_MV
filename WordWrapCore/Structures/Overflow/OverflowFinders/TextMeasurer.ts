@@ -15,6 +15,7 @@ export abstract class TextMeasurer implements ITextMeasurer
     MeasureFor(text: string, textField: Bitmap): number
     {
         text += emptyString; // In case a non-string is passed
+        text = this.WithoutEmptyTexts(text);
         
         this.tempHistory = this.history;
 
@@ -24,6 +25,18 @@ export abstract class TextMeasurer implements ITextMeasurer
 
         return totalWidth;
     }
+
+    protected WithoutEmptyTexts(text: string)
+    {
+        for (const emptyTextRegex of this.EmptyText)
+        {
+            text = text.replace(emptyTextRegex, emptyString);
+        }
+
+        return text;
+    }
+
+    protected get EmptyText() { return CGT.WWCore.Params.EmptyText; }
 
     protected GetBaseWidth(text: string, textField: Bitmap)
     {
