@@ -1,4 +1,4 @@
-import { globalMultiline, emptyString } from '../Shared/_Strings';
+import { globalMultiline, emptyString, caseInsensitive, unicode } from '../Shared/_Strings';
 import { doubleQuotes } from '../Shared/_Regexes';
 let Event = CGT.Core.Utils.Event;
 type Event = CGT.Core.Utils.Event;
@@ -150,7 +150,7 @@ export class WrapParamsFactory
 
         for (const patternEl of patterns)
         {
-            let newRegExp = new RegExp(patternEl, globalMultiline);
+            let newRegExp = new RegExp(patternEl, globalMultiline + caseInsensitive);
             regexes.push(newRegExp);
         }
 

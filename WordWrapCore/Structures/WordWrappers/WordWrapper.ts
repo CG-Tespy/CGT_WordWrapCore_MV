@@ -95,8 +95,10 @@ export class WordWrapper implements IWordWrapper
 
         if (this.ShouldWrap(originalText))
         {
+            let nametag = this.nametagFetcher.FetchFrom(originalText);
             let beforeLineWrapping = this.ruleApplier.ApplyPreRulesTo(originalText);
-            let nametag = this.nametagFetcher.FetchFrom(beforeLineWrapping);
+            
+
             let dialogueOnly = beforeLineWrapping.replace(nametag, emptyString);
             dialogueOnly = dialogueOnly.trim(); 
             // ^For when there are any extra spaces left over from extracting the

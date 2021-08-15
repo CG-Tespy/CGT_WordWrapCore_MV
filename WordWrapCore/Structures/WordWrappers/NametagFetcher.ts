@@ -1,4 +1,5 @@
 import { emptyString } from '../../Shared/_Strings';
+import { newlines } from '../../Shared/_Regexes';
 
 export class NametagFetcher
 {
@@ -14,7 +15,9 @@ export class NametagFetcher
 
         nametagsFound.push(emptyString); // For when no matches were found
         let firstMatch = 0;
-        return nametagsFound[firstMatch];
+        return nametagsFound[firstMatch].trim().replace(newlines, emptyString); 
+        // We don't want any extra spaces in the tag. We also want to account for when a
+        // nametag regex includes a newline for the sake of better detection
     }
 
     protected get NametagFormats(): RegExp[] 
