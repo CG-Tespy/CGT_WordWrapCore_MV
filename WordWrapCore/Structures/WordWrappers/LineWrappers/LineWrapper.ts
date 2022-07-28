@@ -1,29 +1,49 @@
 import { ILineWrapper } from './ILineWrapper';
 import { OverflowFinder } from '../../Overflow/OverflowFinders/OverflowFinder';
 import { IWordWrapArgs } from '../WordWrapArgs/IWordWrapArgs';
-import { emptyString } from '../../../Shared/_Strings';
+import { emptyString, singleNewline } from '../../../Shared/_Strings';
 import { IOverflowFindArgs } from '../../Overflow/OverflowFinders/IOverflowFindArgs';
-
-let ArrayEx = CGT.Core.Extensions.ArrayEx;
+import { UnderflowCascader } from '../UnderflowCascader';
+import { IUnderflowCascadeArgs } from '../IUnderflowCascadeArgs';
 
 export class LineWrapper implements ILineWrapper
 {
     protected overflowFinder: OverflowFinder;
+    protected underflowCascader: UnderflowCascader;
 
     WrapIntoLines(args: IWordWrapArgs, actualTextToWrap: string): string[] 
     {
+        let lines: string[] = this.WithNormalLineWrapping(args, actualTextToWrap);
 
+        if (this.ShouldApplyCascadingUnderflowTo(lines))
+        {
+            let cascaderArgs: IUnderflowCascadeArgs = 
+            {
+                textField: args.textField,
+                lines: lines,
+                focusedLineIndex: 1 // We treat the first line as the base, so we have to start from the second
+            };
+            lines = this.underflowCascader.WithCascadingOverflow(cascaderArgs);
+        }
+
+        return lines;
+    }
+
+    protected WithNormalLineWrapping(args: IWordWrapArgs, actualTextToWrap: string)
+    {
         let lines: string[] = [];
         let words: string[] = actualTextToWrap.split(this.WordSeparator);
         let currentLine: string = emptyString;
 
         for (const currentWord of words)
         {
+            // "currentWord" would be a bit misleading for when the text is like Japanese or 
+            // Chinese, where there's no designated character to separate words... but hey.
             this.UpdateOverflowFindArgs(args, currentWord, currentLine);
 
             let thereIsOverflow = this.overflowFinder.Find(this.overflowFindArgs);
             let foundLineBreak = this.IsLineBreak(currentWord);
-
+            
             if (thereIsOverflow || foundLineBreak)
             {
                 lines.push(currentLine.trim()); // Make sure not to include any extra spaces
@@ -62,7 +82,10 @@ export class LineWrapper implements ILineWrapper
 
     IsLineBreak(text: string): boolean
     {
-        return ArrayEx.Includes(this.LineBreakMarkers, text);
+        // If the pre-rule for replacing LB tags with newlines works right, each newline
+        // should be separated from the rest of the text as its own word 
+        // (or "word" in the case of langs like jp or cn)
+        return text == singleNewline;
     }
 
     get LineBreakMarkers(): string[] { return CGT.WWCore.Params.LineBreakMarkers; }
@@ -72,5 +95,14 @@ export class LineWrapper implements ILineWrapper
     {
         this.overflowFinder.OnWrapJobFinished();
     }
+
+    protected ShouldApplyCascadingUnderflowTo(lines: string[]): boolean
+    {
+        let moreThanOneLine = lines.length > 1;
+        let theUserWantsIt = CGT.WWCore.Params.CascadingUnderflow == true;
+        let cascaderIsThere = this.underflowCascader != null;
+        return moreThanOneLine && theUserWantsIt && cascaderIsThere;
+    }
+
 
 }

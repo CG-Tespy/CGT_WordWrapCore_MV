@@ -215,6 +215,15 @@ declare namespace CGT
             get WrapDescs(): boolean;
             set WrapDescs(value);
 
+            /** Whether or not lines in an input after the first should be wider than said first. */
+            get CascadingUnderflow(): boolean;
+            set CascadingUnderflow(value);
+
+            /** How much wider than the first that lines from the same input are allowed to be. */
+            get CULenience(): number;
+            set CULenience(value);
+
+            // ~~~Spacing~~~
             /** How wide mugshots are treated as being, in a unit decided by the active wrapper. */
             get MugshotWidth(): number;
             set MugshotWidth(value);

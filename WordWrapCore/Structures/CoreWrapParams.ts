@@ -74,6 +74,14 @@ export class CoreWrapParams
     private wrapDescs: boolean = false;
     set WrapDescs(value) { this.wrapDescs = value; }
 
+    get CascadingUnderflow(): boolean { return this.cascadingUnderflow; }
+    private cascadingUnderflow: boolean = false;
+    set CascadingUnderflow(value) { this.cascadingUnderflow = value; }
+
+    get CULenience(): number { return this.cuLenience; }
+    private cuLenience: number = 5;
+    set CULenience(value) { this.cuLenience = value; }
+
     // Spacing
     
     /** How wide mugshots are treated as being, in a wrapper-decided unit */
@@ -125,6 +133,7 @@ export class WrapParamsFactory
         wrapParams.SidePadding = Number(baseParams[names.SidePadding]);
         wrapParams.MugshotPadding = Number(baseParams[names.MugshotPadding]);
         wrapParams.MugshotWidth = Number(baseParams[names.MugshotWidth]);
+        wrapParams.CULenience = Number(baseParams[names.CULenience]);
 
         let basePercent = Number(baseParams[names.BoldItalicWidthMod]);
         wrapParams.BoldItalicWidthMod = 1 + (basePercent / 100.0);
@@ -169,6 +178,7 @@ export class WrapParamsFactory
     {
         wrapParams.ParenthesesAlignment = baseParams[names.ParenthesisAlignment] === 'true';
         wrapParams.WrapDescs = baseParams[names.WrapDescs] === 'true';
+        wrapParams.CascadingUnderflow = baseParams[names.CascadingUnderflow] === 'true';
     }
 
     protected static SetArraysFromParams(baseParams: object, wrapParams: CoreWrapParams)
@@ -191,6 +201,8 @@ export let names =
     ParenthesisAlignment: "ParenthesisAlignment",
     WordSeparator: "WordSeparator",
     WrapDescs: "WrapDescs",
+    CascadingUnderflow: "CascadingUnderflow",
+    CULenience: "CULenience",
     
     // Spacing
     MugshotWidth: "MugshotWidth",

@@ -6,10 +6,11 @@ import { IWordWrapArgs } from './WordWrapArgs/IWordWrapArgs';
 import { IWordWrapArgValidator, WordWrapArgValidator } from './WordWrapArgs/WordWrapArgValidator';
 import { WrapRuleApplier } from '../WrapRules/WrapRuleApplier';
 import { WithoutExtraSpaces } from '../WrapRules/PreRules/WithoutExtraSpaces';
-import { ReplaceBaseNewlinesWithSeparator } from '../WrapRules/PreRules/ReplaceBaseNewlinesWithSeparator';
+import { TurnNewlinesIntoSeparators } from '../WrapRules/PreRules/TurnNewlinesIntoSeparators';
 import { LineWrapper } from './LineWrappers/LineWrapper';
 import { noWrapTag as noWrapTag } from '../../Shared/_Regexes';
 import { NametagFetcher } from './NametagFetcher';
+import { HaveLBTagsBeNewlines } from '../WrapRules/PreRules/HaveLBTagsBeNewlines';
 
 /** 
  * Encapsulates an algorithm for doing word-wrapping. 
@@ -66,8 +67,9 @@ export class WordWrapper implements IWordWrapper
 
     protected InitRuleApplier()
     {
-        // The order of these rules matter
-        this.ruleApplier.RegisterPreRule(new ReplaceBaseNewlinesWithSeparator());
+        // These rules are applied in the order they are registered
+        this.ruleApplier.RegisterPreRule(new TurnNewlinesIntoSeparators());
+        this.ruleApplier.RegisterPreRule(new HaveLBTagsBeNewlines());
         this.ruleApplier.RegisterPreRule(new WithoutExtraSpaces());
 
         this.ruleApplier.RegisterPostRule(new CharPerLineMin());

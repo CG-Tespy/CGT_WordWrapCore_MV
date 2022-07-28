@@ -1,5 +1,4 @@
 import { IOverflowFinder } from './IOverflowFinder';
-import { ITextMeasurer } from './ITextMeasurer';
 import { IOverflowFindArgs } from './IOverflowFindArgs';
 import { TextMeasurer } from './TextMeasurer';
 import { CoreWrapParams } from '../../CoreWrapParams';
@@ -23,7 +22,6 @@ export abstract class OverflowFinder implements IOverflowFinder
 
         return spaceTakenUp > spaceAvailable;
     }
-
 
     /** Returns how much space there is to have text on a single line, based on the inputs. */
     protected GetWrapSpace(args: IOverflowFindArgs): number

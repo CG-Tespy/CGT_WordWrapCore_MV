@@ -1,7 +1,7 @@
 /*:
 * @plugindesc Needed for the CGT word-wrapping plugins, holding information they can use.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help This is version 2.01.03 of this plugin. Tested with RMMV versions 
+* @help This is version 2.01.06 of this plugin. Tested with RMMV versions 
 * 1.5.1 and 1.6.2.
 * 
 * Needs the CGT CoreEngine 1.01.11+ to work. Make sure this is below that 
@@ -19,8 +19,8 @@
 * 
 * @param NametagFormats
 * @type string[]
-* @default ["^.+:", "^\\[.+\\]:", "^\\n<.+>+"]
-* @desc Formats that nametags in your game follow, as regex strings.
+* @default ["^\\[^\\n\\]+:", "^\\[[^\\n\\]+\\]:", "^\\n<[^\\n\\]+>+", "^\\[cC\\]\\[\\d+\\]\\[^\\n\\]+:\\[cC\\]\\[\\d+\\]", "^\\[cC\\]\\[\\d+\\]\\[[^\\n\\]+\\]:\\[cC\\]\\[\\d+\\]"]
+* @desc Regex strings that tell the algorithm what counts as a nametag.
 * 
 * @param LineBreakMarkers
 * @type string[]
@@ -58,6 +58,19 @@
 * @type boolean
 * @default false
 * @desc Whether or not the wrapper should be applied to descs.
+*
+* @param CascadingUnderflow
+* @parent SpecialRules
+* @type boolean
+* @default false
+* @desc Whether any wrapped line will be allowed to be thicker than the first wrapped one for its input.
+* 
+* @param CULenience
+* @parent CascadingUnderflow
+* @type number
+* @min -999999
+* @default 5
+* @desc How many units wider than the first line that later ones in its input are allowed to be.
 * 
 * @param Spacing
 * 
@@ -71,19 +84,20 @@
 * @parent Spacing
 * @type number
 * @default 25
+* @min -999999
 * @desc The space between the mugshot and the text, in a wrapper-decided unit. Default: 25
 * 
 * @param SidePadding
 * @parent Spacing
 * @type number
 * @default 3
-* @min -999
+* @min -999999
 * @desc For the message box sides, in a wrapper-decided unit. Default: 3
 * 
 * @param BoldItalicWidthMod
 * @type number
 * @default 15
-* @min 0
+* @min -999999
 * @desc How much wider-than-usual bold or italicised letters are treated as, in percentage terms. Default: 15
 * 
 */
@@ -112,8 +126,8 @@
 * @param NametagFormats
 * @text FormatosDeGafete
 * @type string[]
-* @default ["^.+:", "^\\[.+\\]:", "^\\n<.+>+"]
-* @desc Los formatos de gafetes que tu juego usa, como texto regex.
+* @default ["^\\[^\\n\\]+:", "^\\[[^\\n\\]+\\]:", "^\\n<[^\\n\\]+>+", "^\\[cC\\]\\[\\d+\\]\\[^\\n\\]+:\\[cC\\]\\[\\d+\\]", "^\\[cC\\]\\[\\d+\\]\\[[^\\n\\]+\\]:\\[cC\\]\\[\\d+\\]"]
+* @desc El texto regex que dice al algoritmo que debe considerar como gafete.
 * 
 * @param LineBreakMarkers
 * @text SenalesDeSaltalíneas
@@ -151,13 +165,28 @@
 * @type string
 * @default " "
 * @desc Que un ajustelíneas busca para diferenciar las palabras. Por defecto: " "
-* 
+*
 * @param WrapDescs
 * @text AjusteLosDescripciones
 * @parent SpecialRules
 * @type boolean
 * @default false
 * @desc Si o no el ajustelíneas se aplica a los descripciones. Por defecto: false
+*
+* @param CascadingUnderflow
+* @text TextoCascadando
+* @parent SpecialRules
+* @type boolean
+* @default false
+* @desc Si o no cualquiera linea ajustada puede ser mas ancho que la primera ajustada por su entrada.
+
+* @param CULenience
+* @text IndulgenciaDeTC
+* @parent CascadingUnderflow
+* @type number
+* @min -999999
+* @default 5
+* @desc Cuantas unidades mas ancho que la primera linea que las posteriores en su entrada pueden ser.
 * 
 * @param Spacing
 * @text El Espaciado
