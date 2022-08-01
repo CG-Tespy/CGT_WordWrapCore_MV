@@ -1,7 +1,7 @@
 /*:
 * @plugindesc Needed for the CGT word-wrapping plugins, holding information they can use.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help This is version 2.01.16 of this plugin. Tested with RMMV versions 
+* @help This is version 2.03.03 of this plugin. Tested with RMMV versions 
 * 1.5.1 and 1.6.2.
 * 
 * Needs the CGT CoreEngine 1.01.11+ to work. Make sure this is below that 
@@ -18,9 +18,8 @@
 * @desc Which word wrap plugin to use. Look at the appropriate User Guides for more info. Default: null
 * 
 * @param NametagFormats
-* @type string[]
-* @default ["^\\[^\\n\\]+:", "^\\[[^\\n\\]+\\]:", "^\\[cC\\]\\[\\d+\\]\\[^\\n\\]+:\\[cC\\]\\[\\d+\\]", "^\\[cC\\]\\[\\d+\\]\\[[^\\n\\]+\\]:\\[cC\\]\\[\\d+\\]" ]
-* @desc Regex strings that tell the algorithm what counts as a nametag.
+* @type struct<NametagFormat>[]
+* @desc Tells the algorithm what counts as a nametag.
 * 
 * @param LineBreakMarkers
 * @type string[]
@@ -102,10 +101,19 @@
 * 
 */
 
+/*~struct~NametagFormat:
+ * @param Name
+ * @type string
+ * @default NewFormat
+ * 
+ * @param RegexAsString
+ * @type string
+ */
+
 /*:es
 * @plugindesc Requisito para los plugins ajustelíneas CGT, teniendo información que pueden usar.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help Este es la versión 2.01.16 de este plugin. Lo probé con versiones RMMV 1.5.1 
+* @help Este es la versión 2.03.03 de este plugin. Lo probé con versiones RMMV 1.5.1 
 * y 1.6.2.
 * 
 * Necesita el CGT CoreEngine 1.0.11+ para funcionar. Asegurate que este es abajo 
@@ -125,9 +133,9 @@
 *
 * @param NametagFormats
 * @text FormatosDeGafete
-* @type string[]
-* @default ["^\\[^\\n\\]+:", "^\\[[^\\n\\]+\\]:", "^\\n<[^\\n\\]+>+", "^\\[cC\\]\\[\\d+\\]\\[^\\n\\]+:\\[cC\\]\\[\\d+\\]", "^\\[cC\\]\\[\\d+\\]\\[[^\\n\\]+\\]:\\[cC\\]\\[\\d+\\]"]
-* @desc El texto regex que dice al algoritmo que debe considerar como gafete.
+* @type struct<NametagFormat>
+* @desc Tells the algorithm what counts as a nametag.
+* @desc Avisa el algoritmo que se vale como gafete.
 * 
 * @param LineBreakMarkers
 * @text SeñalesDeSaltalíneas

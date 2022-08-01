@@ -12,7 +12,8 @@
     "test": "mocha -r ts-node/register Test/**/*.ts"
   },
   "dependencies": {
-    "@rollup/plugin-typescript": "^8.3.4"
+    "@rollup/plugin-typescript": "^8.3.4",
+    "fenix-tools": "^0.2.0-b"
   },
   "devDependencies": {
     "@types/chai": "^4.2.12",

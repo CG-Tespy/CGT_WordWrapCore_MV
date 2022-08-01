@@ -13,7 +13,7 @@ export function ApplyWindowNameboxOverrides()
 function OverrideNameboxRefresh()
 {
     // @ts-ignore
-    var oldNameboxRefresh = Window_Namebox.prototype.refresh;
+    var oldNameboxRefresh = Window_NameBox.prototype.refresh;
 
     function NewRefreshNamebox(text: string, position)
     {
@@ -24,13 +24,13 @@ function OverrideNameboxRefresh()
     }
 
     // @ts-ignore
-    Window_Namebox.prototype.refresh = NewRefreshNamebox;
+    Window_NameBox.prototype.refresh = NewRefreshNamebox;
 }
 
 function OverrideNameboxDeactivate()
 {
     // @ts-ignore
-    let oldNameboxDeactivate = Window_Namebox.prototype.deactivate;
+    let oldNameboxDeactivate = Window_NameBox.prototype.deactivate;
 
     function NewNameboxDeactivate()
     {

@@ -1,5 +1,6 @@
 import { emptyString } from '../../Shared/_Strings';
 import { newlines } from '../../Shared/_Regexes';
+import { INametagFormat } from '../INametagFormat';
 
 export class NametagFetcher
 {
@@ -13,7 +14,8 @@ export class NametagFetcher
 
         for (const format of this.NametagFormats)
         {
-            let matchesFound = text.match(format) || [];
+            let formatRegex = format.Regex;
+            let matchesFound = text.match(formatRegex) || [];
             nametagsFound = nametagsFound.concat(matchesFound);
         }
 
@@ -26,7 +28,7 @@ export class NametagFetcher
 
     protected get YanflyNametagIsThere(): boolean { return CGT.WWCore.activeYanflyNametag.length > 0; }
 
-    protected get NametagFormats(): RegExp[] 
+    protected get NametagFormats(): INametagFormat[] 
     { 
         // @ts-ignore
         return CGT.WWCore.Params.NametagFormats; 

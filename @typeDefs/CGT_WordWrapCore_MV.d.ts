@@ -122,11 +122,18 @@ declare namespace CGT
             set WrapCode(value);
 
             Wrap(args: IWordWrapArgs): string;
-            get NametagFormats(): RegExp[];
+            get NametagFormats(): INametagFormat[];
 
             get LineWrapper(): LineWrapper;
 
             constructor(lineWrapper?: LineWrapper);
+        }
+
+        interface INametagFormat
+        {
+            Name: string;
+            RegexAsString: string;
+            Regex: RegExp;
         }
 
         /**
