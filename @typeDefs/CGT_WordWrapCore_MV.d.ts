@@ -79,7 +79,6 @@ declare namespace CGT
                 OnWrapJobFinished();
             }
 
-
             /**
              * Helper for OverflowFinders to detect overflow
              */
@@ -103,7 +102,6 @@ declare namespace CGT
                 ClearHistory();
             }
 
-            
         }
 
         class NametagFetcher
@@ -153,6 +151,8 @@ declare namespace CGT
         {
             /** Override this in your custom line wrapper  */
             protected overflowFinder: Overflow.OverflowFinder;
+
+            protected underflowCascader: UnderflowCascader;
 
             WrapIntoLines(args: IWordWrapArgs, actualTextToWrap: string);
 
@@ -219,7 +219,7 @@ declare namespace CGT
             get CascadingUnderflow(): boolean;
             set CascadingUnderflow(value);
 
-            /** How much wider than the first that lines from the same input are allowed to be. */
+            /** How much wider than the first line that the others from the same input are allowed to be. */
             get CULenience(): number;
             set CULenience(value);
 
@@ -379,5 +379,24 @@ declare namespace CGT
 
         /** Makes sure that the active wrapper matches the current wrap code set. */
         function UpdateActiveWrapper(): void;
+
+        class UnderflowCascader
+        {
+            protected textMeasurer: Overflow.TextMeasurer;
+            WithCascadingUnderflow(args: IUnderflowCascadeArgs);
+        }
+
+        interface IUnderflowCascadeArgs
+        {
+            textField: Bitmap;
+            lines: string[];
+
+            /** Index of the line to potentially have a word moved from it to the next */
+            focusedLineIndex: number;
+        }
+
+        let activeYanflyNametag: string;
+
+        let version: number;
     }
 }

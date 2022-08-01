@@ -4,4 +4,9 @@ declare namespace Yanfly
     {
         let FaceWidth: number;
     }
+
+    let Message:
+    {
+
+    };
 }

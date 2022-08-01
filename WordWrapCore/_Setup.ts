@@ -61,7 +61,10 @@ export let WWCore =
         registeredWrappers.set(wrapper.WrapCode, wrapper);
     },
 
-    Shared: Shared
+    Shared: Shared,
+
+    activeYanflyNametag: "",
+    version: 20116,
 
 };
 

@@ -5,6 +5,10 @@ export class NametagFetcher
 {
     FetchFrom(text: string)
     {
+        if (this.YanflyNametagIsThere) 
+            return emptyString; 
+            // ^Since the nametag gets taken out of the text by the time this func gets called
+
         let nametagsFound: RegExpMatchArray = [];
 
         for (const format of this.NametagFormats)
@@ -19,6 +23,8 @@ export class NametagFetcher
         // We don't want any extra spaces in the tag. We also want to account for when a
         // nametag regex includes a newline for the sake of better detection
     }
+
+    protected get YanflyNametagIsThere(): boolean { return CGT.WWCore.activeYanflyNametag.length > 0; }
 
     protected get NametagFormats(): RegExp[] 
     { 

@@ -1,8 +1,6 @@
 import { ITextMeasurer } from './ITextMeasurer';
 import { emptyString } from '../../../Shared/_Strings';
 
-let ArrayEx = CGT.Core.Extensions.ArrayEx;
-
 /**
  * Measures text while using a history to help keep track of what's
  * bolded or italicised.

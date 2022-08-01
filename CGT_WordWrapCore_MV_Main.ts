@@ -1,7 +1,7 @@
 /*:
 * @plugindesc Needed for the CGT word-wrapping plugins, holding information they can use.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help This is version 2.01.06 of this plugin. Tested with RMMV versions 
+* @help This is version 2.01.16 of this plugin. Tested with RMMV versions 
 * 1.5.1 and 1.6.2.
 * 
 * Needs the CGT CoreEngine 1.01.11+ to work. Make sure this is below that 
@@ -19,7 +19,7 @@
 * 
 * @param NametagFormats
 * @type string[]
-* @default ["^\\[^\\n\\]+:", "^\\[[^\\n\\]+\\]:", "^\\n<[^\\n\\]+>+", "^\\[cC\\]\\[\\d+\\]\\[^\\n\\]+:\\[cC\\]\\[\\d+\\]", "^\\[cC\\]\\[\\d+\\]\\[[^\\n\\]+\\]:\\[cC\\]\\[\\d+\\]"]
+* @default ["^\\[^\\n\\]+:", "^\\[[^\\n\\]+\\]:", "^\\[cC\\]\\[\\d+\\]\\[^\\n\\]+:\\[cC\\]\\[\\d+\\]", "^\\[cC\\]\\[\\d+\\]\\[[^\\n\\]+\\]:\\[cC\\]\\[\\d+\\]" ]
 * @desc Regex strings that tell the algorithm what counts as a nametag.
 * 
 * @param LineBreakMarkers
@@ -57,20 +57,20 @@
 * @parent SpecialRules
 * @type boolean
 * @default false
-* @desc Whether or not the wrapper should be applied to descs.
+* @desc Whether or not the wrapper should be applied to descs. Default: false
 *
 * @param CascadingUnderflow
 * @parent SpecialRules
 * @type boolean
 * @default false
-* @desc Whether any wrapped line will be allowed to be thicker than the first wrapped one for its input.
+* @desc Whether any wrapped line will be allowed to be thicker than the first wrapped one for its input. Default: false
 * 
 * @param CULenience
 * @parent CascadingUnderflow
 * @type number
 * @min -999999
 * @default 5
-* @desc How many units wider than the first line that later ones in its input are allowed to be.
+* @desc How many units wider than the first line that later ones in its input are allowed to be. Default: 5
 * 
 * @param Spacing
 * 
@@ -105,7 +105,7 @@
 /*:es
 * @plugindesc Requisito para los plugins ajustelíneas CGT, teniendo información que pueden usar.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help Este es la versión 2.01.03 de este plugin. Lo probé con versiones RMMV 1.5.1 
+* @help Este es la versión 2.01.16 de este plugin. Lo probé con versiones RMMV 1.5.1 
 * y 1.6.2.
 * 
 * Necesita el CGT CoreEngine 1.0.11+ para funcionar. Asegurate que este es abajo 
@@ -130,7 +130,7 @@
 * @desc El texto regex que dice al algoritmo que debe considerar como gafete.
 * 
 * @param LineBreakMarkers
-* @text SenalesDeSaltalíneas
+* @text SeñalesDeSaltalíneas
 * @type string[]
 * @default ["<br>", "<br2>", "<line-break>"]
 * @desc Pones estos en el texto dónde quieres garantizar una saltalíneas.
@@ -171,14 +171,14 @@
 * @parent SpecialRules
 * @type boolean
 * @default false
-* @desc Si o no el ajustelíneas se aplica a los descripciones. Por defecto: false
+* @desc Si o no el ajustelíneas se aplica a las descripciones. Por defecto: false
 *
 * @param CascadingUnderflow
 * @text TextoCascadando
 * @parent SpecialRules
 * @type boolean
 * @default false
-* @desc Si o no cualquiera linea ajustada puede ser mas ancho que la primera ajustada por su entrada.
+* @desc Si o no cualquiera línea ajustada puede ser más ancho que la primera ajustada por su entrada.
 
 * @param CULenience
 * @text IndulgenciaDeTC
@@ -186,7 +186,7 @@
 * @type number
 * @min -999999
 * @default 5
-* @desc Cuantas unidades mas ancho que la primera linea que las posteriores en su entrada pueden ser.
+* @desc Cuantas unidades más ancho que la primera línea que las posteriores en su entrada se permiten ser.
 * 
 * @param Spacing
 * @text El Espaciado

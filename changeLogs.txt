@@ -1,0 +1,22 @@
+August 2022
+
+Version 2.01.16
+
+# **English**
+
+## New Features
+* Two new for-aesthetic params: CascadingUnderflow and CULenience ("CU" here being short for "CascadingUnderflow")
+  * The first decides whether the second or later lines of any given wrapped text can be wider than the first
+  * The second decides how much wider than the first that later lines can be
+* Default nametag formats now include colored versions of the non-Yanfly defaults
+
+## Bugfixes
+* Line-break tags no longer have to be separated from other words by spaces
+  * This means that text like "What up?<br2>How's it goin'?<br2>" works just as well as "What up? <br2> How's it goin'? <br2>"
+  * Now, languages that don't separate words with any specific character (such as Japanese and Chinese) can actually make use of these tags!
+* Default nametag formats no longer misdetect nametags as anything after the first line-break
+* Yanfly MessageCore nametags are now properly detected
+  * The format for it has been removed from the default NametagFormats; turns out having it there never made a difference in the first place due to how the MessageCore works
+
+Included a new User Guide to help you better understand the new features. Please check it out.
+

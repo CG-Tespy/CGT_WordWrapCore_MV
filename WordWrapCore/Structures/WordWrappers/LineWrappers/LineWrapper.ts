@@ -16,16 +16,8 @@ export class LineWrapper implements ILineWrapper
         let lines: string[] = this.WithNormalLineWrapping(args, actualTextToWrap);
 
         if (this.ShouldApplyCascadingUnderflowTo(lines))
-        {
-            let cascaderArgs: IUnderflowCascadeArgs = 
-            {
-                textField: args.textField,
-                lines: lines,
-                focusedLineIndex: 1 // We treat the first line as the base, so we have to start from the second
-            };
-            lines = this.underflowCascader.WithCascadingOverflow(cascaderArgs);
-        }
-
+            lines = this.ApplyCUTo(lines, args);
+        
         return lines;
     }
 
@@ -64,8 +56,6 @@ export class LineWrapper implements ILineWrapper
 
     protected get WordSeparator(): string { return CGT.WWCore.Params.WordSeparator; }
 
-    protected separatorToInclude = " ";
-
     protected UpdateOverflowFindArgs(wordWrapArgs: IWordWrapArgs, word: string, line: string)
     {
         this.overflowFindArgs.word = word;
@@ -99,9 +89,23 @@ export class LineWrapper implements ILineWrapper
     protected ShouldApplyCascadingUnderflowTo(lines: string[]): boolean
     {
         let moreThanOneLine = lines.length > 1;
-        let theUserWantsIt = CGT.WWCore.Params.CascadingUnderflow == true;
+        let userEnabledIt = CGT.WWCore.Params.CascadingUnderflow == true;
         let cascaderIsThere = this.underflowCascader != null;
-        return moreThanOneLine && theUserWantsIt && cascaderIsThere;
+        // ^It might not be if the user's using older versions of the specific wrappers
+        return moreThanOneLine && userEnabledIt && cascaderIsThere;
+    }
+
+    protected ApplyCUTo(lines: string[], args: IWordWrapArgs)
+    {
+        let cascaderArgs: IUnderflowCascadeArgs = 
+        {
+            textField: args.textField,
+            lines: lines,
+            focusedLineIndex: 1 // We treat the first line as the base, so we have to start from the second
+        };
+
+        lines = this.underflowCascader.WithCascadingOverflow(cascaderArgs);
+        return lines;
     }
 
 

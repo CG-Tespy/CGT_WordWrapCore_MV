@@ -8,8 +8,8 @@ export class HaveLBTagsBeNewlines extends StringWrapRule
     ProcessNormally(text: string)
     {
         let toReplaceWith = this.WordSeparator + singleNewline + this.WordSeparator;
-        // ^We surround the newlines with separators so they can be properly detected 
-        // as their own things
+        // ^We surround the newlines with separators so said newlines can be properly detected 
+        // as separate from other text
 
         for (let i = 0; i < this.LineBreakTags.length; i++)
         {
@@ -21,8 +21,7 @@ export class HaveLBTagsBeNewlines extends StringWrapRule
         return text;
     }
 
-    protected get LineBreakTags() {return CGT.WWCore.Params.LineBreakMarkers; }
-
+    protected get LineBreakTags() { return CGT.WWCore.Params.LineBreakMarkers; }
     protected get WordSeparator() { return CGT.WWCore.Params.WordSeparator; }
 
 }
