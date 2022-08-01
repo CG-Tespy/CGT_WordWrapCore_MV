@@ -4,4 +4,5 @@ export interface INametagFormat
     Name: string;
     RegexAsString: string;
     Regex: RegExp;
+    Applicable: true;
 }

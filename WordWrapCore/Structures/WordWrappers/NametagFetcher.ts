@@ -14,6 +14,8 @@ export class NametagFetcher
 
         for (const format of this.NametagFormats)
         {
+            if (!format.Applicable)
+                continue;
             let formatRegex = format.Regex;
             let matchesFound = text.match(formatRegex) || [];
             nametagsFound = nametagsFound.concat(matchesFound);

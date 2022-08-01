@@ -192,7 +192,7 @@ export class WrapParamsFactory
         {
             let formatEl = formats[formatKey];
             let defAsString = formatEl.RegexAsString;
-            formatEl.Regex = new RegExp(defAsString, "gm");
+            formatEl.Regex = new RegExp(defAsString, globalMultiline + caseInsensitive);
         }
     }
 

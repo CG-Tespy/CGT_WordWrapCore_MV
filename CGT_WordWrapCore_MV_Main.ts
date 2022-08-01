@@ -108,6 +108,14 @@
  * 
  * @param RegexAsString
  * @type string
+ * 
+ * @param Applicable
+ * @type boolean
+ * @default true
+ * @desc Whether or not the algorithm will consider this format. Default: true
+ * 
+ * @param Notes
+ * @type Note
  */
 
 /*:es
