@@ -10,6 +10,7 @@ import { NullLineWrapper } from './Structures/WordWrappers/LineWrappers/NullLine
 import * as Overflow from "./Structures/Overflow/_SetupOverflow";
 import { NametagFetcher } from './Structures/WordWrappers/NametagFetcher';
 import { LineWrapper } from './Structures/WordWrappers/LineWrappers/LineWrapper';
+import { UnderflowCascader } from './Structures/WordWrappers/UnderflowCascader';
 
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
 
@@ -23,6 +24,7 @@ export let WWCore =
     LineWrapper: LineWrapper,
 
     NametagFetcher: NametagFetcher,
+    UnderflowCascader: UnderflowCascader,
 
     UpdateActiveWrapper(): void
     {

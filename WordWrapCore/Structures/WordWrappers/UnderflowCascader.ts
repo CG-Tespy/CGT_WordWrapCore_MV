@@ -64,7 +64,7 @@ export class UnderflowCascader
     protected ShouldApplyCascading(args: IUnderflowCascadeArgs)
     {
         let lastLineIndex = args.lines.length - 1;
-        return args.focusedLineIndex >= lastLineIndex;
+        return args.focusedLineIndex < lastLineIndex;
     }
 
     protected MakeDecisionAboutMovingWord(args: IUnderflowCascadeArgs)

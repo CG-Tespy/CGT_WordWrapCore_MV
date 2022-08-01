@@ -50,6 +50,7 @@ function OverrideNameBoxClose()
     {
         oldNameBoxClose.call(this);
         this._text = "";
+        CGT.WWCore.activeYanflyNametag = this._text;
     }
 
     Window_NameBox.prototype.close = NewNameBoxClose;

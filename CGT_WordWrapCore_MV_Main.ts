@@ -62,7 +62,7 @@
 * @parent SpecialRules
 * @type boolean
 * @default false
-* @desc Whether any wrapped line will be allowed to be thicker than the first wrapped one for its input. Default: false
+* @desc If true, makes it so no line in a given input is wider than the first. Default: false
 * 
 * @param CULenience
 * @parent CascadingUnderflow
@@ -77,21 +77,21 @@
 * @parent Spacing
 * @type number
 * @default 144
-* @desc How wide mugshots are treated as being, in a wrapper-decided unit. Default: 144
+* @desc How many units wide that mugshots are treated as being. Default: 144
 * 
 * @param MugshotPadding
 * @parent Spacing
 * @type number
 * @default 25
 * @min -999999
-* @desc The space between the mugshot and the text, in a wrapper-decided unit. Default: 25
+* @desc The space between the mugshot and the text (measured in units). Default: 25
 * 
 * @param SidePadding
 * @parent Spacing
 * @type number
 * @default 3
 * @min -999999
-* @desc For the message box sides, in a wrapper-decided unit. Default: 3
+* @desc For the message box sides (measured in units). Default: 3
 * 
 * @param BoldItalicWidthMod
 * @type number
