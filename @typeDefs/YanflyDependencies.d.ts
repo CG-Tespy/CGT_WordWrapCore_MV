@@ -10,3 +10,8 @@ declare namespace Yanfly
 
     };
 }
+
+declare class Window_NameBox extends Window_Base
+{
+    refresh(text: string, position: any);
+}
