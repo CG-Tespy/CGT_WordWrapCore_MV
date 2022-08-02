@@ -27,7 +27,7 @@ export class WordWrapper implements IWordWrapper
     {
         this.argValidator.Validate(args);
 
-        let shouldFetchFromCache: boolean = this.HasAlreadyWrapped(args.rawTextToWrap);
+        let shouldFetchFromCache: boolean = this.ShouldRememberResults && this.HasAlreadyWrapped(args.rawTextToWrap);
         let getOutput = this.wrapResultFetchers.get(shouldFetchFromCache);
 
         return getOutput(args);
@@ -35,6 +35,7 @@ export class WordWrapper implements IWordWrapper
 
     protected argValidator: IWordWrapArgValidator = new WordWrapArgValidator();
 
+    protected get ShouldRememberResults() { return CGT.WWCore.Params.RememberResults; }
     protected HasAlreadyWrapped(text: string): boolean
     {
         return this.wrapResults.has(text);

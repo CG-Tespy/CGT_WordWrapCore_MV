@@ -1,7 +1,6 @@
-import { globalMultiline, emptyString, caseInsensitive, unicode } from '../Shared/_Strings';
+import { emptyString, caseInsensitive, unicode, global } from '../Shared/_Strings';
 import { doubleQuotes } from '../Shared/_Regexes';
 import { INametagFormat } from './INametagFormat';
-import { convertParameters } from "fenix-tools";
 import { IBaseCoreWrapParams } from './IBaseCoreWrapParams';
 let Event = CGT.Core.Utils.Event;
 type Event = CGT.Core.Utils.Event;
@@ -38,9 +37,7 @@ export class CoreWrapParams
         ArrayEx.Clear(this.nametagFormatRegexes);
         this.nametagFormatRegexes = this.NametagFormatRegexes.concat(value);
     }
-
-    protected RegexObj
-
+    
     get LineBreakMarkers(): string[] { return this.lineBreakMarkers; }
     private lineBreakMarkers: string[] = [];
     set LineBreakMarkers(value) 
@@ -93,6 +90,10 @@ export class CoreWrapParams
     get CULenience(): number { return this.cuLenience; }
     private cuLenience: number = 5;
     set CULenience(value) { this.cuLenience = value; }
+
+    get RememberResults(): boolean { return this.rememberResults; }
+    private rememberResults: boolean = true;
+    set RememberResults(value) { this.rememberResults = value; }
 
     // Spacing
     
@@ -192,7 +193,7 @@ export class WrapParamsFactory
         {
             let formatEl = formats[formatKey];
             let defAsString = formatEl.RegexAsString;
-            formatEl.Regex = new RegExp(defAsString, globalMultiline + caseInsensitive);
+            formatEl.Regex = new RegExp(defAsString, global + caseInsensitive);
         }
     }
 
@@ -215,7 +216,7 @@ export class WrapParamsFactory
         for (const patternKey in patterns)
         {
             let patternEl = patterns[patternKey];
-            let newRegExp = new RegExp(patternEl, globalMultiline + caseInsensitive);
+            let newRegExp = new RegExp(patternEl, global + caseInsensitive);
             regexes.push(newRegExp);
         }
 
@@ -235,6 +236,7 @@ export class WrapParamsFactory
         wrapParams.ParenthesesAlignment = baseParams.ParenthesisAlignment;
         wrapParams.WrapDescs = baseParams.WrapDescs;
         wrapParams.CascadingUnderflow = baseParams.CascadingUnderflow;
+        wrapParams.RememberResults = baseParams.RememberResults;
     }
 
     protected static SetArraysFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
@@ -268,6 +270,7 @@ export let names =
     WrapDescs: "WrapDescs",
     CascadingUnderflow: "CascadingUnderflow",
     CULenience: "CULenience",
+    RememberResults: "RememberResults",
     
     // Spacing
     MugshotWidth: "MugshotWidth",

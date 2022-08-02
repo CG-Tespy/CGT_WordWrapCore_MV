@@ -66,7 +66,7 @@ export let WWCore =
     Shared: Shared,
 
     activeYanflyNametag: "",
-    version: 20116,
+    version: 20202,
 
 };
 

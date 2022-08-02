@@ -1,7 +1,7 @@
 /*:
 * @plugindesc Needed for the CGT word-wrapping plugins, holding information they can use.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help This is version 2.03.03 of this plugin. Tested with RMMV versions 
+* @help This is version 2.02.02 of this plugin. Tested with RMMV versions 
 * 1.5.1 and 1.6.2.
 * 
 * Needs the CGT CoreEngine 1.01.11+ to work. Make sure this is below that 
@@ -13,6 +13,9 @@
 * If you want to edit this plugin, you may be better off editing and 
 * building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 * 
+* Other Contributors:
+* LTN Games
+*
 * @param Wrapper
 * @default null
 * @desc Which word wrap plugin to use. Look at the appropriate User Guides for more info. Default: null
@@ -71,6 +74,11 @@
 * @default 5
 * @desc How many units wider than the first line that later ones in its input are allowed to be. Default: 5
 * 
+* @param RememberResults
+* @type boolean
+* @default true
+* @desc Whether or not this will keep track of and always return its original outputs for the same inputs.
+*
 * @param Spacing
 * 
 * @param MugshotWidth
@@ -109,7 +117,7 @@
  * @param RegexAsString
  * @type string
  * 
- * @param Applicable
+ * @param Enabled
  * @type boolean
  * @default true
  * @desc Whether or not the algorithm will consider this format. Default: true
@@ -118,10 +126,31 @@
  * @type Note
  */
 
+/*~struct~NametagFormat:es
+ * @param Name
+ * @text Nombre
+ * @type string
+ * @default NuevoFormato
+ * 
+ * @param RegexAsString
+ * @text RegexComoTexto
+ * @type string
+ * 
+ * @param Enabled
+ * @text Permitido
+ * @type boolean
+ * @default true
+ * @desc Si i no el algoritmo considerará este formato. Por defecto: true
+ * 
+ * @param Notes
+ * @text Notas
+ * @type Note
+ */
+
 /*:es
 * @plugindesc Requisito para los plugins ajustelíneas CGT, teniendo información que pueden usar.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help Este es la versión 2.03.03 de este plugin. Lo probé con versiones RMMV 1.5.1 
+* @help Este es la versión 2.02.02 de este plugin. Lo probé con versiones RMMV 1.5.1 
 * y 1.6.2.
 * 
 * Necesita el CGT CoreEngine 1.0.11+ para funcionar. Asegurate que este es abajo 
@@ -134,6 +163,9 @@
 * Si quieres editar este plugin, tal vez será mejor si lo haces por el fuente:
 * https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 * 
+* Otros donantes:
+* LTN Games
+*
 * @param Wrapper
 * @text Ajustelíneas
 * @default null
@@ -141,8 +173,7 @@
 *
 * @param NametagFormats
 * @text FormatosDeGafete
-* @type struct<NametagFormat>
-* @desc Tells the algorithm what counts as a nametag.
+* @type struct<NametagFormat>[]
 * @desc Avisa el algoritmo que se vale como gafete.
 * 
 * @param LineBreakMarkers
@@ -173,7 +204,7 @@
 * @parent SpecialRules
 * @type boolean
 * @default true
-* @desc Si o no esta se alinea el texto basado en los paréntesis. Por defecto: true
+* @desc Si o no el texto se alineará basado en los paréntesis. Por defecto: true
 * 
 * @param WordSeparator
 * @text SeparadorDePalabras
@@ -187,7 +218,7 @@
 * @parent SpecialRules
 * @type boolean
 * @default false
-* @desc Si o no el ajustelíneas se aplica a las descripciones. Por defecto: false
+* @desc Si o no el ajustelíneas se aplica a las descripciones. Por defecto: falso
 *
 * @param CascadingUnderflow
 * @text TextoCascadando
@@ -195,7 +226,7 @@
 * @type boolean
 * @default false
 * @desc Si o no cualquiera línea ajustada puede ser más ancho que la primera ajustada por su entrada.
-
+*
 * @param CULenience
 * @text IndulgenciaDeTC
 * @parent CascadingUnderflow
@@ -204,22 +235,29 @@
 * @default 5
 * @desc Cuantas unidades más ancho que la primera línea que las posteriores en su entrada se permiten ser.
 * 
+* @param RememberResults
+* @text RecuerdaResultados
+* @type boolean
+* @default true
+* @desc Si o no esto llevara un registro de las salidas originales, regresandolas por las mismas
+entradas.
+*
 * @param Spacing
-* @text El Espaciado
+* @text ElEspaciado
 * 
 * @param MugshotWidth
 * @text AnchoDeFotoRostro
 * @parent Spacing
 * @type number
 * @default 144
-* @desc Cómo ancho los fotos rostros se tratan de ser, en una unidad decidido por el ajustelíneas. Por defecto: 144
+* @desc Cuánto ancho los fotos rostros se tratarán de ser (medido en unidades). Por defecto: 144
 * 
 * @param MugshotPadding
 * @text GuataDeFotoRostro
 * @parent Spacing
 * @type number
 * @default 25
-* @desc El espacio entre el foto rostro y el texto, en una unidad decidido por el ajustelíneas. Por defecto: 25
+* @desc El espacio entre el foto rostro y el texto (medido en unidades). Por defecto: 25
 * 
 * @param SidePadding
 * @text GuataDeLosLados
@@ -227,14 +265,14 @@
 * @type number
 * @default 3
 * @min -999
-* @desc Para los lados del cuadro de dialogo, en una unidad decidido por el ajustelíneas. Por defecto: 3
+* @desc Para los lados del cuadro de dialogo (medido en unidades). Por defecto: 3
 * 
 * @param BoldItalicWidthMod
 * @text ModAnchuraDeNegritasYItálicas
 * @type number
 * @default 15
 * @min 0
-* @desc Cómo mas ancho que usual el texto negrito o italic es, en términos de porcentajes. Por defecto: 15
+* @desc Cuánto mas ancho que usual el texto negrito o itálico se trata en términos de porcentajes. Por defecto: 15
 * 
 */
 

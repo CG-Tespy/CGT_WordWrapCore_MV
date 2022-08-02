@@ -230,6 +230,13 @@ declare namespace CGT
             get CULenience(): number;
             set CULenience(value);
 
+            /** 
+             * Whether or not this should keep track of all its outputs, returning them 
+             * when given the corresponding inputs.
+             */
+            get RememberResults(): boolean;
+            set RememberResults(value);
+
             // ~~~Spacing~~~
             /** How wide mugshots are treated as being, in a unit decided by the active wrapper. */
             get MugshotWidth(): number;

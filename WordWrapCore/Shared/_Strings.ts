@@ -3,6 +3,7 @@ export let singleSpace: string = " ";
 export let emptyString: string = "";
 export let openingParenthesis: string = "(";
 export let closingParenthesis: string = ")";
+export let global: string = "g";
 export let globalMultiline: string = "gm";
 export let caseInsensitive: string = "i";
 export let unicode: string = "u";
