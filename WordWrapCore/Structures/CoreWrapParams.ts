@@ -95,6 +95,10 @@ export class CoreWrapParams
     private rememberResults: boolean = true;
     set RememberResults(value) { this.rememberResults = value; }
 
+    get WrapMessageLog(): boolean { return this.wrapMessageLog; }
+    private wrapMessageLog: boolean = true;
+    set WrapMessageLog(value) { this.wrapMessageLog = value; }
+
     // Spacing
     
     /** How wide mugshots are treated as being, in a wrapper-decided unit */
@@ -237,6 +241,7 @@ export class WrapParamsFactory
         wrapParams.WrapDescs = baseParams.WrapDescs;
         wrapParams.CascadingUnderflow = baseParams.CascadingUnderflow;
         wrapParams.RememberResults = baseParams.RememberResults;
+        wrapParams.WrapMessageLog = baseParams.WrapMessageLog;
     }
 
     protected static SetArraysFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)

@@ -79,6 +79,11 @@
 * @default true
 * @desc Whether or not this will keep track of and always return its original outputs for the same inputs.
 *
+* @param WrapMessageLog
+* @type boolean
+* @default true
+* @desc Whether or not this applies wrapping to certain message backlog scripts like YEP_X_MessageBacklog.
+*
 * @param Spacing
 * 
 * @param MugshotWidth
@@ -241,6 +246,13 @@
 * @default true
 * @desc Si o no esto llevara un registro de las salidas originales, regresandolas por las mismas
 entradas.
+*
+* @param WrapMessageLog
+* @text AjusteRegistrosDeMensajes
+* @type boolean
+* @default true
+* @desc Whether or not this applies wrapping to certain message backlog scripts like YEP_X_MessageBacklog.
+* @desc Si o no este ajuste para unas plugins de registros de mensajes, como YEP_X_MessageBacklog
 *
 * @param Spacing
 * @text ElEspaciado

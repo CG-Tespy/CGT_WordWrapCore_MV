@@ -1,6 +1,7 @@
-import { IWordWrapArgs } from '../Structures/WordWrappers/WordWrapArgs/IWordWrapArgs';
+import { IWordWrapArgs } from '../../Structures/WordWrappers/WordWrapArgs/IWordWrapArgs';
 let oldSetText = Window_Help.prototype.setText;
 
+// This is for the window that shows descs of items and such
 export function ApplyWindowHelpOverrides()
 {
     let defaultWordWrapArgs: IWordWrapArgs = 

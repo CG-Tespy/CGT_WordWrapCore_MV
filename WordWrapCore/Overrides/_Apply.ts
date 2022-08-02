@@ -1,14 +1,9 @@
 import { CoreWrapParams } from '../Structures/CoreWrapParams';
-import { ApplyWindowMessageOverrides } from './Window_Message';
-import { ApplyWindowHelpOverrides } from './Window_Help';
-import { ApplyWindowNameBoxOverrides } from './Window_NameBox';
-
+import { ApplyYanflyScriptOverrides } from './Yanfly/_YanflyScriptOverrides';
+import { ApplyBuiltInWindowOverrides } from './BuiltInWindows/_BuiltInWindowOverrides';
 
 export function ApplyOverrides(coreParams: CoreWrapParams)
 {
-    ApplyWindowMessageOverrides(coreParams);
-    ApplyWindowHelpOverrides();
-    ApplyWindowNameBoxOverrides();
+    ApplyBuiltInWindowOverrides(coreParams);
+    ApplyYanflyScriptOverrides();
 }
-
-

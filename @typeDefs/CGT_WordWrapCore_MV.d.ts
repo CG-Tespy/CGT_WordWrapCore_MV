@@ -198,6 +198,8 @@ declare namespace CGT
              * */
             get EmptyText(): RegExp[];
 
+            get NametagFormats(): INametagFormat[];
+
 
             // ~~~Special Rules~~~
 
@@ -409,7 +411,15 @@ declare namespace CGT
             focusedLineIndex: number;
         }
 
-        let activeYanflyNametag: string;
+        namespace Yanfly
+        {
+            /** 
+             * The text the Yanfly nametag is holding. Is empty when said tag is hidden 
+             * or nonexistent.
+             * */
+            let activeNametagText: string;
+
+        }
 
         let version: number;
     }

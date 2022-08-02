@@ -1,36 +1,31 @@
-import { singleSpace } from '../Shared/_Strings';
-import { CoreWrapParams } from '../Structures/CoreWrapParams';
-import { IWordWrapArgs } from '../Structures/WordWrappers/WordWrapArgs/IWordWrapArgs';
+import { singleSpace } from '../../Shared/_Strings';
+import { CoreWrapParams } from '../../Structures/CoreWrapParams';
+import { IWordWrapArgs } from '../../Structures/WordWrappers/WordWrapArgs/IWordWrapArgs';
 
 export function ApplyWindowMessageOverrides(coreParams: CoreWrapParams)
 {
-    OverrideStartMessage();
+    OverrideOpen();
     OverrideConvertEscapeCharacters();
 }
 
-function OverrideStartMessage()
+function OverrideOpen()
 {
-    function NewStartMessage(this: Window_Message): void
-    {
-        InitTextState.call(this);
-        ApplyWrappedText.call(this);
-    
-        this.newPage(this._textState);
-        this.updatePlacement();
-        this.updateBackground();
-        this.open();
-    }
+    let oldOpen = Window_Message.prototype.open;
 
-    function InitTextState(this: Window_Message): void
+    function NewOpen(this: Window_Message): void
     {
-        // @ts-ignore
-        this._textState = {};
-        this._textState.index = 0;
-        this._textState.text = this.convertEscapeCharacters($gameMessage.allText());
+        ApplyWrappedText.call(this);
+        oldOpen.call(this);
     }
 
     function ApplyWrappedText(this: Window_Message): void
     {
+        let textStateIsThere = this._textState != null; 
+        // ^It sometimes is null when this func is called, so...
+
+        if (!textStateIsThere)
+            return; // We need to stop here to avoid a crash
+
         type WordWrapper = CGT.WWCore.WordWrapper;
         var activeWrapper: Readonly<WordWrapper> = CGT.WWCore.ActiveWrapper;
         
@@ -53,7 +48,7 @@ function OverrideStartMessage()
         return wrapArgs;
     }
 
-    Window_Message.prototype.startMessage = NewStartMessage;
+    Window_Message.prototype.open = NewOpen;
 }
 
 function OverrideConvertEscapeCharacters()

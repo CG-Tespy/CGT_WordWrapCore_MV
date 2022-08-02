@@ -28,11 +28,15 @@ export class NametagFetcher
         // nametag regex includes a newline for the sake of better detection
     }
 
-    protected get YanflyNametagIsThere(): boolean { return CGT.WWCore.activeYanflyNametag.length > 0; }
+    protected get YanflyNametagIsThere(): boolean 
+    { 
+        let theNametag = CGT.WWCore.Yanfly.activeNametagText;
+        return theNametag.length > 0; 
+    }
 
     protected get NametagFormats(): INametagFormat[] 
     { 
         // @ts-ignore
-        return CGT.WWCore.Params.NametagFormats; 
+        return CGT.WWCore.Params.NametagFormats;
     }
 }

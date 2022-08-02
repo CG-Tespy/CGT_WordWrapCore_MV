@@ -15,6 +15,7 @@ export interface IBaseCoreWrapParams
     CascadingUnderflow: boolean;
     CULenience: number;
     RememberResults: boolean;
+    WrapMessageLog: boolean;
 
     // ~~~Spacing~~~
     MugshotWidth: number;

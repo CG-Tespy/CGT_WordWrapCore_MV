@@ -7710,6 +7710,10 @@ declare class Game_System {
      * @memberof Game_System
      */
     saveWalkingBgm2(): void;
+
+    addMessageBacklog(text: string);
+    convertMessageBacklogText(text: string);
+
 }
 
 /**
@@ -19983,6 +19987,10 @@ declare class Window_Message extends Window_Base {
      * @memberof Window_Message
      */
     startPause(): void;
+
+    createMessageBacklogWindow(): void;
+
+    _backlogWindow: Window_MessageBacklog;
 }
 
 /**

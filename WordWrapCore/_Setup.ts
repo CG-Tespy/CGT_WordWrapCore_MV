@@ -65,7 +65,12 @@ export let WWCore =
 
     Shared: Shared,
 
-    activeYanflyNametag: "",
+    Yanfly:
+    {
+        activeNametagText: "",
+        messageBacklogWindow: null,
+    },
+
     version: 20202,
 
 };
