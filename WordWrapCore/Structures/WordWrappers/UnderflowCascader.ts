@@ -45,7 +45,7 @@ export class UnderflowCascader
         let lines = args.lines;
         let wordMoveDecision: IMoveWordDecisionContext = this.MakeDecisionAboutMovingWord(args);
 
-        if (wordMoveDecision.moveIt)
+        while (wordMoveDecision.moveIt)
         {
             let withTextMoved: ILinesToCascade = this.WithWordMovedToNextLine(wordMoveDecision.linesToCascade);
             // ^We want to move one word (or "word", depending on the lang) at a time
@@ -53,6 +53,8 @@ export class UnderflowCascader
             lines[args.focusedLineIndex] = withTextMoved.focusedLine;
             let nextLineIndex = args.focusedLineIndex + 1;
             lines[nextLineIndex] = withTextMoved.nextLine;
+
+            wordMoveDecision = this.MakeDecisionAboutMovingWord(args);
         }
 
         args.focusedLineIndex++; // So that the next call shifts stuff from the next line as needed
