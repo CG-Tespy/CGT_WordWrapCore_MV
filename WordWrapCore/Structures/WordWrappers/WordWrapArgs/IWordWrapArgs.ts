@@ -3,4 +3,5 @@ export interface IWordWrapArgs
 {
     textField: Bitmap;
     rawTextToWrap: string;
+    widthOffset: number;
 }

@@ -147,6 +147,8 @@ declare namespace CGT
         {
             textField: Bitmap;
             rawTextToWrap: string;
+            /** In whatever units the active wrapper is using. */
+            widthOffset: number;
         }
 
         interface ILineWrapper

@@ -1,7 +1,7 @@
 {
   "name": "cgt-word-wrap-core-mv",
   "description": "API container for the CGT word-wrap plugins",
-  "version": "2.02.02",
+  "version": "3.01.01",
   "author": "CG-Tespy",
   "repository": {
     "type": "git",

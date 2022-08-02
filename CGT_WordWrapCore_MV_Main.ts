@@ -1,7 +1,7 @@
 /*:
 * @plugindesc Needed for the CGT word-wrapping plugins, holding information they can use.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help This is version 2.02.02 of this plugin. Tested with RMMV versions 
+* @help This is version 3.01.01 of this plugin. Tested with RMMV versions 
 * 1.5.1 and 1.6.2.
 * 
 * Needs the CGT CoreEngine 1.01.11+ to work. Make sure this is below that 
@@ -155,7 +155,7 @@
 /*:es
 * @plugindesc Requisito para los plugins ajustelíneas CGT, teniendo información que pueden usar.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help Este es la versión 2.02.02 de este plugin. Lo probé con versiones RMMV 1.5.1 
+* @help Este es la versión 3.01.01 de este plugin. Lo probé con versiones RMMV 1.5.1 
 * y 1.6.2.
 * 
 * Necesita el CGT CoreEngine 1.0.11+ para funcionar. Asegurate que este es abajo 

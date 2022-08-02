@@ -43,6 +43,7 @@ function OverrideOpen()
         {
             textField: textField,
             rawTextToWrap: rawText,
+            widthOffset: 0,
         };
 
         return wrapArgs;

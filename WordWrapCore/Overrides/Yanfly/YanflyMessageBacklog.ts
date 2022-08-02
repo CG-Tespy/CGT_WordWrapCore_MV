@@ -37,6 +37,7 @@ function WrapText(this: Window_MessageBacklog, text: string): string
     {
         textField: this.contents,
         rawTextToWrap: text,
+        widthOffset: 0,
     };
     
     var wrappedText = activeWrapper.Wrap(wrapArgs);

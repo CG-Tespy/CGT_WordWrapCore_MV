@@ -1,3 +1,8 @@
 - Add compatibility with Yanfly's MessageBacklog script (done!)
 - Set up defaults for the revamped NametagFormats script
-- Add a width offset param to the word wrap args
+- Add a width offset param to the word wrap args (done!)
+- Make it so you can assign different wrappers to different parts of the UI
+-- Message boxes
+-- Desc box (aka Window_Help)
+-- Message backlog
+-- Text bubbles (starting with Galv's)
