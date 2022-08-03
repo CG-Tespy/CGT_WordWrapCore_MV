@@ -32,7 +32,8 @@ function OverrideConvertMessageText()
 
 function WrapText(this: Window_MessageBacklog, text: string): string
 {
-    var activeWrapper = CGT.WWCore.ActiveWrapper;
+    let WrapTarget = CGT.WWCore.WrapTarget;
+    var activeWrapper = CGT.WWCore.ActiveWrappers.get(WrapTarget.MessageBacklog);
     var wrapArgs = 
     {
         textField: this.contents,

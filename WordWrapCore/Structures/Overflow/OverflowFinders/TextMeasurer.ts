@@ -26,9 +26,10 @@ export abstract class TextMeasurer implements ITextMeasurer
 
     protected WithoutEmptyTexts(text: string)
     {
-        for (const emptyTextRegex of this.EmptyText)
+        for (const emptyTextEl of this.EmptyText)
         {
-            text = text.replace(emptyTextRegex, emptyString);
+            let theRegex = emptyTextEl.Regex;
+            text = text.replace(theRegex, emptyString);
         }
 
         return text;
@@ -88,7 +89,7 @@ export abstract class TextMeasurer implements ITextMeasurer
 
     protected get BoldItalicWidthMod(): number 
     {
-        return CGT.WWCore.Params.BoldItalicWidthMod;
+        return CGT.WWCore.Params.BoldItalicPadding;
     }
 
     /** How much space all the markers take up */

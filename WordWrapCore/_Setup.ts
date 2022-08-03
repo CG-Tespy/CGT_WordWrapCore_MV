@@ -11,8 +11,7 @@ import * as Overflow from "./Structures/Overflow/_SetupOverflow";
 import { NametagFetcher } from './Structures/WordWrappers/NametagFetcher';
 import { LineWrapper } from './Structures/WordWrappers/LineWrappers/LineWrapper';
 import { UnderflowCascader } from './Structures/WordWrappers/UnderflowCascader';
-
-let ArrayEx = CGT.Core.Extensions.ArrayEx;
+import { WrapTarget } from './Structures/WordWrappers/WrapTarget';
 
 export let WWCore = 
 {
@@ -26,40 +25,42 @@ export let WWCore =
     NametagFetcher: NametagFetcher,
     UnderflowCascader: UnderflowCascader,
 
-    UpdateActiveWrapper(): void
+    UpdateActiveWrappers(): void
     {
         let params: CoreWrapParams = this.Params;
-        this.SetActiveWrapper(params.WrapMode);
+        
+        this.SetActiveWrapper(WrapTarget.MessageBox, params.MessageWrapper);
+        this.SetActiveWrapper(WrapTarget.Descs, params.DescWrapper);
+        this.SetActiveWrapper(WrapTarget.MessageBacklog, params.MessageBacklogWrapper);
+        this.SetActiveWrapper(WrapTarget.Bubbles, params.BubbleWrapper);
     },
 
-    SetActiveWrapper(wrapMode: string): boolean
+    SetActiveWrapper(target: WrapTarget, wrapMode: string): boolean
     {
+        // It's too bad that types aren't always auto-detected for regular 
+        // objects, even in TS...
         let wrappers = this.RegisteredWrappers as Map<string, WordWrapper>;
-
         let anythingRegisteredHasMode = wrappers.has(wrapMode);
 
         if (!anythingRegisteredHasMode)
             return false;
         
-        this.activeWrapper = wrappers.get(wrapMode);
+        let toSetAsActive = wrappers.get(wrapMode);
+        let activeOnes = this.activeWrappers as Map<WrapTarget, WordWrapper>;
+        activeOnes.set(target, toSetAsActive);
+
         return true;
     },
 
     get RegisteredWrappers(): Map<string, WordWrapper> { return this.registeredWrappers; },
     registeredWrappers: new Map<string, WordWrapper>(),
 
-    get ActiveWrapper(): WordWrapper { return this.activeWrapper; },
-    activeWrapper: null,
+    get ActiveWrappers(): Map<WrapTarget, WordWrapper> { return this.activeWrappers; },
+    activeWrappers: new Map<WrapTarget, WordWrapper>(),
 
     RegisterWrapper(wrapper: WordWrapper): void
     {
         let registeredWrappers = this.registeredWrappers as Map<string, WordWrapper>;
-        let wrapperValues: WordWrapper[] = ArrayEx.From(registeredWrappers.values());
-
-        let alreadyRegistered = ArrayEx.Includes(wrapperValues, wrapper);
-        if (alreadyRegistered)
-            return; // Avoid duplicates
-
         registeredWrappers.set(wrapper.WrapCode, wrapper);
     },
 
@@ -71,20 +72,35 @@ export let WWCore =
         messageBacklogWindow: null,
     },
 
-    version: 20202,
+    version: 30101,
 
+    messageBoxWrapper: null,
+    descWrapper: null,
+    messageBacklogWrapper: null,
+    bubbleWrapper: null,
+
+    WrapTarget: WrapTarget,
+    
+    WrapTargetValues: [
+        WrapTarget.MessageBox, 
+        WrapTarget.Descs, 
+        WrapTarget.MessageBacklog, 
+        WrapTarget.Bubbles],
 };
 
-SetDefaultWrapper();
+SetDefaultWrappers();
 
-function SetDefaultWrapper()
+function SetDefaultWrappers()
 {
     let lineWrapper = new NullLineWrapper();
     let defaultWrapper = new NullWordWrapper(lineWrapper);
     defaultWrapper.WrapCode = "null";
 
     WWCore.RegisterWrapper(defaultWrapper);
-    WWCore.SetActiveWrapper(defaultWrapper.WrapCode);
+    WWCore.SetActiveWrapper(WrapTarget.MessageBox, defaultWrapper.WrapCode);
+    WWCore.SetActiveWrapper(WrapTarget.Descs, defaultWrapper.WrapCode);
+    WWCore.SetActiveWrapper(WrapTarget.MessageBacklog, defaultWrapper.WrapCode);
+    WWCore.SetActiveWrapper(WrapTarget.Bubbles, defaultWrapper.WrapCode);
 }
 
 WatchForWrapModeChanges();
@@ -97,7 +113,7 @@ function WatchForWrapModeChanges()
 
 function OnWrapModeChanged(oldMode: string, newMode: string)
 {
-    WWCore.UpdateActiveWrapper();
+    WWCore.UpdateActiveWrappers();
 }
 
 ApplyOverrides(WWCore.Params);

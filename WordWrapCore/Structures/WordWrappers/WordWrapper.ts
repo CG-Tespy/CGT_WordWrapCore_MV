@@ -11,6 +11,8 @@ import { LineWrapper } from './LineWrappers/LineWrapper';
 import { noWrapTag as noWrapTag } from '../../Shared/_Regexes';
 import { NametagFetcher } from './NametagFetcher';
 import { HaveLBTagsBeNewlines } from '../WrapRules/PreRules/HaveLBTagsBeNewlines';
+import { NoSpacesBeforeColorTags } from '../WrapRules/PreRules/NoSpacesBeforeColorTags';
+import { NoColorTagsAsFirstWords } from '../WrapRules/PreRules/NoColorTagsAsFirstWords';
 
 /** 
  * Encapsulates an algorithm for doing word-wrapping. 
@@ -72,6 +74,8 @@ export class WordWrapper implements IWordWrapper
         this.ruleApplier.RegisterPreRule(new TurnNewlinesIntoSeparators());
         this.ruleApplier.RegisterPreRule(new HaveLBTagsBeNewlines());
         this.ruleApplier.RegisterPreRule(new WithoutExtraSpaces());
+        this.ruleApplier.RegisterPreRule(new NoSpacesBeforeColorTags());
+        this.ruleApplier.RegisterPreRule(new NoColorTagsAsFirstWords());
 
         this.ruleApplier.RegisterPostRule(new CharPerLineMin());
         this.ruleApplier.RegisterPostRule(new ParenthesisAlignment());

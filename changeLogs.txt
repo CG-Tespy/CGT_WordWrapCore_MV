@@ -16,25 +16,11 @@ With a new main version comes a lot of changes.
   * RegexAsString: where you type in the regex like you did in version 2.01.03
   * Enabled: whether or not the algorithm will consider the format when looking for nametags. You can set it to false instead of deleting the format entirely from the array.
   * Notes: so you can add more info about the entry.
-* The default formats have been changed to accomodate the new structure. Said formats cover these (colored or otherwise):
-  * Those that end with colons
-  * Those enclosed in square brackets
-* A new algorithm-informing tag: <noNametagDetection>
-  * You use this when you want the algorithm to treat a textbox as not having a nametag. This is good for games using the normal, ends-in-a-colon format; 
-  they can now use that mark in non-nametag-having boxes without the algorithm seeing one where there isn't any
+* And too much more to list here
 
-## Bugfixes
-* Line-break tags no longer have to be separated from other words by spaces
-  * This means that text like "What up?<br2>How's it goin'?<br2>" works just as well as "What up? <br2> How's it goin'? <br2>"
-  * Now, languages (such as Japanese and Chinese) that don't separate words with any specific character can actually make use of these tags!
-* Yanfly MessageCore nametags are now properly detected
-  * The algorithm always watches out for when a Yanfly nametag is shown on screen, so no need to add a format for it there
-
-## compatibility
-* There may be compatibility issues with the 2.x.x versions of the Precision and Letter-Based Word Wrap plugins
+## Compatibility
+* This may have compatibility issues with the 2.x.x versions of the Precision and Letter-Based Word Wrap plugins
   * Best get the 3.x.x versions
 
-Included a new User Guide to help you better understand the new features. Please check it out. Also, if you're upgrading from an earlier version of this plugin, please make sure
-to (after having this overwrite the old version) remove and readd it to the PluginManager, reconfiguring things as you like. This update adds new params and changes an old one, 
-so you need to do this to make sure all the params will work right.
+There really is a lot that's changed compared to 2.x.x, so please refer to the 3.x.x User Guide. A
 

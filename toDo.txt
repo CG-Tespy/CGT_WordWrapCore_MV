@@ -6,3 +6,7 @@
 -- Desc box (aka Window_Help)
 -- Message backlog
 -- Text bubbles (starting with Galv's)
+- Implement a new algorithm-informing tag for some inputs to not be scanned for nametags
+- Have EmptyText work off a struct for convenience, like NametagFormats does now
+- Alter plugin command for setting the active wrappers
+-- Add documentation for it

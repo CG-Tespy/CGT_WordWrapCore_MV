@@ -1,6 +1,6 @@
 import { emptyString } from '../../Shared/_Strings';
 import { newlines } from '../../Shared/_Regexes';
-import { INametagFormat } from '../INametagFormat';
+import { IRegexEntry } from '../IRegexEntry';
 
 export class NametagFetcher
 {
@@ -14,7 +14,7 @@ export class NametagFetcher
 
         for (const format of this.NametagFormats)
         {
-            if (!format.Applicable)
+            if (!format.Enabled)
                 continue;
             let formatRegex = format.Regex;
             let matchesFound = text.match(formatRegex) || [];
@@ -34,7 +34,7 @@ export class NametagFetcher
         return theNametag.length > 0; 
     }
 
-    protected get NametagFormats(): INametagFormat[] 
+    protected get NametagFormats(): IRegexEntry[] 
     { 
         // @ts-ignore
         return CGT.WWCore.Params.NametagFormats;

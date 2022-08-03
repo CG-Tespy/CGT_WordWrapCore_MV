@@ -8,6 +8,7 @@ export function ApplyWindowHelpOverrides()
     {
         textField: null,
         rawTextToWrap: "",
+        widthOffset: 0,
     };
     
     Window_Help.prototype.wordWrapArgs = Object.assign({}, defaultWordWrapArgs);
@@ -32,7 +33,8 @@ function NewSetText(this: Window_Help, text: string)
 function ApplyDescWrapping(this: Window_Help, text: string)
 {
     UpdateWrapArgs.call(this, text);
-    let wordWrapper = CGT.WWCore.ActiveWrapper;
+    let WrapTarget = CGT.WWCore.WrapTarget;
+    let wordWrapper = CGT.WWCore.ActiveWrappers.get(WrapTarget.Descs);
     this._text = wordWrapper.Wrap(this.wordWrapArgs);
 }
 

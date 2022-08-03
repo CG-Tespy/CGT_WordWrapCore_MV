@@ -122,14 +122,14 @@ declare namespace CGT
             set WrapCode(value);
 
             Wrap(args: IWordWrapArgs): string;
-            get NametagFormats(): INametagFormat[];
+            get NametagFormats(): IRegexEntry[];
 
             get LineWrapper(): LineWrapper;
 
             constructor(lineWrapper?: LineWrapper);
         }
 
-        interface INametagFormat
+        interface IRegexEntry
         {
             Name: string;
             RegexAsString: string;
@@ -174,8 +174,14 @@ declare namespace CGT
          */
         class CoreWrapParams
         {
-            /** Affects how this decides when a line can't hold more. */
-            get WrapMode(): string;
+            // ~~~DesignatedWrappers~~~
+            get MessageWrapper(): string;
+
+            get DescWrapper(): string;
+
+            get MessageBacklogWrapper(): string;
+
+            get BubbleWrapper(): string;
 
             /**
              * 2-arg event that triggers when the wrap mode changes.
@@ -194,14 +200,9 @@ declare namespace CGT
              */
              get LineBreakMarkers(): string[];
 
-             /** 
-             * Regexes (in string form) that define text that should NOT be treated as
-             * taking up space in the textbox. 
-             * */
-            get EmptyText(): RegExp[];
+            get EmptyText(): IRegexEntry[];
 
-            get NametagFormats(): INametagFormat[];
-
+            get NametagFormats(): IRegexEntry[];
 
             // ~~~Special Rules~~~
 
@@ -257,13 +258,36 @@ declare namespace CGT
             get SidePadding(): number;
             set SidePadding(value);
 
-            /** 
-             * Multiplier for how much bigger than usual that bolded or italicised letters
-             * are treated as being. 1.10 = 110% bigger, 1.34 = 134% bigger, etc.
-             */
-            get BoldItalicWidthMod(): number;
-            set BoldItalicWidthMod(value);
+            get BoldItalicPadding(): number;
+            set BoldItalicPadding(value);
             
+        }
+
+        interface ICoreWrapParams
+        {
+            // ~~~DesignatedWrappers~~~
+            MessageWrapper: string;
+            DescWrapper: string;
+            MessageBacklogWrapper: string;
+            BubbleWrapper: string;
+
+            NametagFormats: IRegexEntry[];
+            EmptyText: IRegexEntry[];
+            LineBreakMarkers: string[];
+            
+            // ~~~Special Rules~~~
+            LineMinCharCount: number;
+            ParenthesisAlignment: boolean;
+            WordSeparator: string;
+            CascadingUnderflow: boolean;
+            CULenience: number;
+            RememberResults: boolean;
+
+            // ~~~Spacing~~~
+            MugshotWidth: number;
+            MugshotPadding: number;
+            SidePadding: number;
+            BoldItalicPadding: number;
         }
 
         let Params: CoreWrapParams;
@@ -387,16 +411,27 @@ declare namespace CGT
          * Returns false if there is no wrapper registered with that mode,
          * true otherwise.
          * */
-        function SetActiveWrapper(wrapMode: string): boolean;
+        function SetActiveWrapper(target: WrapTarget, wrapMode: string): boolean;
 
-        let ActiveWrapper: Readonly<WordWrapper>;
+        /** Mostly an enum */
+        enum WrapTarget
+        {
+            MessageBox, 
+            Descs, 
+            MessageBacklog, 
+            Bubbles,
+        }
+
+        let WrapTargetValues: string[];
+
+        let ActiveWrappers: Map<WrapTarget, WordWrapper>;
 
         function RegisterWrapper(wrapper: WordWrapper);
 
-        let RegisteredWrappers: Readonly<WordWrapper[]>;
+        let RegisteredWrappers: Map<string, WordWrapper>;
 
-        /** Makes sure that the active wrapper matches the current wrap code set. */
-        function UpdateActiveWrapper(): void;
+        /** Makes sure that the active wrappers matches the current wrap codes set. */
+        function UpdateActiveWrappers(): void;
 
         class UnderflowCascader
         {
@@ -424,5 +459,10 @@ declare namespace CGT
         }
 
         let version: number;
+
+        let messageBoxWrapper: WordWrapper;
+        let descWrapper: WordWrapper;
+        let messageBacklogWrapper: WordWrapper;
+        let bubbleWrapper: WordWrapper;
     }
 }

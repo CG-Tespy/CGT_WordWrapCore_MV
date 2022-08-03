@@ -18554,7 +18554,7 @@ declare class Window_HorzCommand extends Window_Command {
  */
 declare class Window_Help extends Window_Base {
 
-    wordWrapArgs: { textField: Bitmap, rawTextToWrap: string };
+    wordWrapArgs: { textField: Bitmap, rawTextToWrap: string, widthOffset: number };
 
     refresh(): void;
 

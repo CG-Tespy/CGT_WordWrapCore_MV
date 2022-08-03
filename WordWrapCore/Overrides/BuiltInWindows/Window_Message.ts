@@ -27,7 +27,9 @@ function OverrideOpen()
             return; // We need to stop here to avoid a crash
 
         type WordWrapper = CGT.WWCore.WordWrapper;
-        var activeWrapper: Readonly<WordWrapper> = CGT.WWCore.ActiveWrapper;
+        let WrapTarget = CGT.WWCore.WrapTarget;
+        let activeWrappers = CGT.WWCore.ActiveWrappers;
+        var activeWrapper: Readonly<WordWrapper> = activeWrappers.get(WrapTarget.MessageBox);
         
         var wrapArgs: IWordWrapArgs = GetInfoForWrapper.call(this);
         var wrappedText = activeWrapper.Wrap(wrapArgs);

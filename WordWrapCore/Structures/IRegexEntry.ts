@@ -1,8 +1,8 @@
 // Represents the NametagFormat struct declared in the Plugin Params
-export interface INametagFormat
+export interface IRegexEntry
 {
     Name: string;
     RegexAsString: string;
     Regex: RegExp;
-    Applicable: true;
+    Enabled: boolean;
 }

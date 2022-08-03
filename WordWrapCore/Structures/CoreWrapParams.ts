@@ -1,6 +1,6 @@
-import { emptyString, caseInsensitive, unicode, global } from '../Shared/_Strings';
+import { emptyString, caseInsensitive, unicode, global, globalMultiline } from '../Shared/_Strings';
 import { doubleQuotes } from '../Shared/_Regexes';
-import { INametagFormat } from './INametagFormat';
+import { IRegexEntry } from './IRegexEntry';
 import { IBaseCoreWrapParams } from './IBaseCoreWrapParams';
 let Event = CGT.Core.Utils.Event;
 type Event = CGT.Core.Utils.Event;
@@ -12,9 +12,21 @@ let ArrayEx = CGT.Core.Extensions.ArrayEx;
 export class CoreWrapParams
 {
     /** Affects how this decides when a line can't hold more. */
-    get WrapMode(): string { return this.wrapMode; }
-    private wrapMode: string = "null";
-    set WrapMode(value) { this.wrapMode = value;; }
+    get MessageWrapper(): string { return this.messageWrapper; }
+    private messageWrapper: string = "null";
+    set MessageWrapper(value) { this.messageWrapper = value; }
+
+    get DescWrapper(): string { return this.descWrapper; }
+    private descWrapper: string = "null";
+    set DescWrapper(value) { this.descWrapper = value; }
+
+    get MessageBacklogWrapper(): string { return this.messageBacklogWrapper; }
+    private messageBacklogWrapper: string = "null";
+    set MessageBacklogWrapper(value) { this.messageBacklogWrapper = value; }
+
+    get BubbleWrapper(): string { return this.bubbleWrapper; }
+    private bubbleWrapper: string = "null";
+    set BubbleWrapper(value) { this.bubbleWrapper = value; }
 
     get WrapModeChanged(): Event { return this.wrapModeChanged; }
     private wrapModeChanged: Event = new Event(2);
@@ -22,7 +34,7 @@ export class CoreWrapParams
     /** 
      * Decides how the wrapper detects nametags.
      * */
-    get NametagFormats(): INametagFormat[] { return this.nametagFormats; }
+    get NametagFormats(): IRegexEntry[] { return this.nametagFormats; }
     private nametagFormats = [];
     set NametagFormats(value) 
     { 
@@ -46,8 +58,8 @@ export class CoreWrapParams
         this.lineBreakMarkers = this.lineBreakMarkers.concat(value); 
     }
 
-    get EmptyText(): RegExp[] { return this.emptyText; }
-    private emptyText: RegExp[] = [];
+    get EmptyText(): IRegexEntry[] { return this.emptyText; }
+    private emptyText: IRegexEntry[] = [];
     set EmptyText(value) 
     { 
         ArrayEx.Clear(this.emptyText);
@@ -116,9 +128,9 @@ export class CoreWrapParams
     private sidePadding: number = 5;
     set SidePadding(value) { this.sidePadding = value; }
 
-    get BoldItalicWidthMod(): number { return this.boldItalicWidthMod; }
-    private boldItalicWidthMod: number = 1;
-    set BoldItalicWidthMod(value) { this.boldItalicWidthMod = value; }
+    get BoldItalicPadding(): number { return this.boldItalicPadding; }
+    private boldItalicPadding: number = 1;
+    set BoldItalicPadding(value) { this.boldItalicPadding = value; }
 
 }
 
@@ -139,10 +151,14 @@ export class WrapParamsFactory
 
     protected static SetStringsFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        wrapParams.WrapMode = baseParams.Wrapper;
         let wordSeparator: string = baseParams.WordSeparator;
         wordSeparator = wordSeparator.replace(doubleQuotes, emptyString);
         wrapParams.WordSeparator = wordSeparator;
+
+        wrapParams.MessageWrapper = baseParams.MessageWrapper;
+        wrapParams.DescWrapper = baseParams.DescWrapper;
+        wrapParams.MessageBacklogWrapper = baseParams.MessageBacklogWrapper;
+        wrapParams.BubbleWrapper = baseParams.BubbleWrapper;
     }
 
     protected static SetNumbersFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
@@ -152,9 +168,7 @@ export class WrapParamsFactory
         wrapParams.MugshotPadding = baseParams.MugshotPadding;
         wrapParams.MugshotWidth = baseParams.MugshotWidth;
         wrapParams.CULenience = baseParams.CULenience;
-
-        let basePercent = baseParams.BoldItalicWidthMod;
-        wrapParams.BoldItalicWidthMod = 1 + (basePercent / 100.0);
+        wrapParams.BoldItalicPadding = baseParams.BoldItalicPadding;
     }
 
     protected static SetRegexesFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
@@ -165,8 +179,7 @@ export class WrapParamsFactory
 
     protected static SetNametagFormats(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        let baseFormatObjects = baseParams.NametagFormats;
-        let formatObjects: INametagFormat[] = this.GetNametagFormatArray(baseFormatObjects);
+        let formatObjects = baseParams.NametagFormats;
         this.ApplyRegexObjectsTo(formatObjects);
         // ^Since the Param def doesn't let you define Regex objects, we have to
         // convert things ourselves
@@ -175,89 +188,44 @@ export class WrapParamsFactory
         wrapParams.NametagFormatRegexes = this.RegexObjectsFrom(formatObjects);
     }
 
-    protected static GetNametagFormatArray(hasBaseFormats: object): INametagFormat[]
+    protected static ApplyRegexObjectsTo(formats: IRegexEntry[]): void
     {
-        let theArray: INametagFormat[] = [];
-        // fenix-tools parses arrays as regular objects, so we have to use the "in"
-        // keyword. Same for other array params we set up here
-        for (const key in hasBaseFormats)
+        for (const formatEl of formats)
         {
-            let formatEl = hasBaseFormats[key];
-            theArray.push(formatEl);
-        }
-
-        return theArray;
-    }
-
-    protected static ApplyRegexObjectsTo(formats: INametagFormat[]): void
-    {
-        // fenix-tools parses arrays as regular objects, so we have to use the "in"
-        // keyword 
-        for (const formatKey in formats)
-        {
-            let formatEl = formats[formatKey];
-            let defAsString = formatEl.RegexAsString;
-            formatEl.Regex = new RegExp(defAsString, global + caseInsensitive);
+            let asString = formatEl.RegexAsString;
+            formatEl.Regex = new RegExp(asString, globalMultiline + caseInsensitive);
         }
     }
 
-    protected static RegexObjectsFrom(formats: INametagFormat[]): RegExp[]
+    protected static RegexObjectsFrom(formats: IRegexEntry[]): RegExp[]
     {
-        let theObjects: RegExp[] = [];
-        for (const formatKey in formats)
+        let result: RegExp[] = [];
+
+        for (const formatEl of formats)
         {
-            let formatObj = formats[formatKey];
-            theObjects.push(formatObj.Regex);
+            result.push(formatEl.Regex);
         }
 
-        return theObjects;
+        return result;
     }
 
-    protected static FormatStructsToRegexes(patterns: string[])
+    protected static SetEmptyText(hasParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        let regexes: RegExp[] = [];
-
-        for (const patternKey in patterns)
-        {
-            let patternEl = patterns[patternKey];
-            let newRegExp = new RegExp(patternEl, global + caseInsensitive);
-            regexes.push(newRegExp);
-        }
-
-        return regexes;
-    }
-
-    protected static SetEmptyText(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
-    {
-        let patternsAsStrings: string[] = baseParams.EmptyText;
-        let regexes: RegExp[] = this.FormatStructsToRegexes(patternsAsStrings);
-
-        wrapParams.EmptyText = regexes;
+        wrapParams.EmptyText = hasParams.EmptyText;
+        this.ApplyRegexObjectsTo(wrapParams.EmptyText);
     }
 
     protected static SetBooleansFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
         wrapParams.ParenthesesAlignment = baseParams.ParenthesisAlignment;
-        wrapParams.WrapDescs = baseParams.WrapDescs;
         wrapParams.CascadingUnderflow = baseParams.CascadingUnderflow;
         wrapParams.RememberResults = baseParams.RememberResults;
-        wrapParams.WrapMessageLog = baseParams.WrapMessageLog;
     }
 
     protected static SetArraysFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        let markerArray: string[] = [];
-        let baseMarkers = baseParams.LineBreakMarkers;
-
-        for (const markerKey in baseMarkers)
-        {
-            let markerEl = baseMarkers[markerKey];
-            markerArray.push(markerEl);
-        }
-
-        wrapParams.LineBreakMarkers = markerArray;
+        wrapParams.LineBreakMarkers = baseParams.LineBreakMarkers;
     }
-
 }
 
 // To avoid magic strings when fetching from Plugin Params

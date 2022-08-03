@@ -1,25 +1,29 @@
-import { INametagFormat } from './INametagFormat';
+import { IRegexEntry } from './IRegexEntry';
+
 // The stuff converted from fenix-tool's convertParameters func
 export interface IBaseCoreWrapParams
 {
-    Wrapper: string;
-    NametagFormats: INametagFormat[];
-    LineBreakMarkers: string[];
-    EmptyText: string[];
+    // ~~~DesignatedWrappers~~~
+    MessageWrapper: string;
+    DescWrapper: string;
+    MessageBacklogWrapper: string;
+    BubbleWrapper: string;
 
+    NametagFormats: IRegexEntry[];
+    EmptyText: IRegexEntry[];
+    LineBreakMarkers: string[];
+    
     // ~~~Special Rules~~~
     LineMinCharCount: number;
     ParenthesisAlignment: boolean;
     WordSeparator: string;
-    WrapDescs: boolean;
     CascadingUnderflow: boolean;
     CULenience: number;
     RememberResults: boolean;
-    WrapMessageLog: boolean;
 
     // ~~~Spacing~~~
     MugshotWidth: number;
     MugshotPadding: number;
     SidePadding: number;
-    BoldItalicWidthMod: number;
+    BoldItalicPadding: number;
 }

@@ -16,23 +16,52 @@
 * Other Contributors:
 * LTN Games
 *
-* @param Wrapper
+* @param DesignatedWrappers
+* @desc Here, you decide which wrappers are assigned to different parts of the UI.
+*
+* @param MessageWrapper
+* @text MessageBoxes
+* @parent DesignatedWrappers
+* @type string
 * @default null
-* @desc Which word wrap plugin to use. Look at the appropriate User Guides for more info. Default: null
-* 
+* @desc For regular message boxes. Default: null
+*
+* @param DescWrapper
+* @text Descs
+* @parent DesignatedWrappers
+* @type string
+* @default null
+* @desc For the windows that show descs for items and such. Default: null
+*
+* @param MessageBacklogWrapper
+* @text MessageBacklog
+* @parent DesignatedWrappers
+* @type string
+* @default null
+* @desc For message backlogs. Default: null
+*
+* @param BubbleWrapper
+* @text MessageBubbles
+* @parent DesignatedWrappers
+* @type string
+* @default null
+* @desc For message bubbles like the ones from Galv's MessageStyles plugin. Default: null
+*
 * @param NametagFormats
-* @type struct<NametagFormat>[]
+* @type struct<RegexEntry>[]
 * @desc Tells the algorithm what counts as a nametag.
+* @default ["{\"Name\":\"Normal\",\"RegexAsString\":\"^[^\\\\n]+:((\\u001b|\\\\\\\\)c\\\\[\\\\d+\\\\])?\",\"Enabled\":\"true\",\"Notes\":\"\\\"This catches any (non-newline) text starting from the \\\\nbeginning and ending with a colon. If any newlines \\\\nare before the colon, then this format won't catch\\\\nanything in whatever text the wrapper is working with.\\\\n\\\\nWorks with colored text, too.\\\"\"}","{\"Name\":\"SquareBrackets\",\"RegexAsString\":\"^\\\\\\\\[[^\\\\n]+\\\\\\\\]((\\u001b|\\\\\\\\)c\\\\[\\\\d+\\\\])?\",\"Enabled\":\"true\",\"Notes\":\"\\\"This catches any (non-newline) text starting from the \\\\nbeginning with an opening square bracket, and ending with \\\\na closing square bracket. If any newlines are before that\\\\nsecond one, then this format won't catch anything in \\\\nwhatever text the wrapper is working with.\\\\n\\\\nWorks with colored text, too.\\\"\"}"]
+* 
+* @param EmptyText
+* @type struct<RegexEntry>[]
+* @default ["\u001bC\\[[0-9]+\\]", "\u001b\\$", "\u001b\\."]
+* @desc For text that should NOT be treated as taking up space in the textbox.
+* @default ["{\"Name\":\"Text-ColoringCode\",\"RegexAsString\":\"\\u001bC\\\\[\\\\d+\\\\]\",\"Enabled\":\"true\",\"Notes\":\"\\\"\\\"\"}","{\"Name\":\"Money-DisplayingCode\",\"RegexAsString\":\"\\u001b\\\\$\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"DotPause\",\"RegexAsString\":\"\\u001b\\\\.\",\"Enabled\":\"true\",\"Notes\":\"\\\"For the code that applies a slight pause in text.\\\"\"}"]
 * 
 * @param LineBreakMarkers
 * @type string[]
 * @default ["<br>", "<br2>", "<line-break>"]
 * @desc You put these in the text where you want to guarantee a line break.
-* 
-* @param EmptyText
-* @type string[]
-* @default ["\u001bC\\[[0-9]+\\]", "\u001b\\$", "\u001b\\."]
-* @desc Regexes that define text that should NOT be treated as taking up space in the textbox.
 * 
 * @param SpecialRules
 * 
@@ -54,18 +83,12 @@
 * @type string
 * @default " "
 * @desc What a wrapper should look for to tell words apart. Default: " "
-* 
-* @param WrapDescs
-* @parent SpecialRules
-* @type boolean
-* @default false
-* @desc Whether or not the wrapper should be applied to descs. Default: false
 *
 * @param CascadingUnderflow
 * @parent SpecialRules
 * @type boolean
 * @default false
-* @desc If true, makes it so no line in a given input is wider than the first. Default: false
+* @desc Whether any line in a given input's allowed to be wider than the first. Default: false
 * 
 * @param CULenience
 * @parent CascadingUnderflow
@@ -78,11 +101,6 @@
 * @type boolean
 * @default true
 * @desc Whether or not this will keep track of and always return its original outputs for the same inputs.
-*
-* @param WrapMessageLog
-* @type boolean
-* @default true
-* @desc Whether or not this applies wrapping to certain message backlog scripts like YEP_X_MessageBacklog.
 *
 * @param Spacing
 * 
@@ -106,18 +124,19 @@
 * @min -999999
 * @desc For the message box sides (measured in units). Default: 3
 * 
-* @param BoldItalicWidthMod
+* @param BoldItalicPadding
+* @parent Spacing
 * @type number
-* @default 15
+* @default 10
 * @min -999999
-* @desc How much wider-than-usual bold or italicised letters are treated as, in percentage terms. Default: 15
+* @desc How much padding is applied when there's any bolded or italicized text in the input.
 * 
 */
 
-/*~struct~NametagFormat:
+/*~struct~RegexEntry:
  * @param Name
  * @type string
- * @default NewFormat
+ * @default NewRegex
  * 
  * @param RegexAsString
  * @type string
@@ -125,13 +144,13 @@
  * @param Enabled
  * @type boolean
  * @default true
- * @desc Whether or not the algorithm will consider this format. Default: true
+ * @desc Whether or not the algorithm will consider this entry. Default: true
  * 
  * @param Notes
  * @type Note
  */
 
-/*~struct~NametagFormat:es
+/*~struct~RegexEntry:es
  * @param Name
  * @text Nombre
  * @type string
@@ -170,121 +189,8 @@
 * 
 * Otros donantes:
 * LTN Games
-*
-* @param Wrapper
-* @text Ajustelíneas
-* @default null
-* @desc Cual plugin ajustelíneas a usar. Ve el apropriado Guia de Usuario para más info. Por defecto: null
-*
-* @param NametagFormats
-* @text FormatosDeGafete
-* @type struct<NametagFormat>[]
-* @desc Avisa el algoritmo que se vale como gafete.
 * 
-* @param LineBreakMarkers
-* @text SeñalesDeSaltalíneas
-* @type string[]
-* @default ["<br>", "<br2>", "<line-break>"]
-* @desc Pones estos en el texto dónde quieres garantizar una saltalíneas.
-* 
-* @param EmptyText
-* @text TextoVacío
-* @type string[]
-* @default ["\u001bC\\[[0-9]+\\]", "\u001b\\$", "\u001b\\."]
-* @desc Los regexes que destacan texto que NO debe ser tratado como texto que usa espacio en la caja.
-* 
-* @param SpecialRules
-* @text ReglasEspeciales
-* 
-* @param LineMinCharCount
-* @text CarácterTotalMinPorCadaLínea
-* @parent SpecialRules
-* @type number
-* @default 10
-* @min 0
-* @desc El número mínimo de carácteres una línea puede tener. Por defecto: 10
-* 
-* @param ParenthesisAlignment
-* @text AlineaciónDeParéntesis
-* @parent SpecialRules
-* @type boolean
-* @default true
-* @desc Si o no el texto se alineará basado en los paréntesis. Por defecto: true
-* 
-* @param WordSeparator
-* @text SeparadorDePalabras
-* @parent SpecialRules
-* @type string
-* @default " "
-* @desc Que un ajustelíneas busca para diferenciar las palabras. Por defecto: " "
-*
-* @param WrapDescs
-* @text AjusteLosDescripciones
-* @parent SpecialRules
-* @type boolean
-* @default false
-* @desc Si o no el ajustelíneas se aplica a las descripciones. Por defecto: falso
-*
-* @param CascadingUnderflow
-* @text TextoCascadando
-* @parent SpecialRules
-* @type boolean
-* @default false
-* @desc Si o no cualquiera línea ajustada puede ser más ancho que la primera ajustada por su entrada.
-*
-* @param CULenience
-* @text IndulgenciaDeTC
-* @parent CascadingUnderflow
-* @type number
-* @min -999999
-* @default 5
-* @desc Cuantas unidades más ancho que la primera línea que las posteriores en su entrada se permiten ser.
-* 
-* @param RememberResults
-* @text RecuerdaResultados
-* @type boolean
-* @default true
-* @desc Si o no esto llevara un registro de las salidas originales, regresandolas por las mismas
-entradas.
-*
-* @param WrapMessageLog
-* @text AjusteRegistrosDeMensajes
-* @type boolean
-* @default true
-* @desc Whether or not this applies wrapping to certain message backlog scripts like YEP_X_MessageBacklog.
-* @desc Si o no este ajuste para unas plugins de registros de mensajes, como YEP_X_MessageBacklog
-*
-* @param Spacing
-* @text ElEspaciado
-* 
-* @param MugshotWidth
-* @text AnchoDeFotoRostro
-* @parent Spacing
-* @type number
-* @default 144
-* @desc Cuánto ancho los fotos rostros se tratarán de ser (medido en unidades). Por defecto: 144
-* 
-* @param MugshotPadding
-* @text GuataDeFotoRostro
-* @parent Spacing
-* @type number
-* @default 25
-* @desc El espacio entre el foto rostro y el texto (medido en unidades). Por defecto: 25
-* 
-* @param SidePadding
-* @text GuataDeLosLados
-* @parent Spacing
-* @type number
-* @default 3
-* @min -999
-* @desc Para los lados del cuadro de dialogo (medido en unidades). Por defecto: 3
-* 
-* @param BoldItalicWidthMod
-* @text ModAnchuraDeNegritasYItálicas
-* @type number
-* @default 15
-* @min 0
-* @desc Cuánto mas ancho que usual el texto negrito o itálico se trata en términos de porcentajes. Por defecto: 15
+    ~~~~~ADD STUFF HERE EVENTUALLY~~~~~
 * 
 */
 
