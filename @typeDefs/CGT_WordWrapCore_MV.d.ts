@@ -404,6 +404,13 @@ declare namespace CGT
                 RemovePostRule(rule: LineWrapRule);
             
             }
+
+            interface ITextMeasurerArgs 
+            {
+                text: string;
+                textField: Bitmap;
+                textHasBoldOrItalic: boolean;
+            }
         }
 
         /**

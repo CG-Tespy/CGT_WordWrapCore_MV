@@ -13,6 +13,7 @@ export class LineWrapper implements ILineWrapper
 
     WrapIntoLines(args: IWordWrapArgs, actualTextToWrap: string): string[] 
     {
+        actualTextToWrap += emptyString; // In case the orig was a non-string
         let lines: string[] = this.WithNormalLineWrapping(args, actualTextToWrap);
 
         if (this.ShouldApplyCascadingUnderflowTo(lines))
@@ -26,14 +27,15 @@ export class LineWrapper implements ILineWrapper
         let lines: string[] = [];
         let words: string[] = actualTextToWrap.split(this.WordSeparator);
         let currentLine: string = emptyString;
+        let overflowFindArgs = this.CreateOverflowFindArgs();
 
         for (const currentWord of words)
         {
             // "currentWord" would be a bit misleading for when the text is like Japanese or 
             // Chinese, where there's no designated character to separate words... but hey.
-            this.UpdateOverflowFindArgs(args, currentWord, currentLine);
+            this.Update(overflowFindArgs, args, currentWord, currentLine);
 
-            let thereIsOverflow = this.overflowFinder.Find(this.overflowFindArgs);
+            let thereIsOverflow = this.overflowFinder.Find(overflowFindArgs);
             let foundLineBreak = this.IsLineBreak(currentWord);
             
             if (thereIsOverflow || foundLineBreak)
@@ -54,21 +56,27 @@ export class LineWrapper implements ILineWrapper
         return lines;
     }
 
-    protected get WordSeparator(): string { return CGT.WWCore.Params.WordSeparator; }
-
-    protected UpdateOverflowFindArgs(wordWrapArgs: IWordWrapArgs, word: string, line: string)
+    protected CreateOverflowFindArgs(): IOverflowFindArgs
     {
-        this.overflowFindArgs.word = word;
-        this.overflowFindArgs.line = line;
-        this.overflowFindArgs.wordWrapArgs = wordWrapArgs;
+        let args: IOverflowFindArgs = 
+        {
+            word: "",
+            line: "",
+            wordWrapArgs: null,
+            fullTextHasBoldOrItalics: false,
+        };
+
+        return args;
     }
 
-    protected overflowFindArgs: IOverflowFindArgs = 
+    protected get WordSeparator(): string { return CGT.WWCore.Params.WordSeparator; }
+
+    protected Update(overflowFindArgs: IOverflowFindArgs, wordWrapArgs: IWordWrapArgs, word: string, line: string)
     {
-        word: "",
-        line: "",
-        wordWrapArgs: null
-    };
+        overflowFindArgs.word = word;
+        overflowFindArgs.line = line;
+        overflowFindArgs.wordWrapArgs = wordWrapArgs;
+    }
 
     IsLineBreak(text: string): boolean
     {

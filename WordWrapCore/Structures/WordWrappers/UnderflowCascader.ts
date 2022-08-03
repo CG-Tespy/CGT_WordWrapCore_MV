@@ -1,6 +1,7 @@
 import { emptyString } from "../../Shared/_Strings";
 import { TextMeasurer } from "../Overflow/_SetupOverflow";
 import { IUnderflowCascadeArgs } from "./IUnderflowCascadeArgs";
+import { ITextMeasurerArgs } from '../Overflow/OverflowFinders/ITextMeasurerArgs';
 
 // For applying cascading underflow
 export class UnderflowCascader
@@ -104,10 +105,26 @@ export class UnderflowCascader
         let firstLine = relevantLines.firstLine;
         let currentLine = relevantLines.focusedLine;
 
+        let firstLineArgs: ITextMeasurerArgs = 
+        {
+            text: firstLine,
+            textField: textField,
+            textHasBoldOrItalic: false 
+            // ^Won't matter at this point, given how the base line-wrapping already handled
+            // any concerns with bolding and italics for the input
+        };
+
+        let currentLineArgs: ITextMeasurerArgs = 
+        {
+            text: currentLine,
+            textField: textField,
+            textHasBoldOrItalic: false
+        };
+
         let results: IWidthAnalysisResults = 
         {
-            firstLineWidth: this.textMeasurer.MeasureFor(firstLine, textField) + this.CULenience,
-            currentLineWidth: this.textMeasurer.MeasureFor(currentLine, textField),
+            firstLineWidth: this.textMeasurer.MeasureFor(firstLineArgs) + this.CULenience,
+            currentLineWidth: this.textMeasurer.MeasureFor(currentLineArgs),
         };
 
         return results;

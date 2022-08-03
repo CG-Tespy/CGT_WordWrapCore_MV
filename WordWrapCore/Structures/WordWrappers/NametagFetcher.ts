@@ -6,9 +6,10 @@ export class NametagFetcher
 {
     FetchFrom(text: string)
     {
-        if (this.YanflyNametagIsThere) 
+        if (!this.ShouldScanForNametagIn(text))
+        { 
             return emptyString; 
-            // ^Since the nametag gets taken out of the text by the time this func gets called
+        }
 
         let nametagsFound: RegExpMatchArray = [];
 
@@ -28,10 +29,28 @@ export class NametagFetcher
         // nametag regex includes a newline for the sake of better detection
     }
 
+    protected ShouldScanForNametagIn(text: string): boolean
+    {
+        return !this.YanflyNametagIsThere && !this.HasDisableNametagScanTag(text);
+    }
+
     protected get YanflyNametagIsThere(): boolean 
     { 
+        // Since the nametag gets taken out of the text by the time FetchFrom gets called
         let theNametag = CGT.WWCore.Yanfly.activeNametagText;
         return theNametag.length > 0; 
+    }
+
+    protected HasDisableNametagScanTag(text: string)
+    {
+        return text.match(NametagFetcher.noNametagScanTag) != null;
+    }
+
+    protected static noNametagScanTag: RegExp = /<disableNametagScan>\s?/gmi;
+
+    protected WithoutNametagScanTags(text: string)
+    {
+        return text.replace(NametagFetcher.noNametagScanTag, emptyString);
     }
 
     protected get NametagFormats(): IRegexEntry[] 

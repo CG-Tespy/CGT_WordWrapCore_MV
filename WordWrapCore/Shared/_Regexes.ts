@@ -8,4 +8,5 @@ export let bracketNametag: RegExp = /^\[\S+\]:/gm;
 export let bracketNametagNoColon: RegExp = /^\[\S+\]/gm;
 export let doubleQuotes: RegExp = /"/gm;
 
-export let noWrapTag: RegExp = / <noWrap>|<noWrap>/gmi;
+export let noWrapTag: RegExp = /<noWrap>\s?/gmi;
+export let disableNametagScanTag: RegExp = /<disableNametagScan>\s?/gmi;

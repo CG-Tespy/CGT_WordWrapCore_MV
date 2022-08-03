@@ -13,6 +13,7 @@ import { NametagFetcher } from './NametagFetcher';
 import { HaveLBTagsBeNewlines } from '../WrapRules/PreRules/HaveLBTagsBeNewlines';
 import { NoSpacesBeforeColorTags } from '../WrapRules/PreRules/NoSpacesBeforeColorTags';
 import { NoColorTagsAsFirstWords } from '../WrapRules/PreRules/NoColorTagsAsFirstWords';
+import { RemoveDisableNametagScanTags } from '../WrapRules/PreRules/RemoveDisableNametagScanTags';
 
 /** 
  * Encapsulates an algorithm for doing word-wrapping. 
@@ -71,6 +72,7 @@ export class WordWrapper implements IWordWrapper
     protected InitRuleApplier()
     {
         // These rules are applied in the order they are registered
+        this.ruleApplier.RegisterPreRule(new RemoveDisableNametagScanTags());
         this.ruleApplier.RegisterPreRule(new TurnNewlinesIntoSeparators());
         this.ruleApplier.RegisterPreRule(new HaveLBTagsBeNewlines());
         this.ruleApplier.RegisterPreRule(new WithoutExtraSpaces());
