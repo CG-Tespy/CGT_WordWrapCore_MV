@@ -19,7 +19,7 @@ declare namespace Yanfly
 
 declare class Window_MessageBacklog extends Window_Command
 {
-    convertMessageText(text: string): string;
+    addIndividualLines(text: string): void;
     WrapText(text: string): string;
 }
 

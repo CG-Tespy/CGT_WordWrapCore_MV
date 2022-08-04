@@ -3,7 +3,7 @@ export function ApplyYanflyMsgBacklogOverrides()
     if (!YanflyMessageBacklogIsThere())
         return null;
 
-    OverrideConvertMessageText();
+    OverrideAddIndividualLines();
     AddNewMemberFunctions();
 }
 
@@ -15,18 +15,17 @@ function YanflyMessageBacklogIsThere()
     return backlogScriptIsThere;
 }
 
-function OverrideConvertMessageText()
+function OverrideAddIndividualLines()
 {
-    let oldVersion = Window_MessageBacklog.prototype.convertMessageText;
+    let oldVersion = Window_MessageBacklog.prototype.addIndividualLines;
 
-    function NewConvertMessageText(this: Window_MessageBacklog, text: string)
+    function NewAddIndividualLines(this: Window_MessageBacklog, text: string)
     {
-        let baseResult = oldVersion.call(this, text);
-        let wrappedText = this.WrapText(baseResult);
-        return wrappedText;
+        let wrappedText = this.WrapText(text);
+        oldVersion.call(this, wrappedText);
     }
 
-    Window_MessageBacklog.prototype.convertMessageText = NewConvertMessageText;
+    Window_MessageBacklog.prototype.addIndividualLines = NewAddIndividualLines;
     
 }
 
