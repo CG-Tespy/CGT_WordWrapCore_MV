@@ -5,6 +5,7 @@ import { emptyString, singleNewline } from '../../../Shared/_Strings';
 import { IOverflowFindArgs } from '../../Overflow/OverflowFinders/IOverflowFindArgs';
 import { UnderflowCascader } from '../UnderflowCascader';
 import { IUnderflowCascadeArgs } from '../IUnderflowCascadeArgs';
+import { italicsMarkers, boldMarkers } from '../../../Shared/_Regexes';
 
 export class LineWrapper implements ILineWrapper
 {
@@ -28,6 +29,7 @@ export class LineWrapper implements ILineWrapper
         let words: string[] = actualTextToWrap.split(this.WordSeparator);
         let currentLine: string = emptyString;
         let overflowFindArgs = this.CreateOverflowFindArgs();
+        overflowFindArgs.fullTextHasBoldOrItalics = this.HasBoldOrItalicMarkers(actualTextToWrap);
 
         for (const currentWord of words)
         {
@@ -67,6 +69,11 @@ export class LineWrapper implements ILineWrapper
         };
 
         return args;
+    }
+
+    protected HasBoldOrItalicMarkers(text: string)
+    {
+        return text.match(boldMarkers) != null || text.match(italicsMarkers) != null;
     }
 
     protected get WordSeparator(): string { return CGT.WWCore.Params.WordSeparator; }

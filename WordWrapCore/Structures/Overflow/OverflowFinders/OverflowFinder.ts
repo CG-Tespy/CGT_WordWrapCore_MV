@@ -12,6 +12,15 @@ export abstract class OverflowFinder implements IOverflowFinder
 
     Find(args: IOverflowFindArgs): boolean 
     {
+        let measurerArgs = this.PrepareArgsForMeasurerFrom(args);
+        let spaceTakenUp: number = this.textMeasurer.MeasureFor(measurerArgs);
+        let spaceAvailable = this.GetWrapSpace(args);
+
+        return spaceTakenUp > spaceAvailable;
+    }
+
+    protected PrepareArgsForMeasurerFrom(args: IOverflowFindArgs)
+    {
         let textField = args.wordWrapArgs.textField;
         let text = args.line + args.word;
         
@@ -22,15 +31,8 @@ export abstract class OverflowFinder implements IOverflowFinder
             textHasBoldOrItalic: args.fullTextHasBoldOrItalics
         };
 
-        let spaceTakenUp: number = this.textMeasurer.MeasureFor(measurerArgs);
-
-        let spaceAvailable = this.GetWrapSpace(args);
-
-        return spaceTakenUp > spaceAvailable;
+        return measurerArgs;
     }
-
-    protected static boldMarkers: RegExp = /\u001bMSGCORE\[1\]/gmi;
-    protected static italicsMarkers: RegExp = /\u001bMSGCORE\[2\]/gmi;
 
     /** Returns how much space there is to have text on a single line, based on the inputs. */
     protected GetWrapSpace(args: IOverflowFindArgs): number

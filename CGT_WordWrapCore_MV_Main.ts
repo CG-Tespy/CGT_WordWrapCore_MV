@@ -120,16 +120,16 @@
 * @param SidePadding
 * @parent Spacing
 * @type number
-* @default 3
+* @default 5
 * @min -999999
-* @desc For the message box sides (measured in units). Default: 3
+* @desc For the message box sides (measured in units). Default: 5
 * 
 * @param BoldItalicPadding
 * @parent Spacing
 * @type number
-* @default 10
+* @default 15
 * @min -999999
-* @desc How much padding is applied when there's any bolded or italicized text in the input.
+* @desc How much padding is applied when there's any bolded or italicized text in the input. Default: 15
 * 
 */
 

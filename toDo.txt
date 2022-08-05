@@ -1,12 +1,12 @@
 - Add compatibility with Yanfly's MessageBacklog script (done!)
-- Set up defaults for the revamped NametagFormats script
+- Set up defaults for the revamped NametagFormats script (done!)
 - Add a width offset param to the word wrap args (done!)
 - Make it so you can assign different wrappers to different parts of the UI (done!)
 -- Message boxes (done!)
 -- Desc box (aka Window_Help) (done!)
 -- Message backlog (done!)
 -- Text bubbles (starting with Galv's)
-- Implement a new algorithm-informing tag for some inputs to not be scanned for nametags
+- Implement a new algorithm-informing tag for some inputs to not be scanned for nametags (done!)
 - Have EmptyText work off a struct for convenience, like NametagFormats does now (done!)
 - Alter plugin command for setting the active wrappers
 -- Add documentation for it
