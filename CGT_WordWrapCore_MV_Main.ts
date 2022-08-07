@@ -54,38 +54,41 @@
 * 
 * @param EmptyText
 * @type struct<RegexEntry>[]
-* @default ["\u001bC\\[[0-9]+\\]", "\u001b\\$", "\u001b\\."]
-* @desc For text that should NOT be treated as taking up space in the textbox.
-* @default ["{\"Name\":\"Text-ColoringCode\",\"RegexAsString\":\"\\u001bC\\\\[\\\\d+\\\\]\",\"Enabled\":\"true\",\"Notes\":\"\\\"\\\"\"}","{\"Name\":\"Money-DisplayingCode\",\"RegexAsString\":\"\\u001b\\\\$\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"DotPause\",\"RegexAsString\":\"\\u001b\\\\.\",\"Enabled\":\"true\",\"Notes\":\"\\\"For the code that applies a slight pause in text.\\\"\"}"]
+* @default ["{\"Name\":\"Text-ColoringCode\",\"RegexAsString\":\"\\\\s?(\\u001b|\\\\\\\\)C\\\\[\\\\d+\\\\]\\\\s?\",\"Enabled\":\"true\",\"Notes\":\"\\\"\\\"\"}","{\"Name\":\"GoldWindowCode\",\"RegexAsString\":\"\\u001b\\\\$\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"DotPause\",\"RegexAsString\":\"\\u001b\\\\.\",\"Enabled\":\"true\",\"Notes\":\"\\\"For the code that applies a slight pause in text.\\\"\"}","{\"Name\":\"BoldTextMarker\",\"RegexAsString\":\"\\u001bMSGCORE\\\\[1\\\\]\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"ItalicTextMarker\",\"RegexAsString\":\"\\u001bMSGCORE\\\\[2\\\\]\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"One-SecondWaitMarker\",\"RegexAsString\":\"\\u001b|\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"AutoscrollMarker\",\"RegexAsString\":\"\\u001b^\",\"Enabled\":\"true\",\"Notes\":\"\"}"]
 * 
 * @param LineBreakMarkers
 * @type string[]
 * @default ["<br>", "<br2>", "<line-break>"]
 * @desc You put these in the text where you want to guarantee a line break.
 * 
-* @param SpecialRules
+* @param RememberResults
+* @type boolean
+* @default true
+* @desc Whether or not this will keep track of and always return its original outputs for the same inputs.
+* 
+* @param ForAesthetics
 * 
 * @param LineMinCharCount
-* @parent SpecialRules
+* @parent ForAesthetics
 * @type number
 * @default 10
 * @min 0
 * @desc Minimum amount of characters a line can hold. Default: 10
 * 
 * @param ParenthesisAlignment
-* @parent SpecialRules
+* @parent ForAesthetics
 * @type boolean
 * @default true
 * @desc Whether or not this aligns text based on parentheses. Default: true
 * 
 * @param WordSeparator
-* @parent SpecialRules
+* @parent ForAesthetics
 * @type string
 * @default " "
 * @desc What a wrapper should look for to tell words apart. Default: " "
 *
 * @param CascadingUnderflow
-* @parent SpecialRules
+* @parent ForAesthetics
 * @type boolean
 * @default false
 * @desc Whether any line in a given input's allowed to be wider than the first. Default: false
@@ -97,11 +100,6 @@
 * @default 5
 * @desc How many units wider than the first line that later ones in its input are allowed to be. Default: 5
 * 
-* @param RememberResults
-* @type boolean
-* @default true
-* @desc Whether or not this will keep track of and always return its original outputs for the same inputs.
-*
 * @param Spacing
 * 
 * @param MugshotWidth
