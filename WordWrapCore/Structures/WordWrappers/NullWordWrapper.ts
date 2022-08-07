@@ -11,6 +11,7 @@ export class NullWordWrapper extends WordWrapper
 
     Wrap(args: IWordWrapArgs): string
     {
+        this.argValidator.Validate(args);
         return args.rawTextToWrap;
     }
 }

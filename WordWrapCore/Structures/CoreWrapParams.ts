@@ -1,5 +1,7 @@
-import { globalMultiline, emptyString, caseInsensitive, unicode } from '../Shared/_Strings';
+import { emptyString, caseInsensitive, unicode, global, globalMultiline } from '../Shared/_Strings';
 import { doubleQuotes } from '../Shared/_Regexes';
+import { IRegexEntry } from './IRegexEntry';
+import { IBaseCoreWrapParams } from './IBaseCoreWrapParams';
 let Event = CGT.Core.Utils.Event;
 type Event = CGT.Core.Utils.Event;
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
@@ -10,25 +12,44 @@ let ArrayEx = CGT.Core.Extensions.ArrayEx;
 export class CoreWrapParams
 {
     /** Affects how this decides when a line can't hold more. */
-    get WrapMode(): string { return this.wrapMode; }
-    private wrapMode: string = "null";
-    set WrapMode(value) { this.wrapMode = value;; }
+    get MessageWrapper(): string { return this.messageWrapper; }
+    private messageWrapper: string = "null";
+    set MessageWrapper(value) { this.messageWrapper = value; }
+
+    get DescWrapper(): string { return this.descWrapper; }
+    private descWrapper: string = "null";
+    set DescWrapper(value) { this.descWrapper = value; }
+
+    get MessageBacklogWrapper(): string { return this.messageBacklogWrapper; }
+    private messageBacklogWrapper: string = "null";
+    set MessageBacklogWrapper(value) { this.messageBacklogWrapper = value; }
+
+    get BubbleWrapper(): string { return this.bubbleWrapper; }
+    private bubbleWrapper: string = "null";
+    set BubbleWrapper(value) { this.bubbleWrapper = value; }
 
     get WrapModeChanged(): Event { return this.wrapModeChanged; }
     private wrapModeChanged: Event = new Event(2);
 
     /** 
      * Decides how the wrapper detects nametags.
-     * Set to the Yanfly format by default. 
      * */
-    get NametagFormats(): RegExp[] { return this.nametagFormats; }
+    get NametagFormats(): IRegexEntry[] { return this.nametagFormats; }
     private nametagFormats = [];
     set NametagFormats(value) 
     { 
         ArrayEx.Clear(this.nametagFormats);
-        this.nametagFormats = this.nametagFormats.concat(value); 
+        this.nametagFormats = this.nametagFormats.concat(value);
     }
 
+    get NametagFormatRegexes(): RegExp[] { return this.nametagFormatRegexes; }
+    private nametagFormatRegexes = [];
+    set NametagFormatRegexes(value)
+    {
+        ArrayEx.Clear(this.nametagFormatRegexes);
+        this.nametagFormatRegexes = this.NametagFormatRegexes.concat(value);
+    }
+    
     get LineBreakMarkers(): string[] { return this.lineBreakMarkers; }
     private lineBreakMarkers: string[] = [];
     set LineBreakMarkers(value) 
@@ -37,8 +58,8 @@ export class CoreWrapParams
         this.lineBreakMarkers = this.lineBreakMarkers.concat(value); 
     }
 
-    get EmptyText(): RegExp[] { return this.emptyText; }
-    private emptyText: RegExp[] = [];
+    get EmptyText(): IRegexEntry[] { return this.emptyText; }
+    private emptyText: IRegexEntry[] = [];
     set EmptyText(value) 
     { 
         ArrayEx.Clear(this.emptyText);
@@ -74,6 +95,22 @@ export class CoreWrapParams
     private wrapDescs: boolean = false;
     set WrapDescs(value) { this.wrapDescs = value; }
 
+    get CascadingUnderflow(): boolean { return this.cascadingUnderflow; }
+    private cascadingUnderflow: boolean = false;
+    set CascadingUnderflow(value) { this.cascadingUnderflow = value; }
+
+    get CULenience(): number { return this.cuLenience; }
+    private cuLenience: number = 5;
+    set CULenience(value) { this.cuLenience = value; }
+
+    get RememberResults(): boolean { return this.rememberResults; }
+    private rememberResults: boolean = true;
+    set RememberResults(value) { this.rememberResults = value; }
+
+    get WrapMessageLog(): boolean { return this.wrapMessageLog; }
+    private wrapMessageLog: boolean = true;
+    set WrapMessageLog(value) { this.wrapMessageLog = value; }
+
     // Spacing
     
     /** How wide mugshots are treated as being, in a wrapper-decided unit */
@@ -91,15 +128,16 @@ export class CoreWrapParams
     private sidePadding: number = 5;
     set SidePadding(value) { this.sidePadding = value; }
 
-    get BoldItalicWidthMod(): number { return this.boldItalicWidthMod; }
-    private boldItalicWidthMod: number = 1;
-    set BoldItalicWidthMod(value) { this.boldItalicWidthMod = value; }
+    get BoldItalicPadding(): number { return this.boldItalicPadding; }
+    private boldItalicPadding: number = 1;
+    set BoldItalicPadding(value) { this.boldItalicPadding = value; }
 
 }
 
 export class WrapParamsFactory
 {
-    static FromBaseParams(baseParams: object): CoreWrapParams
+    /* Converted by fenix-tools convertParameters func*/
+    static FromConvertedParams(baseParams: IBaseCoreWrapParams): CoreWrapParams
     {
         let wrapParams = new CoreWrapParams();
         this.SetStringsFromParams(baseParams, wrapParams);
@@ -111,71 +149,83 @@ export class WrapParamsFactory
         return wrapParams;
     }
 
-    protected static SetStringsFromParams(baseParams: object, wrapParams: CoreWrapParams)
+    protected static SetStringsFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        wrapParams.WrapMode = baseParams[names.WrapMode];
-        let wordSeparator: string = baseParams[names.WordSeparator];
+        let wordSeparator: string = baseParams.WordSeparator;
         wordSeparator = wordSeparator.replace(doubleQuotes, emptyString);
         wrapParams.WordSeparator = wordSeparator;
+
+        wrapParams.MessageWrapper = baseParams.MessageWrapper;
+        wrapParams.DescWrapper = baseParams.DescWrapper;
+        wrapParams.MessageBacklogWrapper = baseParams.MessageBacklogWrapper;
+        wrapParams.BubbleWrapper = baseParams.BubbleWrapper;
     }
 
-    protected static SetNumbersFromParams(baseParams: object, wrapParams: CoreWrapParams)
+    protected static SetNumbersFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        wrapParams.LineMinCharCount = Number(baseParams[names.LineMinCharCount]);
-        wrapParams.SidePadding = Number(baseParams[names.SidePadding]);
-        wrapParams.MugshotPadding = Number(baseParams[names.MugshotPadding]);
-        wrapParams.MugshotWidth = Number(baseParams[names.MugshotWidth]);
-
-        let basePercent = Number(baseParams[names.BoldItalicWidthMod]);
-        wrapParams.BoldItalicWidthMod = 1 + (basePercent / 100.0);
+        wrapParams.LineMinCharCount = baseParams.LineMinCharCount;
+        wrapParams.SidePadding = baseParams.SidePadding;
+        wrapParams.MugshotPadding = baseParams.MugshotPadding;
+        wrapParams.MugshotWidth = baseParams.MugshotWidth;
+        wrapParams.CULenience = baseParams.CULenience;
+        wrapParams.BoldItalicPadding = baseParams.BoldItalicPadding;
     }
 
-    protected static SetRegexesFromParams(baseParams: object, wrapParams: CoreWrapParams)
+    protected static SetRegexesFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
         this.SetNametagFormats(baseParams, wrapParams);
         this.SetEmptyText(baseParams, wrapParams);
     }
 
-    protected static SetNametagFormats(baseParams: object, wrapParams: CoreWrapParams)
+    protected static SetNametagFormats(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        let patternsAsStrings: string[] = JSON.parse(baseParams[names.NametagFormats]);
-        let regexes: RegExp[] = this.StringPatternsToRegexes(patternsAsStrings);
+        let formatObjects = baseParams.NametagFormats;
+        this.ApplyRegexObjectsTo(formatObjects);
+        // ^Since the Param def doesn't let you define Regex objects, we have to
+        // convert things ourselves
 
-        wrapParams.NametagFormats = regexes;
+        wrapParams.NametagFormats = formatObjects;
+        wrapParams.NametagFormatRegexes = this.RegexObjectsFrom(formatObjects);
     }
 
-    protected static StringPatternsToRegexes(patterns: string[])
+    protected static ApplyRegexObjectsTo(formats: IRegexEntry[]): void
     {
-        let regexes: RegExp[] = [];
-
-        for (const patternEl of patterns)
+        for (const formatEl of formats)
         {
-            let newRegExp = new RegExp(patternEl, globalMultiline + caseInsensitive);
-            regexes.push(newRegExp);
+            let asString = formatEl.RegexAsString;
+            formatEl.Regex = new RegExp(asString, globalMultiline + caseInsensitive);
+        }
+    }
+
+    protected static RegexObjectsFrom(formats: IRegexEntry[]): RegExp[]
+    {
+        let result: RegExp[] = [];
+
+        for (const formatEl of formats)
+        {
+            result.push(formatEl.Regex);
         }
 
-        return regexes;
+        return result;
     }
 
-    protected static SetEmptyText(baseParams: object, wrapParams: CoreWrapParams)
+    protected static SetEmptyText(hasParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        let patternsAsStrings: string[] = JSON.parse(baseParams[names.EmptyText]);
-        let regexes: RegExp[] = this.StringPatternsToRegexes(patternsAsStrings);
-
-        wrapParams.EmptyText = regexes;
+        wrapParams.EmptyText = hasParams.EmptyText;
+        this.ApplyRegexObjectsTo(wrapParams.EmptyText);
     }
 
-    protected static SetBooleansFromParams(baseParams: object, wrapParams: CoreWrapParams)
+    protected static SetBooleansFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        wrapParams.ParenthesesAlignment = baseParams[names.ParenthesisAlignment] === 'true';
-        wrapParams.WrapDescs = baseParams[names.WrapDescs] === 'true';
+        wrapParams.ParenthesesAlignment = baseParams.ParenthesisAlignment;
+        wrapParams.CascadingUnderflow = baseParams.CascadingUnderflow;
+        wrapParams.RememberResults = baseParams.RememberResults;
     }
 
-    protected static SetArraysFromParams(baseParams: object, wrapParams: CoreWrapParams)
+    protected static SetArraysFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
-        wrapParams.LineBreakMarkers = JSON.parse(baseParams[names.LineBreakMarkers]);
+        wrapParams.LineBreakMarkers = baseParams.LineBreakMarkers;
     }
-
 }
 
 // To avoid magic strings when fetching from Plugin Params
@@ -191,6 +241,9 @@ export let names =
     ParenthesisAlignment: "ParenthesisAlignment",
     WordSeparator: "WordSeparator",
     WrapDescs: "WrapDescs",
+    CascadingUnderflow: "CascadingUnderflow",
+    CULenience: "CULenience",
+    RememberResults: "RememberResults",
     
     // Spacing
     MugshotWidth: "MugshotWidth",

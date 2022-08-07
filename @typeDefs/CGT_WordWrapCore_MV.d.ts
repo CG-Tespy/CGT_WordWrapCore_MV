@@ -79,7 +79,6 @@ declare namespace CGT
                 OnWrapJobFinished();
             }
 
-
             /**
              * Helper for OverflowFinders to detect overflow
              */
@@ -103,7 +102,6 @@ declare namespace CGT
                 ClearHistory();
             }
 
-            
         }
 
         class NametagFetcher
@@ -124,11 +122,18 @@ declare namespace CGT
             set WrapCode(value);
 
             Wrap(args: IWordWrapArgs): string;
-            get NametagFormats(): RegExp[];
+            get NametagFormats(): IRegexEntry[];
 
             get LineWrapper(): LineWrapper;
 
             constructor(lineWrapper?: LineWrapper);
+        }
+
+        interface IRegexEntry
+        {
+            Name: string;
+            RegexAsString: string;
+            Regex: RegExp;
         }
 
         /**
@@ -142,6 +147,8 @@ declare namespace CGT
         {
             textField: Bitmap;
             rawTextToWrap: string;
+            /** In whatever units the active wrapper is using. */
+            widthOffset: number;
         }
 
         interface ILineWrapper
@@ -154,6 +161,8 @@ declare namespace CGT
             /** Override this in your custom line wrapper  */
             protected overflowFinder: Overflow.OverflowFinder;
 
+            protected underflowCascader: UnderflowCascader;
+
             WrapIntoLines(args: IWordWrapArgs, actualTextToWrap: string);
 
             /** Call this after you finish a full wrapping session. */
@@ -165,8 +174,14 @@ declare namespace CGT
          */
         class CoreWrapParams
         {
-            /** Affects how this decides when a line can't hold more. */
-            get WrapMode(): string;
+            // ~~~DesignatedWrappers~~~
+            get MessageWrapper(): string;
+
+            get DescWrapper(): string;
+
+            get MessageBacklogWrapper(): string;
+
+            get BubbleWrapper(): string;
 
             /**
              * 2-arg event that triggers when the wrap mode changes.
@@ -185,12 +200,9 @@ declare namespace CGT
              */
              get LineBreakMarkers(): string[];
 
-             /** 
-             * Regexes (in string form) that define text that should NOT be treated as
-             * taking up space in the textbox. 
-             * */
-            get EmptyText(): RegExp[];
+            get EmptyText(): IRegexEntry[];
 
+            get NametagFormats(): IRegexEntry[];
 
             // ~~~Special Rules~~~
 
@@ -215,6 +227,22 @@ declare namespace CGT
             get WrapDescs(): boolean;
             set WrapDescs(value);
 
+            /** Whether or not lines in an input after the first should be wider than said first. */
+            get CascadingUnderflow(): boolean;
+            set CascadingUnderflow(value);
+
+            /** How much wider than the first line that the others from the same input are allowed to be. */
+            get CULenience(): number;
+            set CULenience(value);
+
+            /** 
+             * Whether or not this should keep track of all its outputs, returning them 
+             * when given the corresponding inputs.
+             */
+            get RememberResults(): boolean;
+            set RememberResults(value);
+
+            // ~~~Spacing~~~
             /** How wide mugshots are treated as being, in a unit decided by the active wrapper. */
             get MugshotWidth(): number;
             set MugshotWidth(value);
@@ -230,13 +258,36 @@ declare namespace CGT
             get SidePadding(): number;
             set SidePadding(value);
 
-            /** 
-             * Multiplier for how much bigger than usual that bolded or italicised letters
-             * are treated as being. 1.10 = 110% bigger, 1.34 = 134% bigger, etc.
-             */
-            get BoldItalicWidthMod(): number;
-            set BoldItalicWidthMod(value);
+            get BoldItalicPadding(): number;
+            set BoldItalicPadding(value);
             
+        }
+
+        interface ICoreWrapParams
+        {
+            // ~~~DesignatedWrappers~~~
+            MessageWrapper: string;
+            DescWrapper: string;
+            MessageBacklogWrapper: string;
+            BubbleWrapper: string;
+
+            NametagFormats: IRegexEntry[];
+            EmptyText: IRegexEntry[];
+            LineBreakMarkers: string[];
+            
+            // ~~~Special Rules~~~
+            LineMinCharCount: number;
+            ParenthesisAlignment: boolean;
+            WordSeparator: string;
+            CascadingUnderflow: boolean;
+            CULenience: number;
+            RememberResults: boolean;
+
+            // ~~~Spacing~~~
+            MugshotWidth: number;
+            MugshotPadding: number;
+            SidePadding: number;
+            BoldItalicPadding: number;
         }
 
         let Params: CoreWrapParams;
@@ -353,6 +404,13 @@ declare namespace CGT
                 RemovePostRule(rule: LineWrapRule);
             
             }
+
+            interface ITextMeasurerArgs 
+            {
+                text: string;
+                textField: Bitmap;
+                textHasBoldOrItalic: boolean;
+            }
         }
 
         /**
@@ -360,15 +418,60 @@ declare namespace CGT
          * Returns false if there is no wrapper registered with that mode,
          * true otherwise.
          * */
-        function SetActiveWrapper(wrapMode: string): boolean;
+        function SetActiveWrapper(target: WrapTarget, wrapMode: string): boolean;
 
-        let ActiveWrapper: Readonly<WordWrapper>;
+        /** Mostly an enum */
+        enum WrapTarget
+        {
+            MessageBox, 
+            Desc, 
+            MessageBacklog, 
+            Bubble,
+        }
+
+        let WrapTargetValues: string[];
+
+        let ActiveWrappers: Map<WrapTarget, WordWrapper>;
 
         function RegisterWrapper(wrapper: WordWrapper);
 
-        let RegisteredWrappers: Readonly<WordWrapper[]>;
+        let RegisteredWrappers: Map<string, WordWrapper>;
 
-        /** Makes sure that the active wrapper matches the current wrap code set. */
-        function UpdateActiveWrapper(): void;
+        /** Makes sure that the active wrappers matches the current wrap codes set. */
+        function UpdateActiveWrappers(): void;
+
+        class UnderflowCascader
+        {
+            protected textMeasurer: Overflow.TextMeasurer;
+            WithCascadingUnderflow(args: IUnderflowCascadeArgs);
+        }
+
+        interface IUnderflowCascadeArgs
+        {
+            textField: Bitmap;
+            lines: string[];
+
+            /** Index of the line to potentially have a word moved from it to the next */
+            focusedLineIndex: number;
+        }
+
+        namespace Yanfly
+        {
+            /** 
+             * The text the Yanfly nametag is holding. Is empty when said tag is hidden 
+             * or nonexistent.
+             * */
+            let activeNametagText: string;
+
+        }
+
+        let version: number;
+
+        let messageBoxWrapper: WordWrapper;
+        let descWrapper: WordWrapper;
+        let messageBacklogWrapper: WordWrapper;
+        let bubbleWrapper: WordWrapper;
+
+        let currentMessageIsBubble: boolean;
     }
 }

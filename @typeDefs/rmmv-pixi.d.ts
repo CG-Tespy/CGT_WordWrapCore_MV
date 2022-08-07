@@ -7710,6 +7710,10 @@ declare class Game_System {
      * @memberof Game_System
      */
     saveWalkingBgm2(): void;
+
+    addMessageBacklog(text: string);
+    convertMessageBacklogText(text: string);
+
 }
 
 /**
@@ -18550,7 +18554,7 @@ declare class Window_HorzCommand extends Window_Command {
  */
 declare class Window_Help extends Window_Base {
 
-    wordWrapArgs: { textField: Bitmap, rawTextToWrap: string };
+    wordWrapArgs: { textField: Bitmap, rawTextToWrap: string, widthOffset: number };
 
     refresh(): void;
 
@@ -19983,6 +19987,10 @@ declare class Window_Message extends Window_Base {
      * @memberof Window_Message
      */
     startPause(): void;
+
+    createMessageBacklogWindow(): void;
+
+    _backlogWindow: Window_MessageBacklog;
 }
 
 /**

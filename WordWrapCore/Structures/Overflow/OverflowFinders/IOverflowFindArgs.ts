@@ -5,4 +5,5 @@ export interface IOverflowFindArgs
     word: string;
     line: string;
     wordWrapArgs: IWordWrapArgs;
+    fullTextHasBoldOrItalics: boolean;
 }

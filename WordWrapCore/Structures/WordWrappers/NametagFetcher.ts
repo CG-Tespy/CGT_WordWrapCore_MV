@@ -1,15 +1,24 @@
 import { emptyString } from '../../Shared/_Strings';
 import { newlines } from '../../Shared/_Regexes';
+import { IRegexEntry } from '../IRegexEntry';
 
 export class NametagFetcher
 {
     FetchFrom(text: string)
     {
+        if (!this.ShouldScanForNametagIn(text))
+        { 
+            return emptyString; 
+        }
+
         let nametagsFound: RegExpMatchArray = [];
 
         for (const format of this.NametagFormats)
         {
-            let matchesFound = text.match(format) || [];
+            if (!format.Enabled)
+                continue;
+            let formatRegex = format.Regex;
+            let matchesFound = text.match(formatRegex) || [];
             nametagsFound = nametagsFound.concat(matchesFound);
         }
 
@@ -20,9 +29,33 @@ export class NametagFetcher
         // nametag regex includes a newline for the sake of better detection
     }
 
-    protected get NametagFormats(): RegExp[] 
+    protected ShouldScanForNametagIn(text: string): boolean
+    {
+        return !this.YanflyNametagIsThere && !this.HasDisableNametagScanTag(text);
+    }
+
+    protected get YanflyNametagIsThere(): boolean 
+    { 
+        // Since the nametag gets taken out of the text by the time FetchFrom gets called
+        let theNametag = CGT.WWCore.Yanfly.activeNametagText;
+        return theNametag.length > 0; 
+    }
+
+    protected HasDisableNametagScanTag(text: string)
+    {
+        return text.match(NametagFetcher.noNametagScanTag) != null;
+    }
+
+    protected static noNametagScanTag: RegExp = /<disableNametagScan>\s?/gmi;
+
+    protected WithoutNametagScanTags(text: string)
+    {
+        return text.replace(NametagFetcher.noNametagScanTag, emptyString);
+    }
+
+    protected get NametagFormats(): IRegexEntry[] 
     { 
         // @ts-ignore
-        return CGT.WWCore.Params.NametagFormats; 
+        return CGT.WWCore.Params.NametagFormats;
     }
 }

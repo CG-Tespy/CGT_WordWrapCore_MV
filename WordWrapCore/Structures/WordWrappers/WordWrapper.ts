@@ -6,10 +6,14 @@ import { IWordWrapArgs } from './WordWrapArgs/IWordWrapArgs';
 import { IWordWrapArgValidator, WordWrapArgValidator } from './WordWrapArgs/WordWrapArgValidator';
 import { WrapRuleApplier } from '../WrapRules/WrapRuleApplier';
 import { WithoutExtraSpaces } from '../WrapRules/PreRules/WithoutExtraSpaces';
-import { ReplaceBaseNewlinesWithSeparator } from '../WrapRules/PreRules/ReplaceBaseNewlinesWithSeparator';
+import { TurnNewlinesIntoSeparators } from '../WrapRules/PreRules/TurnNewlinesIntoSeparators';
 import { LineWrapper } from './LineWrappers/LineWrapper';
 import { noWrapTag as noWrapTag } from '../../Shared/_Regexes';
 import { NametagFetcher } from './NametagFetcher';
+import { HaveLBTagsBeNewlines } from '../WrapRules/PreRules/HaveLBTagsBeNewlines';
+import { NoSpacesBeforeColorTags } from '../WrapRules/PreRules/NoSpacesBeforeColorTags';
+import { NoColorTagsAsFirstWords } from '../WrapRules/PreRules/NoColorTagsAsFirstWords';
+import { RemoveDisableNametagScanTags } from '../WrapRules/PreRules/RemoveDisableNametagScanTags';
 
 /** 
  * Encapsulates an algorithm for doing word-wrapping. 
@@ -26,7 +30,7 @@ export class WordWrapper implements IWordWrapper
     {
         this.argValidator.Validate(args);
 
-        let shouldFetchFromCache: boolean = this.HasAlreadyWrapped(args.rawTextToWrap);
+        let shouldFetchFromCache: boolean = this.ShouldRememberResults && this.HasAlreadyWrapped(args.rawTextToWrap);
         let getOutput = this.wrapResultFetchers.get(shouldFetchFromCache);
 
         return getOutput(args);
@@ -34,6 +38,7 @@ export class WordWrapper implements IWordWrapper
 
     protected argValidator: IWordWrapArgValidator = new WordWrapArgValidator();
 
+    protected get ShouldRememberResults() { return CGT.WWCore.Params.RememberResults; }
     protected HasAlreadyWrapped(text: string): boolean
     {
         return this.wrapResults.has(text);
@@ -66,9 +71,13 @@ export class WordWrapper implements IWordWrapper
 
     protected InitRuleApplier()
     {
-        // The order of these rules matter
-        this.ruleApplier.RegisterPreRule(new ReplaceBaseNewlinesWithSeparator());
+        // These rules are applied in the order they are registered
+        this.ruleApplier.RegisterPreRule(new RemoveDisableNametagScanTags());
+        this.ruleApplier.RegisterPreRule(new TurnNewlinesIntoSeparators());
+        this.ruleApplier.RegisterPreRule(new HaveLBTagsBeNewlines());
         this.ruleApplier.RegisterPreRule(new WithoutExtraSpaces());
+        this.ruleApplier.RegisterPreRule(new NoSpacesBeforeColorTags());
+        this.ruleApplier.RegisterPreRule(new NoColorTagsAsFirstWords());
 
         this.ruleApplier.RegisterPostRule(new CharPerLineMin());
         this.ruleApplier.RegisterPostRule(new ParenthesisAlignment());
@@ -98,7 +107,6 @@ export class WordWrapper implements IWordWrapper
             let nametag = this.nametagFetcher.FetchFrom(originalText);
             let beforeLineWrapping = this.ruleApplier.ApplyPreRulesTo(originalText);
             
-
             let dialogueOnly = beforeLineWrapping.replace(nametag, emptyString);
             dialogueOnly = dialogueOnly.trim(); 
             // ^For when there are any extra spaces left over from extracting the

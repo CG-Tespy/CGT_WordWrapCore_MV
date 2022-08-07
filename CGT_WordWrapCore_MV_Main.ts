@@ -1,7 +1,7 @@
 /*:
 * @plugindesc Needed for the CGT word-wrapping plugins, holding information they can use.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help This is version 2.01.03 of this plugin. Tested with RMMV versions 
+* @help This is version 3.01.01 of this plugin. Tested with RMMV versions 
 * 1.5.1 and 1.6.2.
 * 
 * Needs the CGT CoreEngine 1.01.11+ to work. Make sure this is below that 
@@ -13,51 +13,92 @@
 * If you want to edit this plugin, you may be better off editing and 
 * building the source: https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 * 
-* @param Wrapper
+* Other Contributors:
+* LTN Games
+*
+* @param DesignatedWrappers
+* @desc Here, you decide which wrappers are assigned to different parts of the UI.
+*
+* @param MessageWrapper
+* @text MessageBoxes
+* @parent DesignatedWrappers
+* @type string
 * @default null
-* @desc Which word wrap plugin to use. Look at the appropriate User Guides for more info. Default: null
-* 
+* @desc For regular message boxes. Default: null
+*
+* @param DescWrapper
+* @text Descs
+* @parent DesignatedWrappers
+* @type string
+* @default null
+* @desc For the windows that show descs for items and such. Default: null
+*
+* @param MessageBacklogWrapper
+* @text MessageBacklog
+* @parent DesignatedWrappers
+* @type string
+* @default null
+* @desc For message backlogs. Default: null
+*
+* @param BubbleWrapper
+* @text MessageBubbles
+* @parent DesignatedWrappers
+* @type string
+* @default null
+* @desc For message bubbles like the ones from Galv's MessageStyles plugin. Default: null
+*
 * @param NametagFormats
-* @type string[]
-* @default ["^.+:", "^\\[.+\\]:", "^\\n<.+>+"]
-* @desc Formats that nametags in your game follow, as regex strings.
+* @type struct<RegexEntry>[]
+* @desc Tells the algorithm what counts as a nametag.
+* @default ["{\"Name\":\"Normal\",\"RegexAsString\":\"^[^\\\\n]+:((\\u001b|\\\\\\\\)c\\\\[\\\\d+\\\\])?\",\"Enabled\":\"true\",\"Notes\":\"\\\"This catches any (non-newline) text starting from the \\\\nbeginning and ending with a colon. If any newlines \\\\nare before the colon, then this format won't catch\\\\nanything in whatever text the wrapper is working with.\\\\n\\\\nWorks with colored text, too.\\\"\"}","{\"Name\":\"SquareBrackets\",\"RegexAsString\":\"^\\\\\\\\[[^\\\\n]+\\\\\\\\]((\\u001b|\\\\\\\\)c\\\\[\\\\d+\\\\])?\",\"Enabled\":\"true\",\"Notes\":\"\\\"This catches any (non-newline) text starting from the \\\\nbeginning with an opening square bracket, and ending with \\\\na closing square bracket. If any newlines are before that\\\\nsecond one, then this format won't catch anything in \\\\nwhatever text the wrapper is working with.\\\\n\\\\nWorks with colored text, too.\\\"\"}"]
+* 
+* @param EmptyText
+* @type struct<RegexEntry>[]
+* @default ["{\"Name\":\"Text-ColoringCode\",\"RegexAsString\":\"\\\\s?(\\u001b|\\\\\\\\)C\\\\[\\\\d+\\\\]\\\\s?\",\"Enabled\":\"true\",\"Notes\":\"\\\"\\\"\"}","{\"Name\":\"GoldWindowCode\",\"RegexAsString\":\"\\u001b\\\\$\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"DotPause\",\"RegexAsString\":\"\\u001b\\\\.\",\"Enabled\":\"true\",\"Notes\":\"\\\"For the code that applies a slight pause in text.\\\"\"}","{\"Name\":\"BoldTextMarker\",\"RegexAsString\":\"\\u001bMSGCORE\\\\[1\\\\]\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"ItalicTextMarker\",\"RegexAsString\":\"\\u001bMSGCORE\\\\[2\\\\]\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"One-SecondWaitMarker\",\"RegexAsString\":\"\\u001b|\",\"Enabled\":\"true\",\"Notes\":\"\"}","{\"Name\":\"AutoscrollMarker\",\"RegexAsString\":\"\\u001b^\",\"Enabled\":\"true\",\"Notes\":\"\"}"]
 * 
 * @param LineBreakMarkers
 * @type string[]
 * @default ["<br>", "<br2>", "<line-break>"]
 * @desc You put these in the text where you want to guarantee a line break.
 * 
-* @param EmptyText
-* @type string[]
-* @default ["\u001bC\\[[0-9]+\\]", "\u001b\\$", "\u001b\\."]
-* @desc Regexes that define text that should NOT be treated as taking up space in the textbox.
+* @param RememberResults
+* @type boolean
+* @default true
+* @desc Whether or not this will keep track of and always return its original outputs for the same inputs.
 * 
-* @param SpecialRules
+* @param ForAesthetics
 * 
 * @param LineMinCharCount
-* @parent SpecialRules
+* @parent ForAesthetics
 * @type number
 * @default 10
 * @min 0
 * @desc Minimum amount of characters a line can hold. Default: 10
 * 
 * @param ParenthesisAlignment
-* @parent SpecialRules
+* @parent ForAesthetics
 * @type boolean
 * @default true
 * @desc Whether or not this aligns text based on parentheses. Default: true
 * 
 * @param WordSeparator
-* @parent SpecialRules
+* @parent ForAesthetics
 * @type string
 * @default " "
 * @desc What a wrapper should look for to tell words apart. Default: " "
-* 
-* @param WrapDescs
-* @parent SpecialRules
+*
+* @param CascadingUnderflow
+* @parent ForAesthetics
 * @type boolean
 * @default false
-* @desc Whether or not the wrapper should be applied to descs.
+* @desc Whether any line in a given input's allowed to be wider than the first. Default: false
+* 
+* @param CULenience
+* @parent CascadingUnderflow
+* @type number
+* @min -999999
+* @default 5
+* @desc How many units wider than the first line that later ones in its input are allowed to be. Default: 5
 * 
 * @param Spacing
 * 
@@ -65,33 +106,73 @@
 * @parent Spacing
 * @type number
 * @default 144
-* @desc How wide mugshots are treated as being, in a wrapper-decided unit. Default: 144
+* @desc How many units wide that mugshots are treated as being. Default: 144
 * 
 * @param MugshotPadding
 * @parent Spacing
 * @type number
 * @default 25
-* @desc The space between the mugshot and the text, in a wrapper-decided unit. Default: 25
+* @min -999999
+* @desc The space between the mugshot and the text (measured in units). Default: 25
 * 
 * @param SidePadding
 * @parent Spacing
 * @type number
-* @default 3
-* @min -999
-* @desc For the message box sides, in a wrapper-decided unit. Default: 3
+* @default 5
+* @min -999999
+* @desc For the message box sides (measured in units). Default: 5
 * 
-* @param BoldItalicWidthMod
+* @param BoldItalicPadding
+* @parent Spacing
 * @type number
 * @default 15
-* @min 0
-* @desc How much wider-than-usual bold or italicised letters are treated as, in percentage terms. Default: 15
+* @min -999999
+* @desc How much padding is applied when there's any bolded or italicized text in the input. Default: 15
 * 
 */
+
+/*~struct~RegexEntry:
+ * @param Name
+ * @type string
+ * @default NewRegex
+ * 
+ * @param RegexAsString
+ * @type string
+ * 
+ * @param Enabled
+ * @type boolean
+ * @default true
+ * @desc Whether or not the algorithm will consider this entry. Default: true
+ * 
+ * @param Notes
+ * @type Note
+ */
+
+/*~struct~RegexEntry:es
+ * @param Name
+ * @text Nombre
+ * @type string
+ * @default NuevoFormato
+ * 
+ * @param RegexAsString
+ * @text RegexComoTexto
+ * @type string
+ * 
+ * @param Enabled
+ * @text Permitido
+ * @type boolean
+ * @default true
+ * @desc Si i no el algoritmo considerará este formato. Por defecto: true
+ * 
+ * @param Notes
+ * @text Notas
+ * @type Note
+ */
 
 /*:es
 * @plugindesc Requisito para los plugins ajustelíneas CGT, teniendo información que pueden usar.
 * @author CG-Tespy – https://github.com/CG-Tespy
-* @help Este es la versión 2.01.03 de este plugin. Lo probé con versiones RMMV 1.5.1 
+* @help Este es la versión 3.01.01 de este plugin. Lo probé con versiones RMMV 1.5.1 
 * y 1.6.2.
 * 
 * Necesita el CGT CoreEngine 1.0.11+ para funcionar. Asegurate que este es abajo 
@@ -104,92 +185,10 @@
 * Si quieres editar este plugin, tal vez será mejor si lo haces por el fuente:
 * https://github.com/CG-Tespy/CGT_WordWrapCore_MV
 * 
-* @param Wrapper
-* @text Ajustelíneas
-* @default null
-* @desc Cual plugin ajustelíneas a usar. Ve el apropriado Guia de Usuario para más info. Por defecto: null
-*
-* @param NametagFormats
-* @text FormatosDeGafete
-* @type string[]
-* @default ["^.+:", "^\\[.+\\]:", "^\\n<.+>+"]
-* @desc Los formatos de gafetes que tu juego usa, como texto regex.
+* Otros donantes:
+* LTN Games
 * 
-* @param LineBreakMarkers
-* @text SenalesDeSaltalíneas
-* @type string[]
-* @default ["<br>", "<br2>", "<line-break>"]
-* @desc Pones estos en el texto dónde quieres garantizar una saltalíneas.
-* 
-* @param EmptyText
-* @text TextoVacío
-* @type string[]
-* @default ["\u001bC\\[[0-9]+\\]", "\u001b\\$", "\u001b\\."]
-* @desc Los regexes que destacan texto que NO debe ser tratado como texto que usa espacio en la caja.
-* 
-* @param SpecialRules
-* @text ReglasEspeciales
-* 
-* @param LineMinCharCount
-* @text CarácterTotalMinPorCadaLínea
-* @parent SpecialRules
-* @type number
-* @default 10
-* @min 0
-* @desc El número mínimo de carácteres una línea puede tener. Por defecto: 10
-* 
-* @param ParenthesisAlignment
-* @text AlineaciónDeParéntesis
-* @parent SpecialRules
-* @type boolean
-* @default true
-* @desc Si o no esta se alinea el texto basado en los paréntesis. Por defecto: true
-* 
-* @param WordSeparator
-* @text SeparadorDePalabras
-* @parent SpecialRules
-* @type string
-* @default " "
-* @desc Que un ajustelíneas busca para diferenciar las palabras. Por defecto: " "
-* 
-* @param WrapDescs
-* @text AjusteLosDescripciones
-* @parent SpecialRules
-* @type boolean
-* @default false
-* @desc Si o no el ajustelíneas se aplica a los descripciones. Por defecto: false
-* 
-* @param Spacing
-* @text El Espaciado
-* 
-* @param MugshotWidth
-* @text AnchoDeFotoRostro
-* @parent Spacing
-* @type number
-* @default 144
-* @desc Cómo ancho los fotos rostros se tratan de ser, en una unidad decidido por el ajustelíneas. Por defecto: 144
-* 
-* @param MugshotPadding
-* @text GuataDeFotoRostro
-* @parent Spacing
-* @type number
-* @default 25
-* @desc El espacio entre el foto rostro y el texto, en una unidad decidido por el ajustelíneas. Por defecto: 25
-* 
-* @param SidePadding
-* @text GuataDeLosLados
-* @parent Spacing
-* @type number
-* @default 3
-* @min -999
-* @desc Para los lados del cuadro de dialogo, en una unidad decidido por el ajustelíneas. Por defecto: 3
-* 
-* @param BoldItalicWidthMod
-* @text ModAnchuraDeNegritasYItálicas
-* @type number
-* @default 15
-* @min 0
-* @desc Cómo mas ancho que usual el texto negrito o italic es, en términos de porcentajes. Por defecto: 15
+    ~~~~~ADD STUFF HERE EVENTUALLY~~~~~
 * 
 */
 

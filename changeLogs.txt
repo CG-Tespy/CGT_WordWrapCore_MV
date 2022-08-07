@@ -1,0 +1,26 @@
+August 2022
+
+Version 3.01.01
+
+# **English**
+With a new main version comes a lot of changes.
+
+## New Features
+* Three new for-aesthetic params: CascadingUnderflow, CULenience ("CU" here being short for "CascadingUnderflow"), and RememberResults
+  * The first decides whether the second or later lines of any given wrapped text can be wider than the first
+  * The second decides how much wider than the first that later lines can be
+  * The third decides whether the wrapper will keep track of its output so that when wrapping the same thing more than once, it returns said output instead of going through the usual process
+    * If your game uses more than one font, you might want to set this to false
+* The NametagFormats param has been overhauled; it is no longer an array of strings, but one of a new struct with these fields:
+  * Name: just what it sounds like 
+  * RegexAsString: where you type in the regex like you did in version 2.01.03
+  * Enabled: whether or not the algorithm will consider the format when looking for nametags. You can set it to false instead of deleting the format entirely from the array.
+  * Notes: so you can add more info about the entry.
+* And too much more to list here
+
+## Compatibility
+* This may have compatibility issues with the 2.x.x versions of the Precision and Letter-Based Word Wrap plugins
+  * Best get the 3.x.x versions
+
+There really is a lot that's changed compared to 2.x.x, so please refer to the 3.x.x User Guide. A
+

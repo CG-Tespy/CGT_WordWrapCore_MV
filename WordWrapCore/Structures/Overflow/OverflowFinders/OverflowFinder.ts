@@ -1,8 +1,8 @@
 import { IOverflowFinder } from './IOverflowFinder';
-import { ITextMeasurer } from './ITextMeasurer';
 import { IOverflowFindArgs } from './IOverflowFindArgs';
 import { TextMeasurer } from './TextMeasurer';
 import { CoreWrapParams } from '../../CoreWrapParams';
+import { ITextMeasurerArgs } from './ITextMeasurerArgs';
 
 // Best inherit from this, since what defines wrap width
 // can vary between wrapper types
@@ -12,18 +12,27 @@ export abstract class OverflowFinder implements IOverflowFinder
 
     Find(args: IOverflowFindArgs): boolean 
     {
-        let textField = args.wordWrapArgs.textField;
-        let text = args.line + args.word;
-        
-        let spaceTakenUp: number = this.textMeasurer.MeasureFor(text, textField);
-        this.textMeasurer.RegisterInHistory(text);
-        // ^To inform measurements for later inputs
-
+        let measurerArgs = this.PrepareArgsForMeasurerFrom(args);
+        let spaceTakenUp: number = this.textMeasurer.MeasureFor(measurerArgs);
         let spaceAvailable = this.GetWrapSpace(args);
 
         return spaceTakenUp > spaceAvailable;
     }
 
+    protected PrepareArgsForMeasurerFrom(args: IOverflowFindArgs)
+    {
+        let textField = args.wordWrapArgs.textField;
+        let text = args.line + args.word;
+        
+        let measurerArgs: ITextMeasurerArgs = 
+        {
+            text: text,
+            textField: textField,
+            textHasBoldOrItalic: args.fullTextHasBoldOrItalics
+        };
+
+        return measurerArgs;
+    }
 
     /** Returns how much space there is to have text on a single line, based on the inputs. */
     protected GetWrapSpace(args: IOverflowFindArgs): number
@@ -58,7 +67,6 @@ export abstract class OverflowFinder implements IOverflowFinder
     /** Call this after you finish a full wrapping session. */
     OnWrapJobFinished()
     {
-        this.textMeasurer.ClearHistory();
     }
 
     // @ts-ignore
