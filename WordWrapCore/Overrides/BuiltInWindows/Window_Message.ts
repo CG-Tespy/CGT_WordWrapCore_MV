@@ -58,7 +58,7 @@ function OverrideOpen()
 
     function NewOpen(this: Window_Message): void
     {
-        if (ShouldApplyWrappedText())
+        if (ShouldApplyWrappedText.call(this))
             ApplyWrappedText.call(this);
         oldOpen.call(this);
     }
