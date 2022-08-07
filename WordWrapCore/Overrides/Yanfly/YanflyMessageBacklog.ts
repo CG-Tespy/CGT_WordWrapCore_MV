@@ -9,10 +9,10 @@ export function ApplyYanflyMsgBacklogOverrides()
 
 function YanflyMessageBacklogIsThere()
 {
-    let namespaceIsThere = window.Yanfly != null;
-    let backlogScriptIsThere = namespaceIsThere && window.Yanfly.MsgBacklog != null;
-
-    return backlogScriptIsThere;
+    let messageBacklogName = "YEP_X_MessageBacklog";
+    let messageBacklogParams = PluginManager.parameters(messageBacklogName);
+    let itIsThere = Object.keys(messageBacklogParams).length > 0;
+    return itIsThere;
 }
 
 function OverrideAddIndividualLines()

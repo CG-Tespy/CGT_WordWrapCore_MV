@@ -30,9 +30,9 @@ export let WWCore =
         let params: CoreWrapParams = this.Params;
         
         this.SetActiveWrapper(WrapTarget.MessageBox, params.MessageWrapper);
-        this.SetActiveWrapper(WrapTarget.Descs, params.DescWrapper);
+        this.SetActiveWrapper(WrapTarget.Desc, params.DescWrapper);
         this.SetActiveWrapper(WrapTarget.MessageBacklog, params.MessageBacklogWrapper);
-        this.SetActiveWrapper(WrapTarget.Bubbles, params.BubbleWrapper);
+        this.SetActiveWrapper(WrapTarget.Bubble, params.BubbleWrapper);
     },
 
     SetActiveWrapper(target: WrapTarget, wrapMode: string): boolean
@@ -81,11 +81,7 @@ export let WWCore =
 
     WrapTarget: WrapTarget,
     
-    WrapTargetValues: [
-        WrapTarget.MessageBox, 
-        WrapTarget.Descs, 
-        WrapTarget.MessageBacklog, 
-        WrapTarget.Bubbles],
+    currentMessageIsBubble: false,
 };
 
 SetDefaultWrappers();
@@ -98,9 +94,9 @@ function SetDefaultWrappers()
 
     WWCore.RegisterWrapper(defaultWrapper);
     WWCore.SetActiveWrapper(WrapTarget.MessageBox, defaultWrapper.WrapCode);
-    WWCore.SetActiveWrapper(WrapTarget.Descs, defaultWrapper.WrapCode);
+    WWCore.SetActiveWrapper(WrapTarget.Desc, defaultWrapper.WrapCode);
     WWCore.SetActiveWrapper(WrapTarget.MessageBacklog, defaultWrapper.WrapCode);
-    WWCore.SetActiveWrapper(WrapTarget.Bubbles, defaultWrapper.WrapCode);
+    WWCore.SetActiveWrapper(WrapTarget.Bubble, defaultWrapper.WrapCode);
 }
 
 WatchForWrapModeChanges();

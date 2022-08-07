@@ -424,9 +424,9 @@ declare namespace CGT
         enum WrapTarget
         {
             MessageBox, 
-            Descs, 
+            Desc, 
             MessageBacklog, 
-            Bubbles,
+            Bubble,
         }
 
         let WrapTargetValues: string[];
@@ -471,5 +471,7 @@ declare namespace CGT
         let descWrapper: WordWrapper;
         let messageBacklogWrapper: WordWrapper;
         let bubbleWrapper: WordWrapper;
+
+        let currentMessageIsBubble: boolean;
     }
 }

@@ -8,9 +8,9 @@ export function ApplyYanflyMessageCoreOverrides()
 
 function YanflyMessageCoreIsAvailable(): boolean
 {
-    let yanflyNamespaceIsThere = window.Yanfly != null;
-    let messageCoreIsThere = yanflyNamespaceIsThere && window.Yanfly.Message != null;
-
+    let messageCoreName = "YEP_MessageCore";
+    let messageCoreParams = PluginManager.parameters(messageCoreName);
+    let messageCoreIsThere = Object.keys(messageCoreParams).length > 0;
     return messageCoreIsThere;
 }
 

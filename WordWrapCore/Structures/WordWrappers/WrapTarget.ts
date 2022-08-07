@@ -1,7 +1,7 @@
 export enum WrapTarget
 {
     MessageBox = "messagebox", 
-    Descs = "descs", 
+    Desc = "desc", 
     MessageBacklog = "messageBacklog", 
-    Bubbles = "bubbles",
+    Bubble = "bubble",
 };

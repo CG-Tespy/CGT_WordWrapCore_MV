@@ -26,7 +26,7 @@ function ApplyDescWrapping(this: Window_Help, text: string)
 {
     UpdateWrapArgs.call(this, text);
     let WrapTarget = CGT.WWCore.WrapTarget;
-    let wordWrapper = CGT.WWCore.ActiveWrappers.get(WrapTarget.Descs);
+    let wordWrapper = CGT.WWCore.ActiveWrappers.get(WrapTarget.Desc);
     let wrappedText = wordWrapper.Wrap(this.wordWrapArgs);
     this._text = wrappedText;
 }
