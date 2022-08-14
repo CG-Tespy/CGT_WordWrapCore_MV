@@ -18,7 +18,7 @@ export abstract class TextMeasurer implements ITextMeasurer
         let baseWidth: number = this.GetDefaultWidthOf(text, textField);
         let offset = 0;
         if (args.textHasBoldOrItalic)
-            offset = this.BoldItalicPadding;
+            offset = args.spacing.BoldItalicPadding;
             // ^ We want to treat the text as bigger in this case to help avoid
             // overflow caused by bolding or italicization
 

@@ -62,7 +62,7 @@ export let WWCore =
     UpdateWrapSpacing()
     {
         let spacings = this.wrapperSpacing as Map<WrapTarget, IWrapperSpacing>;
-        let params = CGT.WWCore.Params;
+        let params = this.Params as CGT.WWCore.CoreWrapParams;
 
         spacings.set(WrapTarget.MessageBox, params.MessageSpacing);
         spacings.set(WrapTarget.Desc, params.DescSpacing);

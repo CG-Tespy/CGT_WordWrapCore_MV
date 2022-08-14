@@ -28,7 +28,8 @@ export abstract class OverflowFinder implements IOverflowFinder
         {
             text: text,
             textField: textField,
-            textHasBoldOrItalic: args.fullTextHasBoldOrItalics
+            textHasBoldOrItalic: args.fullTextHasBoldOrItalics,
+            spacing: args.wordWrapArgs.spacing,
         };
 
         return measurerArgs;

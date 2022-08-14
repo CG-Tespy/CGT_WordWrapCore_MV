@@ -25,6 +25,7 @@ export class UnderflowCascader
             lines: args.lines.slice(),
             textField: args.textField,
             focusedLineIndex: args.focusedLineIndex,
+            spacing: args.spacing
         };
 
         return theCopy;
@@ -73,9 +74,7 @@ export class UnderflowCascader
     protected MakeDecisionAboutMovingWord(args: IUnderflowCascadeArgs)
     {
         let toCascade: ILinesToCascade = this.GetLinesToCascade(args);
-
-        let textField = args.textField;
-        let widthsMeasured: IWidthAnalysisResults = this.MeasuredWidthsOf(toCascade, textField);
+        let widthsMeasured: IWidthAnalysisResults = this.MeasuredWidthsOf(toCascade, args);
 
         let decision: IMoveWordDecisionContext = 
         {
@@ -100,8 +99,9 @@ export class UnderflowCascader
         return theLines;
     }
 
-    protected MeasuredWidthsOf(relevantLines: ILinesToCascade, textField: Bitmap): IWidthAnalysisResults
+    protected MeasuredWidthsOf(relevantLines: ILinesToCascade, cascadeArgs: IUnderflowCascadeArgs): IWidthAnalysisResults
     {
+        let textField = cascadeArgs.textField;
         let firstLine = relevantLines.firstLine;
         let currentLine = relevantLines.focusedLine;
 
@@ -109,7 +109,8 @@ export class UnderflowCascader
         {
             text: firstLine,
             textField: textField,
-            textHasBoldOrItalic: false 
+            textHasBoldOrItalic: false,
+            spacing: cascadeArgs.spacing,
             // ^Won't matter at this point, given how the base line-wrapping already handled
             // any concerns with bolding and italics for the input
         };
@@ -118,7 +119,8 @@ export class UnderflowCascader
         {
             text: currentLine,
             textField: textField,
-            textHasBoldOrItalic: false
+            textHasBoldOrItalic: false,
+            spacing: cascadeArgs.spacing,
         };
 
         let results: IWidthAnalysisResults = 

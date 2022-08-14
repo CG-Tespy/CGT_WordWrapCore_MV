@@ -120,7 +120,6 @@
 * @default 5
 * @desc How many units wider than the first line that later ones in its input are allowed to be. Default: 5
 * 
-* 
 */
 
 /*~struct~WrapperSpacing:
