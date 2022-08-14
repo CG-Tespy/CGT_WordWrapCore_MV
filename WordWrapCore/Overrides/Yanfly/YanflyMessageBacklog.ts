@@ -32,12 +32,16 @@ function OverrideAddIndividualLines()
 function WrapText(this: Window_MessageBacklog, text: string): string
 {
     let WrapTarget = CGT.WWCore.WrapTarget;
-    var activeWrapper = CGT.WWCore.ActiveWrappers.get(WrapTarget.MessageBacklog);
+    let targetBacklog = WrapTarget.MessageBacklog;
+
+    var activeWrapper = CGT.WWCore.ActiveWrappers.get(targetBacklog);
+    let spacing = CGT.WWCore.WrapperSpacing.get(targetBacklog);
+
     var wrapArgs = 
     {
         textField: this.contents,
         rawTextToWrap: text,
-        widthOffset: 0,
+        spacing: spacing,
     };
     
     var wrappedText = activeWrapper.Wrap(wrapArgs);

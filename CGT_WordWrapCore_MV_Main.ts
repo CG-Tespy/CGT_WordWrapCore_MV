@@ -26,12 +26,22 @@
 * @default null
 * @desc For regular message boxes. Default: null
 *
+* @param MessageSpacing
+* @text Spacing
+* @parent MessageWrapper
+* @type struct<WrapperSpacing>
+*
 * @param DescWrapper
 * @text Descs
 * @parent DesignatedWrappers
 * @type string
 * @default null
 * @desc For the windows that show descs for items and such. Default: null
+*
+* @param DescSpacing
+* @text Spacing
+* @parent DescWrapper
+* @type struct<WrapperSpacing>
 *
 * @param MessageBacklogWrapper
 * @text MessageBacklog
@@ -40,12 +50,22 @@
 * @default null
 * @desc For message backlogs. Default: null
 *
+* @param BacklogSpacing
+* @text Spacing
+* @parent MessageBacklogWrapper
+* @type struct<WrapperSpacing>
+*
 * @param BubbleWrapper
 * @text MessageBubbles
 * @parent DesignatedWrappers
 * @type string
 * @default null
 * @desc For message bubbles like the ones from Galv's MessageStyles plugin. Default: null
+*
+* @param BubbleSpacing
+* @text Spacing
+* @parent BubbleWrapper
+* @type struct<WrapperSpacing>
 *
 * @param NametagFormats
 * @type struct<RegexEntry>[]
@@ -100,36 +120,34 @@
 * @default 5
 * @desc How many units wider than the first line that later ones in its input are allowed to be. Default: 5
 * 
-* @param Spacing
-* 
-* @param MugshotWidth
-* @parent Spacing
-* @type number
-* @default 144
-* @desc How many units wide that mugshots are treated as being. Default: 144
-* 
-* @param MugshotPadding
-* @parent Spacing
-* @type number
-* @default 25
-* @min -999999
-* @desc The space between the mugshot and the text (measured in units). Default: 25
-* 
-* @param SidePadding
-* @parent Spacing
-* @type number
-* @default 5
-* @min -999999
-* @desc For the message box sides (measured in units). Default: 5
-* 
-* @param BoldItalicPadding
-* @parent Spacing
-* @type number
-* @default 15
-* @min -999999
-* @desc How much padding is applied when there's any bolded or italicized text in the input. Default: 15
 * 
 */
+
+/*~struct~WrapperSpacing:
+ * @param MugshotWidth
+ * @type number
+ * @min -999999
+ * @default 144
+ * @desc How wide mugshots are treated as being
+ * 
+ * @param MugshotPadding
+ * @type number
+ * @min -999999
+ * @default 25
+ * @desc The space between the mugshot (where applicable) and the text
+ * 
+ * @param SidePadding
+ * @type number
+ * @min -999999
+ * @default 5
+ * @desc For the message box sides
+ * 
+ * @param BoldItalicPadding
+ * @type number
+ * @min -999999
+ * @default 15
+ * @desc How much padding is applied when there's any bolded or italicized text in the input.
+ */
 
 /*~struct~RegexEntry:
  * @param Name

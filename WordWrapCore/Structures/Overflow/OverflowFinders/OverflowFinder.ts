@@ -47,7 +47,8 @@ export abstract class OverflowFinder implements IOverflowFinder
 
     protected SpaceMinusMugshot(args: IOverflowFindArgs): number
     {
-        let offset = this.Params.MugshotWidth + this.Params.MugshotPadding;
+        let spacing = args.wordWrapArgs.spacing;
+        let offset = spacing.MugshotWidth + spacing.MugshotPadding;
         return this.RegularWrapSpace(args) - offset;
     }
 

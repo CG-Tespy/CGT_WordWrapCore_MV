@@ -11,3 +11,7 @@
 - Alter plugin command for setting the active wrappers
 -- Add documentation for it
 - Implement the functionality for BoldItalicPadding
+- Add individual spacing params for each wrapper
+-- Maybe have those params as part of the individual wrappers instead of the WWC?
+- Make it so that Galv's MessageStyles doesn't stop the built-in textbox-splitting that happens
+when the current textbox can't hold all the text it was given

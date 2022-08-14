@@ -1,13 +1,13 @@
 import { singleSpace } from '../../Shared/_Strings';
 import { CoreWrapParams } from '../../Structures/CoreWrapParams';
 import { IWordWrapArgs } from '../../Structures/WordWrappers/WordWrapArgs/IWordWrapArgs';
+import { WrapTarget } from '../../Structures/WordWrappers/WrapTarget';
 
 export function ApplyWindowMessageOverrides(coreParams: CoreWrapParams)
 {
     OverrideConvertEscapeCharacters();
     OverrideOpen();
 }
-
 
 function OverrideConvertEscapeCharacters()
 {
@@ -74,17 +74,18 @@ function OverrideOpen()
 
     function ApplyWrappedText(this: Window_Message): void
     {
-        var wrapperToUse: WordWrapper = DecideWrapperToUse();
-        var wrapArgs: IWordWrapArgs = GetInfoForWrapper.call(this);
+        let wrapTarget = DecideOnWrapTarget();
+        var wrapperToUse: WordWrapper = DecideWrapperToUse(wrapTarget);
+
+        var wrapArgs: IWordWrapArgs = GetInfoForWrapper.call(this, wrapTarget);
         var wrappedText = wrapperToUse.Wrap(wrapArgs);
 
         this._textState.text = wrappedText;
     }
 
     type WordWrapper = CGT.WWCore.WordWrapper;
-    function DecideWrapperToUse(): WordWrapper
+    function DecideWrapperToUse(wrapTarget: CGT.WWCore.WrapTarget): WordWrapper
     {
-        let wrapTarget = DecideOnWrapTarget();
         let activeWrappers = CGT.WWCore.ActiveWrappers;
         var theOneToUse: WordWrapper = activeWrappers.get(wrapTarget);
         return theOneToUse;
@@ -103,19 +104,28 @@ function OverrideOpen()
         return decidedOn;
     }
 
-    function GetInfoForWrapper(this: Window_Message): IWordWrapArgs
+    function GetInfoForWrapper(this: Window_Message, wrapTarget: CGT.WWCore.WrapTarget): IWordWrapArgs
     {
+        let wrapArgs: IWordWrapArgs = null;
+        let spacing: IWrapperSpacing = null;
+        let wrapperSpacing = CGT.WWCore.WrapperSpacing;
+
+        spacing = wrapperSpacing.get(wrapTarget);
+
         let rawText = this._textState.text + "";
         let textField = this.contents;
-        let wrapArgs: IWordWrapArgs = 
+
+        wrapArgs = 
         {
             textField: textField,
             rawTextToWrap: rawText,
-            widthOffset: 0,
+            spacing: spacing
         };
 
         return wrapArgs;
     }
+
+    type IWrapperSpacing = CGT.WWCore.IWrapperSpacing;
 
     Window_Message.prototype.open = NewOpen;
 }

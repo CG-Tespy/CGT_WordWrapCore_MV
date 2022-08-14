@@ -2,6 +2,7 @@ import { emptyString, caseInsensitive, unicode, global, globalMultiline } from '
 import { doubleQuotes } from '../Shared/_Regexes';
 import { IRegexEntry } from './IRegexEntry';
 import { IBaseCoreWrapParams } from './IBaseCoreWrapParams';
+import { IWrapperSpacing } from './WordWrappers/WordWrapArgs/IWrapperSpacing';
 let Event = CGT.Core.Utils.Event;
 type Event = CGT.Core.Utils.Event;
 let ArrayEx = CGT.Core.Extensions.ArrayEx;
@@ -16,17 +17,33 @@ export class CoreWrapParams
     private messageWrapper: string = "null";
     set MessageWrapper(value) { this.messageWrapper = value; }
 
+    get MessageSpacing(): IWrapperSpacing { return this.messageSpacing; }
+    private messageSpacing: IWrapperSpacing;
+    set MessageSpacing(value) { this.messageSpacing = value; }
+
     get DescWrapper(): string { return this.descWrapper; }
     private descWrapper: string = "null";
     set DescWrapper(value) { this.descWrapper = value; }
+
+    get DescSpacing(): IWrapperSpacing { return this.descSpacing; }
+    private descSpacing: IWrapperSpacing;
+    set DescSpacing(value) { this.descSpacing = value; }
 
     get MessageBacklogWrapper(): string { return this.messageBacklogWrapper; }
     private messageBacklogWrapper: string = "null";
     set MessageBacklogWrapper(value) { this.messageBacklogWrapper = value; }
 
+    get BacklogSpacing(): IWrapperSpacing { return this.backlogSpacing; }
+    private backlogSpacing: IWrapperSpacing;
+    set BacklogSpacing(value) { this.backlogSpacing = value; }
+
     get BubbleWrapper(): string { return this.bubbleWrapper; }
     private bubbleWrapper: string = "null";
     set BubbleWrapper(value) { this.bubbleWrapper = value; }
+
+    get BubbleSpacing(): IWrapperSpacing { return this.bubbleSpacing; }
+    private bubbleSpacing: IWrapperSpacing;
+    set BubbleSpacing(value) { this.bubbleSpacing = value; }
 
     get WrapModeChanged(): Event { return this.wrapModeChanged; }
     private wrapModeChanged: Event = new Event(2);
@@ -111,27 +128,6 @@ export class CoreWrapParams
     private wrapMessageLog: boolean = true;
     set WrapMessageLog(value) { this.wrapMessageLog = value; }
 
-    // Spacing
-    
-    /** How wide mugshots are treated as being, in a wrapper-decided unit */
-    get MugshotWidth(): number { return this.mugshotWidth; };
-    private mugshotWidth = 144; 
-    set MugshotWidth(value) { this.mugshotWidth = value; }
-
-    /** The space between the mugshot and the text, in a wrapper-decided unit. */
-    get MugshotPadding(): number { return this.mugshotPadding; }
-    private mugshotPadding = 20;
-    set MugshotPadding(value) { this.mugshotPadding = value; }
-
-    /** For the message box sides, in a wrapper-decided unit. */
-    get SidePadding(): number { return this.sidePadding; }
-    private sidePadding: number = 5;
-    set SidePadding(value) { this.sidePadding = value; }
-
-    get BoldItalicPadding(): number { return this.boldItalicPadding; }
-    private boldItalicPadding: number = 1;
-    set BoldItalicPadding(value) { this.boldItalicPadding = value; }
-
 }
 
 export class WrapParamsFactory
@@ -145,6 +141,7 @@ export class WrapParamsFactory
         this.SetBooleansFromParams(baseParams, wrapParams);
         this.SetRegexesFromParams(baseParams, wrapParams);
         this.SetArraysFromParams(baseParams, wrapParams);
+        this.SetSpacingFromParams(baseParams, wrapParams);
         
         return wrapParams;
     }
@@ -164,11 +161,7 @@ export class WrapParamsFactory
     protected static SetNumbersFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
         wrapParams.LineMinCharCount = baseParams.LineMinCharCount;
-        wrapParams.SidePadding = baseParams.SidePadding;
-        wrapParams.MugshotPadding = baseParams.MugshotPadding;
-        wrapParams.MugshotWidth = baseParams.MugshotWidth;
         wrapParams.CULenience = baseParams.CULenience;
-        wrapParams.BoldItalicPadding = baseParams.BoldItalicPadding;
     }
 
     protected static SetRegexesFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
@@ -225,6 +218,14 @@ export class WrapParamsFactory
     protected static SetArraysFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
     {
         wrapParams.LineBreakMarkers = baseParams.LineBreakMarkers;
+    }
+
+    protected static SetSpacingFromParams(baseParams: IBaseCoreWrapParams, wrapParams: CoreWrapParams)
+    {
+        wrapParams.MessageSpacing = baseParams.MessageSpacing;
+        wrapParams.DescSpacing = baseParams.DescSpacing;
+        wrapParams.BacklogSpacing = baseParams.BacklogSpacing;
+        wrapParams.BubbleSpacing = baseParams.BubbleSpacing;
     }
 }
 

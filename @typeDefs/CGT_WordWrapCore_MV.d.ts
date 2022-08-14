@@ -147,8 +147,7 @@ declare namespace CGT
         {
             textField: Bitmap;
             rawTextToWrap: string;
-            /** In whatever units the active wrapper is using. */
-            widthOffset: number;
+            spacing: IWrapperSpacing;
         }
 
         interface ILineWrapper
@@ -176,12 +175,16 @@ declare namespace CGT
         {
             // ~~~DesignatedWrappers~~~
             get MessageWrapper(): string;
+            get MessageSpacing(): IWrapperSpacing;
 
             get DescWrapper(): string;
+            get DescSpacing(): IWrapperSpacing;
 
             get MessageBacklogWrapper(): string;
+            get BacklogSpacing(): IWrapperSpacing;
 
             get BubbleWrapper(): string;
+            get BubbleSpacing(): IWrapperSpacing;
 
             /**
              * 2-arg event that triggers when the wrap mode changes.
@@ -261,6 +264,14 @@ declare namespace CGT
             get BoldItalicPadding(): number;
             set BoldItalicPadding(value);
             
+        }
+
+        interface IWrapperSpacing
+        {
+            MugshotWidth: number;
+            MugshotPadding: number;
+            SidePadding: number;
+            BoldItalicPadding: number;
         }
 
         interface ICoreWrapParams
@@ -432,6 +443,7 @@ declare namespace CGT
         let WrapTargetValues: string[];
 
         let ActiveWrappers: Map<WrapTarget, WordWrapper>;
+        let WrapperSpacing: Map<WrapTarget, IWrapperSpacing>;
 
         function RegisterWrapper(wrapper: WordWrapper);
 
@@ -463,6 +475,14 @@ declare namespace CGT
              * */
             let activeNametagText: string;
 
+        }
+
+        interface IWrapperSpacing
+        {
+            MugshotWidth: number;
+            MugshotPadding: number;
+            SidePadding: number;
+            BoldItalicPadding: number;
         }
 
         let version: number;
