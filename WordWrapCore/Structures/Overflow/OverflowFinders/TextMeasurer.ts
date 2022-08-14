@@ -43,9 +43,5 @@ export abstract class TextMeasurer implements ITextMeasurer
     // Override this to use the units your measurer uses
     protected abstract GetDefaultWidthOf(text: string, textField: Bitmap): number;
     
-    protected get BoldItalicPadding(): number 
-    {
-        return CGT.WWCore.Params.BoldItalicPadding;
-    }
 
 }

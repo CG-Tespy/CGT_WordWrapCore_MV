@@ -1,5 +1,9 @@
+import { WrapperSpacingByString } from "../Shared/_Functions";
+
 export function SetMugshotPadding(args: string[])
 {
     let newPadding = Number(args[0]);
-    CGT.WWCore.Params.MugshotPadding = newPadding;
+    let wrapTargetRaw = args[1];
+    let spacingToChange = WrapperSpacingByString(wrapTargetRaw);
+    spacingToChange.MugshotPadding = newPadding;
 }

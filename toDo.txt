@@ -10,8 +10,11 @@
 - Have EmptyText work off a struct for convenience, like NametagFormats does now (done!)
 - Alter plugin command for setting the active wrappers
 -- Add documentation for it
-- Implement the functionality for BoldItalicPadding
-- Add individual spacing params for each wrapper
+- Implement the functionality for BoldItalicPadding (done!)
+- Add individual spacing params for each wrapper (done!)
 -- Maybe have those params as part of the individual wrappers instead of the WWC?
 - Make it so that Galv's MessageStyles doesn't stop the built-in textbox-splitting that happens
 when the current textbox can't hold all the text it was given
+- Refactor the PluginCommands to work with the new spacing params. 
+-- Make it so that as part of the command call, you must include the name of the wrapper type.
+--

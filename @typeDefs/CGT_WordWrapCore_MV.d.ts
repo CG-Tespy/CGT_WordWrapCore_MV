@@ -244,26 +244,6 @@ declare namespace CGT
              */
             get RememberResults(): boolean;
             set RememberResults(value);
-
-            // ~~~Spacing~~~
-            /** How wide mugshots are treated as being, in a unit decided by the active wrapper. */
-            get MugshotWidth(): number;
-            set MugshotWidth(value);
-
-            /** 
-             * How much space there is between the mugshot and the text, in a unit 
-             * decided by the active wrapper. 
-             * */
-            get MugshotPadding(): number;
-            set MugshotPadding(value);
-
-            /** For the message box sides, in a wrapper-decided unit. */
-            get SidePadding(): number;
-            set SidePadding(value);
-
-            get BoldItalicPadding(): number;
-            set BoldItalicPadding(value);
-            
         }
 
         interface IWrapperSpacing
@@ -274,13 +254,20 @@ declare namespace CGT
             BoldItalicPadding: number;
         }
 
-        interface ICoreWrapParams
+        interface IBaseCoreWrapParams
         {
             // ~~~DesignatedWrappers~~~
             MessageWrapper: string;
+            MessageSpacing: IWrapperSpacing;
+
             DescWrapper: string;
+            DescSpacing: IWrapperSpacing;
+
             MessageBacklogWrapper: string;
+            BacklogSpacing: IWrapperSpacing;
+
             BubbleWrapper: string;
+            BubbleSpacing: IWrapperSpacing;
 
             NametagFormats: IRegexEntry[];
             EmptyText: IRegexEntry[];
@@ -294,11 +281,6 @@ declare namespace CGT
             CULenience: number;
             RememberResults: boolean;
 
-            // ~~~Spacing~~~
-            MugshotWidth: number;
-            MugshotPadding: number;
-            SidePadding: number;
-            BoldItalicPadding: number;
         }
 
         let Params: CoreWrapParams;
