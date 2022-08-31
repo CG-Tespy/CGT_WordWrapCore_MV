@@ -92,6 +92,8 @@ export let WWCore =
     WrapTarget: WrapTarget,
     
     currentMessageIsBubble: false,
+
+    textForGalvMessageStyles: "",
 };
 
 SetDefaultWrappers();

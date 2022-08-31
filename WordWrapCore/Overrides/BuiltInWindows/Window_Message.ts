@@ -1,7 +1,6 @@
 import { singleSpace } from '../../Shared/_Strings';
 import { CoreWrapParams } from '../../Structures/CoreWrapParams';
 import { IWordWrapArgs } from '../../Structures/WordWrappers/WordWrapArgs/IWordWrapArgs';
-import { WrapTarget } from '../../Structures/WordWrappers/WrapTarget';
 
 export function ApplyWindowMessageOverrides(coreParams: CoreWrapParams)
 {
@@ -39,19 +38,6 @@ function OverrideConvertEscapeCharacters()
 
 }
 
-function GalvMessageStyleApplies(): boolean
-{
-    let pluginName = "GALV_MessageStyles";
-    let params = PluginManager.parameters(pluginName);
-    let itIsThere = Object.keys(params).length > 0;
-
-    if (!itIsThere)
-        return false;
-
-    let galvTargetIsThere = Galv.Mstyle.target != false;
-    return galvTargetIsThere;
-}
-
 function OverrideOpen()
 {
     let oldOpen = Window_Message.prototype.open;
@@ -59,7 +45,10 @@ function OverrideOpen()
     function NewOpen(this: Window_Message): void
     {
         if (ShouldApplyWrappedText.call(this))
+        {
             ApplyWrappedText.call(this);
+            UpdateGalvGlobals.call(this);
+        }
         oldOpen.call(this);
     }
 
@@ -127,5 +116,15 @@ function OverrideOpen()
 
     type IWrapperSpacing = CGT.WWCore.IWrapperSpacing;
 
+    function UpdateGalvGlobals(this: Window_Message)
+    {
+        let showingBubble = this.pTarget != null;
+        CGT.WWCore.textForGalvMessageStyles = "";
+
+        if (showingBubble)
+            return;
+
+        CGT.WWCore.textForGalvMessageStyles = this._textState.text;
+    }
     Window_Message.prototype.open = NewOpen;
 }

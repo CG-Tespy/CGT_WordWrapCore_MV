@@ -475,5 +475,6 @@ declare namespace CGT
         let bubbleWrapper: WordWrapper;
 
         let currentMessageIsBubble: boolean;
+        let textForGalvMessageStyles: string;
     }
 }
