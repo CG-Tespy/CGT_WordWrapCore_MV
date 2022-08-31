@@ -19,5 +19,8 @@ when the current textbox can't hold all the text it was given
 -- For regular textboxes
 - Refactor the PluginCommands to work with the new spacing params. 
 -- Make it so that as part of the command call, you must include the name of the wrapper type.
-- Make CascadingUnderflow work with LCB wrapping
-- Fix issue with yanfly-nametag-detection conflicting with message log wrapper detecting nametags
+- Make CascadingUnderflow work with LCB wrapping (done!)
+- Fix issue with yanfly-nametag-detection conflicting with message log wrapper detecting nametags (done!)
+- Fix issue with spaces removed in text like "perspiciatis \C[5]unde omnis \C[3]iste" (done!)
+- Fix the issue with greek text wrapped oddly in regular textboxes, yet okay in the
+message backlog despite using the exact same wrapper

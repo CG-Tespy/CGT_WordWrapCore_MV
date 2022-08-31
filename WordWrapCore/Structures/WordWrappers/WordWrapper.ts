@@ -76,7 +76,7 @@ export class WordWrapper implements IWordWrapper
         this.ruleApplier.RegisterPreRule(new TurnNewlinesIntoSeparators());
         this.ruleApplier.RegisterPreRule(new HaveLBTagsBeNewlines());
         this.ruleApplier.RegisterPreRule(new WithoutExtraSpaces());
-        this.ruleApplier.RegisterPreRule(new NoSpacesBeforeColorTags());
+        //this.ruleApplier.RegisterPreRule(new NoSpacesBeforeColorTags());
         this.ruleApplier.RegisterPreRule(new NoColorTagsAsFirstWords());
 
         this.ruleApplier.RegisterPostRule(new CharPerLineMin());
