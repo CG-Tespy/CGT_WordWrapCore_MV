@@ -120,7 +120,7 @@ export class LineWrapper implements ILineWrapper
             spacing: args.spacing,
         };
 
-        lines = this.underflowCascader.WithCascadingOverflow(cascaderArgs);
+        lines = this.underflowCascader.WithCascadingUnderflow(cascaderArgs);
         return lines;
     }
 

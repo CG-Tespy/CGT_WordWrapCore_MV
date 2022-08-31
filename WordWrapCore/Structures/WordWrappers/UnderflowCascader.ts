@@ -8,7 +8,7 @@ export class UnderflowCascader
 {
     protected textMeasurer: TextMeasurer;
 
-    WithCascadingOverflow(args: IUnderflowCascadeArgs): string[]
+    WithCascadingUnderflow(args: IUnderflowCascadeArgs): string[]
     {
         args = this.CopyOf(args); // To avoid mutating the orig
         this.AddEmptyLineForSafetyTo(args.lines);
