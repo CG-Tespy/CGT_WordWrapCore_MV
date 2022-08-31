@@ -8,7 +8,8 @@ export function ApplyWindowHelpOverrides()
     {
         textField: null,
         rawTextToWrap: "",
-        spacing: null
+        spacing: null,
+        ignoreYanflyNamebox: false,
     };
     
     Window_Help.prototype.wordWrapArgs = Object.assign({}, defaultWordWrapArgs);

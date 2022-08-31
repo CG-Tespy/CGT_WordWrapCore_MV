@@ -18559,7 +18559,9 @@ declare class Window_HorzCommand extends Window_Command {
  */
 declare class Window_Help extends Window_Base {
 
-    wordWrapArgs: { textField: Bitmap, rawTextToWrap: string, spacing: CGT.WWCore.IWrapperSpacing };
+    wordWrapArgs: 
+    { textField: Bitmap, rawTextToWrap: string, 
+        spacing: CGT.WWCore.IWrapperSpacing, ignoreYanflyNamebox: boolean };
 
     refresh(): void;
 

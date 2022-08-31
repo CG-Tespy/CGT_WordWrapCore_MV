@@ -1,12 +1,13 @@
 import { emptyString } from '../../Shared/_Strings';
 import { newlines } from '../../Shared/_Regexes';
 import { IRegexEntry } from '../IRegexEntry';
+import { IWordWrapArgs } from './WordWrapArgs/IWordWrapArgs';
 
 export class NametagFetcher
 {
-    FetchFrom(text: string)
+    FetchFrom(text: string, wrapArgs: IWordWrapArgs)
     {
-        if (!this.ShouldScanForNametagIn(text))
+        if (!this.ShouldScanForNametagIn(text, wrapArgs))
         { 
             return emptyString; 
         }
@@ -29,16 +30,18 @@ export class NametagFetcher
         // nametag regex includes a newline for the sake of better detection
     }
 
-    protected ShouldScanForNametagIn(text: string): boolean
+    protected ShouldScanForNametagIn(text: string, wrapArgs: IWordWrapArgs): boolean
     {
-        return !this.YanflyNametagIsThere && !this.HasDisableNametagScanTag(text);
+        return !this.YanflyNametagIsThere(wrapArgs) && !this.HasDisableNametagScanTag(text);
     }
 
-    protected get YanflyNametagIsThere(): boolean 
+    protected YanflyNametagIsThere(wrapArgs: IWordWrapArgs): boolean 
     { 
-        // Since the nametag gets taken out of the text by the time FetchFrom gets called
+        // Since the nametag gets taken out of the text by the time FetchFrom gets called,
+        // at least in normal message boxes
+        let shouldCareForIt = !wrapArgs.ignoreYanflyNamebox;
         let theNametag = CGT.WWCore.Yanfly.activeNametagText;
-        return theNametag.length > 0; 
+        return shouldCareForIt && theNametag.length > 0; 
     }
 
     protected HasDisableNametagScanTag(text: string)

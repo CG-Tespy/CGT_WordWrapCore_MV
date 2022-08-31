@@ -15,6 +15,9 @@
 -- Maybe have those params as part of the individual wrappers instead of the WWC?
 - Make it so that Galv's MessageStyles doesn't stop the built-in textbox-splitting that happens
 when the current textbox can't hold all the text it was given
+-- For the message bubbles (done!)
+-- For regular textboxes
 - Refactor the PluginCommands to work with the new spacing params. 
 -- Make it so that as part of the command call, you must include the name of the wrapper type.
---
+- Make CascadingUnderflow work with LCB wrapping
+- Fix issue with yanfly-nametag-detection conflicting with message log wrapper detecting nametags

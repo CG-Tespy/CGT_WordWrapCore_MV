@@ -108,7 +108,8 @@ function OverrideOpen()
         {
             textField: textField,
             rawTextToWrap: rawText,
-            spacing: spacing
+            spacing: spacing,
+            ignoreYanflyNamebox: false,
         };
 
         return wrapArgs;
@@ -118,13 +119,13 @@ function OverrideOpen()
 
     function UpdateGalvGlobals(this: Window_Message)
     {
+        let textForMessageStyles = "";
         let showingBubble = this.pTarget != null;
-        CGT.WWCore.textForGalvMessageStyles = "";
-
+        
         if (showingBubble)
-            return;
+            textForMessageStyles = this._textState.text;
 
-        CGT.WWCore.textForGalvMessageStyles = this._textState.text;
+        CGT.WWCore.textForGalvMessageStyles = textForMessageStyles;
     }
     Window_Message.prototype.open = NewOpen;
 }
