@@ -1,5 +1,5 @@
 
-import { SetBoldItalicWidthMod } from './SetBoldItalicWidthMod';
+import { SetBoldItalicPadding } from './SetBoldItalicPadding';
 import { SetLineMinCharCount } from './SetLineMinCharCount';
 import { SetMugshotPadding } from './SetMugshotPadding';
 import { SetParenthesisAlignment } from './SetParenthesisAlignment';
@@ -11,7 +11,7 @@ import { SetWordSeparator } from './SetWordSeparator';
 
 let commands = 
 [
-    SetBoldItalicWidthMod,
+    SetBoldItalicPadding,
     SetLineMinCharCount,
 
     SetMugshotPadding,

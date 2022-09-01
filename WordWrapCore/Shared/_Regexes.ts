@@ -1,4 +1,4 @@
-export let doubleSpaces: RegExp = / [^\S\r\n][^\S\r\n]+/gm;
+export let doubleSpaces: RegExp = /[^\S\r\n][^\S\r\n]+/gm;
 // ^Had to do this weird double-negative so it wouldn't treat newlines
 // as whitespace
 export let newlines: RegExp = /\n+/gm;

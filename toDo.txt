@@ -18,4 +18,4 @@
 - Make CascadingUnderflow work with LCB wrapping (done!)
 - Fix issue with yanfly-nametag-detection conflicting with message log wrapper detecting nametags (done!)
 - Fix issue with spaces removed in text like "perspiciatis \C[5]unde omnis \C[3]iste" (done!)
-
+- Fix the issue with how sometimes, spaces get inappropriately added in some places (done!)
