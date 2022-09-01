@@ -43,7 +43,7 @@ function WrapText(this: Window_MessageBacklog, text: string): string
         rawTextToWrap: text,
         spacing: spacing,
 
-        ignoreYanflyNamebox: true,
+        considerYanflyNamebox: false,
         // ^ When wrapping message backlog text that includes a yanfly nametag, it is 
         // included in the input as opposed to moved to the namebox. Hence why
         // here, we need the wrapper to ignore what's in the namebox

@@ -39,7 +39,7 @@ export class NametagFetcher
     { 
         // Since the nametag gets taken out of the text by the time FetchFrom gets called,
         // at least in normal message boxes
-        let shouldCareForIt = !wrapArgs.ignoreYanflyNamebox;
+        let shouldCareForIt = wrapArgs.considerYanflyNamebox;
         let theNametag = CGT.WWCore.Yanfly.activeNametagText;
         return shouldCareForIt && theNametag.length > 0; 
     }

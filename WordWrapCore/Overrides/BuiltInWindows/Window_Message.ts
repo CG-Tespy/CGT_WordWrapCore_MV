@@ -109,7 +109,7 @@ function OverrideOpen()
             textField: textField,
             rawTextToWrap: rawText,
             spacing: spacing,
-            ignoreYanflyNamebox: false,
+            considerYanflyNamebox: true,
         };
 
         return wrapArgs;

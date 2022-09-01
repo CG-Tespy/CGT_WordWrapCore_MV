@@ -6,5 +6,5 @@ export interface IWordWrapArgs
     textField: Bitmap;
     rawTextToWrap: string;
     spacing: IWrapperSpacing;
-    ignoreYanflyNamebox: boolean;
+    considerYanflyNamebox: boolean;
 }

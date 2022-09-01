@@ -18561,7 +18561,7 @@ declare class Window_Help extends Window_Base {
 
     wordWrapArgs: 
     { textField: Bitmap, rawTextToWrap: string, 
-        spacing: CGT.WWCore.IWrapperSpacing, ignoreYanflyNamebox: boolean };
+        spacing: CGT.WWCore.IWrapperSpacing, considerYanflyNamebox: boolean };
 
     refresh(): void;
 

@@ -148,7 +148,7 @@ declare namespace CGT
             textField: Bitmap;
             rawTextToWrap: string;
             spacing: IWrapperSpacing;
-            ignoreYanflyNamebox: boolean;
+            considerYanflyNamebox: boolean;
         }
 
         interface ILineWrapper
