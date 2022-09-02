@@ -213,7 +213,7 @@
  * @text Permitido
  * @type boolean
  * @default true
- * @desc Sí o no el algoritmo considerará este formato. Por defecto: true
+ * @desc Si o no el algoritmo considerará este formato. Por defecto: true
  * 
  * @param Notes
  * @text Notas
@@ -316,7 +316,7 @@
 * @text RecuerdaResultos
 * @type boolean
 * @default true
-* @desc Sí o no esto llevará un registro y siempre da las salidas para las mismas entradas.
+* @desc Si o no esto llevará un registro y siempre da las salidas para las mismas entradas.
 * 
 * @param ForAesthetics
 * @text PorEstéticos
@@ -330,11 +330,11 @@
 * @desc Minimo de carácteres que una línea puede tener. Por defecto: 10
 * 
 * @param ParenthesisAlignment
-* @text AlineacionDeParéntesis
+* @text AlineaciónDeParéntesis
 * @parent ForAesthetics
 * @type boolean
 * @default true
-* @desc Sí o no esto alinea el texto basado en paréntesis. Por defecto: true
+* @desc Si o no esto alinea el texto basado en paréntesis. Por defecto: true
 * 
 * @param WordSeparator
 * @text SeparadorDePalabras
@@ -348,7 +348,7 @@
 * @parent ForAesthetics
 * @type boolean
 * @default false
-* @desc Sí o no una línea en cualquier entrada puede ser más ancho que la primera. Por defecto: OFF
+* @desc Si o no una línea en cualquier entrada puede ser más ancho que la primera. Por defecto: OFF
 * 
 * @param CULenience
 * @text IndulgenciaDeNC
