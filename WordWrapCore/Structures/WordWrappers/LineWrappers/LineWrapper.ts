@@ -116,10 +116,11 @@ export class LineWrapper implements ILineWrapper
         {
             textField: args.textField,
             lines: lines,
-            focusedLineIndex: 1 // We treat the first line as the base, so we have to start from the second
+            focusedLineIndex: 1, // We treat the first line as the base, so we have to start from the second
+            spacing: args.spacing,
         };
 
-        lines = this.underflowCascader.WithCascadingOverflow(cascaderArgs);
+        lines = this.underflowCascader.WithCascadingUnderflow(cascaderArgs);
         return lines;
     }
 

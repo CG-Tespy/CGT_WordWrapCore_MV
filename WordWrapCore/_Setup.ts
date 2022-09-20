@@ -12,6 +12,7 @@ import { NametagFetcher } from './Structures/WordWrappers/NametagFetcher';
 import { LineWrapper } from './Structures/WordWrappers/LineWrappers/LineWrapper';
 import { UnderflowCascader } from './Structures/WordWrappers/UnderflowCascader';
 import { WrapTarget } from './Structures/WordWrappers/WrapTarget';
+import { IWrapperSpacing } from './Structures/WordWrappers/WordWrapArgs/IWrapperSpacing';
 
 export let WWCore = 
 {
@@ -58,6 +59,20 @@ export let WWCore =
     get ActiveWrappers(): Map<WrapTarget, WordWrapper> { return this.activeWrappers; },
     activeWrappers: new Map<WrapTarget, WordWrapper>(),
 
+    UpdateWrapSpacing()
+    {
+        let spacings = this.wrapperSpacing as Map<WrapTarget, IWrapperSpacing>;
+        let params = this.Params as CGT.WWCore.CoreWrapParams;
+
+        spacings.set(WrapTarget.MessageBox, params.MessageSpacing);
+        spacings.set(WrapTarget.Desc, params.DescSpacing);
+        spacings.set(WrapTarget.MessageBacklog, params.BacklogSpacing);
+        spacings.set(WrapTarget.Bubble, params.BubbleSpacing);
+    },
+
+    get WrapperSpacing(): Map<WrapTarget, IWrapperSpacing> { return this.wrapperSpacing; },
+    wrapperSpacing: new Map<WrapTarget, IWrapperSpacing>(),
+
     RegisterWrapper(wrapper: WordWrapper): void
     {
         let registeredWrappers = this.registeredWrappers as Map<string, WordWrapper>;
@@ -74,14 +89,11 @@ export let WWCore =
 
     version: 30101,
 
-    messageBoxWrapper: null,
-    descWrapper: null,
-    messageBacklogWrapper: null,
-    bubbleWrapper: null,
-
     WrapTarget: WrapTarget,
     
     currentMessageIsBubble: false,
+
+    textForGalvMessageStyles: "",
 };
 
 SetDefaultWrappers();
@@ -111,5 +123,7 @@ function OnWrapModeChanged(oldMode: string, newMode: string)
 {
     WWCore.UpdateActiveWrappers();
 }
+
+WWCore.UpdateWrapSpacing();
 
 ApplyOverrides(WWCore.Params);

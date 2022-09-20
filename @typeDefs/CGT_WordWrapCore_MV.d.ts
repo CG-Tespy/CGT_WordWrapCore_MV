@@ -147,8 +147,8 @@ declare namespace CGT
         {
             textField: Bitmap;
             rawTextToWrap: string;
-            /** In whatever units the active wrapper is using. */
-            widthOffset: number;
+            spacing: IWrapperSpacing;
+            considerYanflyNamebox: boolean;
         }
 
         interface ILineWrapper
@@ -176,12 +176,16 @@ declare namespace CGT
         {
             // ~~~DesignatedWrappers~~~
             get MessageWrapper(): string;
+            get MessageSpacing(): IWrapperSpacing;
 
             get DescWrapper(): string;
+            get DescSpacing(): IWrapperSpacing;
 
             get MessageBacklogWrapper(): string;
+            get BacklogSpacing(): IWrapperSpacing;
 
             get BubbleWrapper(): string;
+            get BubbleSpacing(): IWrapperSpacing;
 
             /**
              * 2-arg event that triggers when the wrap mode changes.
@@ -241,35 +245,30 @@ declare namespace CGT
              */
             get RememberResults(): boolean;
             set RememberResults(value);
-
-            // ~~~Spacing~~~
-            /** How wide mugshots are treated as being, in a unit decided by the active wrapper. */
-            get MugshotWidth(): number;
-            set MugshotWidth(value);
-
-            /** 
-             * How much space there is between the mugshot and the text, in a unit 
-             * decided by the active wrapper. 
-             * */
-            get MugshotPadding(): number;
-            set MugshotPadding(value);
-
-            /** For the message box sides, in a wrapper-decided unit. */
-            get SidePadding(): number;
-            set SidePadding(value);
-
-            get BoldItalicPadding(): number;
-            set BoldItalicPadding(value);
-            
         }
 
-        interface ICoreWrapParams
+        interface IWrapperSpacing
+        {
+            MugshotWidth: number;
+            MugshotPadding: number;
+            SidePadding: number;
+            BoldItalicPadding: number;
+        }
+
+        interface IBaseCoreWrapParams
         {
             // ~~~DesignatedWrappers~~~
             MessageWrapper: string;
+            MessageSpacing: IWrapperSpacing;
+
             DescWrapper: string;
+            DescSpacing: IWrapperSpacing;
+
             MessageBacklogWrapper: string;
+            BacklogSpacing: IWrapperSpacing;
+
             BubbleWrapper: string;
+            BubbleSpacing: IWrapperSpacing;
 
             NametagFormats: IRegexEntry[];
             EmptyText: IRegexEntry[];
@@ -283,11 +282,6 @@ declare namespace CGT
             CULenience: number;
             RememberResults: boolean;
 
-            // ~~~Spacing~~~
-            MugshotWidth: number;
-            MugshotPadding: number;
-            SidePadding: number;
-            BoldItalicPadding: number;
         }
 
         let Params: CoreWrapParams;
@@ -432,6 +426,7 @@ declare namespace CGT
         let WrapTargetValues: string[];
 
         let ActiveWrappers: Map<WrapTarget, WordWrapper>;
+        let WrapperSpacing: Map<WrapTarget, IWrapperSpacing>;
 
         function RegisterWrapper(wrapper: WordWrapper);
 
@@ -465,6 +460,14 @@ declare namespace CGT
 
         }
 
+        interface IWrapperSpacing
+        {
+            MugshotWidth: number;
+            MugshotPadding: number;
+            SidePadding: number;
+            BoldItalicPadding: number;
+        }
+
         let version: number;
 
         let messageBoxWrapper: WordWrapper;
@@ -473,5 +476,6 @@ declare namespace CGT
         let bubbleWrapper: WordWrapper;
 
         let currentMessageIsBubble: boolean;
+        let textForGalvMessageStyles: string;
     }
 }

@@ -8,7 +8,8 @@ export function ApplyWindowHelpOverrides()
     {
         textField: null,
         rawTextToWrap: "",
-        widthOffset: 0,
+        spacing: null,
+        considerYanflyNamebox: false,
     };
     
     Window_Help.prototype.wordWrapArgs = Object.assign({}, defaultWordWrapArgs);
@@ -27,6 +28,7 @@ function ApplyDescWrapping(this: Window_Help, text: string)
     UpdateWrapArgs.call(this, text);
     let WrapTarget = CGT.WWCore.WrapTarget;
     let wordWrapper = CGT.WWCore.ActiveWrappers.get(WrapTarget.Desc);
+    
     let wrappedText = wordWrapper.Wrap(this.wordWrapArgs);
     this._text = wrappedText;
 }
@@ -35,4 +37,8 @@ function UpdateWrapArgs(this: Window_Help, text: string)
 {
     this.wordWrapArgs.textField = this.contents;
     this.wordWrapArgs.rawTextToWrap = text;
+
+    let WrapTarget = CGT.WWCore.WrapTarget;
+    let spacing = CGT.WWCore.WrapperSpacing.get(WrapTarget.Desc);
+    this.wordWrapArgs.spacing = spacing;
 }

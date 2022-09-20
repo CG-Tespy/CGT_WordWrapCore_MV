@@ -8,7 +8,6 @@ export function ApplyWindowMessageOverrides(coreParams: CoreWrapParams)
     OverrideOpen();
 }
 
-
 function OverrideConvertEscapeCharacters()
 {
     let oldVersion = Window_Message.prototype.convertEscapeCharacters;
@@ -39,19 +38,6 @@ function OverrideConvertEscapeCharacters()
 
 }
 
-function GalvMessageStyleApplies(): boolean
-{
-    let pluginName = "GALV_MessageStyles";
-    let params = PluginManager.parameters(pluginName);
-    let itIsThere = Object.keys(params).length > 0;
-
-    if (!itIsThere)
-        return false;
-
-    let galvTargetIsThere = Galv.Mstyle.target != false;
-    return galvTargetIsThere;
-}
-
 function OverrideOpen()
 {
     let oldOpen = Window_Message.prototype.open;
@@ -59,7 +45,10 @@ function OverrideOpen()
     function NewOpen(this: Window_Message): void
     {
         if (ShouldApplyWrappedText.call(this))
+        {
             ApplyWrappedText.call(this);
+            UpdateGalvGlobals.call(this);
+        }
         oldOpen.call(this);
     }
 
@@ -74,17 +63,18 @@ function OverrideOpen()
 
     function ApplyWrappedText(this: Window_Message): void
     {
-        var wrapperToUse: WordWrapper = DecideWrapperToUse();
-        var wrapArgs: IWordWrapArgs = GetInfoForWrapper.call(this);
+        let wrapTarget = DecideOnWrapTarget();
+        var wrapperToUse: WordWrapper = DecideWrapperToUse(wrapTarget);
+
+        var wrapArgs: IWordWrapArgs = GetInfoForWrapper.call(this, wrapTarget);
         var wrappedText = wrapperToUse.Wrap(wrapArgs);
 
         this._textState.text = wrappedText;
     }
 
     type WordWrapper = CGT.WWCore.WordWrapper;
-    function DecideWrapperToUse(): WordWrapper
+    function DecideWrapperToUse(wrapTarget: CGT.WWCore.WrapTarget): WordWrapper
     {
-        let wrapTarget = DecideOnWrapTarget();
         let activeWrappers = CGT.WWCore.ActiveWrappers;
         var theOneToUse: WordWrapper = activeWrappers.get(wrapTarget);
         return theOneToUse;
@@ -103,19 +93,39 @@ function OverrideOpen()
         return decidedOn;
     }
 
-    function GetInfoForWrapper(this: Window_Message): IWordWrapArgs
+    function GetInfoForWrapper(this: Window_Message, wrapTarget: CGT.WWCore.WrapTarget): IWordWrapArgs
     {
+        let wrapArgs: IWordWrapArgs = null;
+        let spacing: IWrapperSpacing = null;
+        let wrapperSpacing = CGT.WWCore.WrapperSpacing;
+
+        spacing = wrapperSpacing.get(wrapTarget);
+
         let rawText = this._textState.text + "";
         let textField = this.contents;
-        let wrapArgs: IWordWrapArgs = 
+
+        wrapArgs = 
         {
             textField: textField,
             rawTextToWrap: rawText,
-            widthOffset: 0,
+            spacing: spacing,
+            considerYanflyNamebox: true,
         };
 
         return wrapArgs;
     }
 
+    type IWrapperSpacing = CGT.WWCore.IWrapperSpacing;
+
+    function UpdateGalvGlobals(this: Window_Message)
+    {
+        let textForMessageStyles = "";
+        let showingBubble = this.pTarget != null;
+        
+        if (showingBubble)
+            textForMessageStyles = this._textState.text;
+
+        CGT.WWCore.textForGalvMessageStyles = textForMessageStyles;
+    }
     Window_Message.prototype.open = NewOpen;
 }

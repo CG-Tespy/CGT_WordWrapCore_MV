@@ -8,6 +8,14 @@
 -- Text bubbles (starting with Galv's)
 - Implement a new algorithm-informing tag for some inputs to not be scanned for nametags (done!)
 - Have EmptyText work off a struct for convenience, like NametagFormats does now (done!)
-- Alter plugin command for setting the active wrappers
+- Alter plugin command for setting the active wrappers (done!)
 -- Add documentation for it
-- Implement the functionality for BoldItalicPadding
+- Implement the functionality for BoldItalicPadding (done!)
+- Add individual spacing params for each wrapper (done!)
+-- Maybe have those params as part of the individual wrappers instead of the WWC?
+- Refactor the PluginCommands to work with the new spacing params. (done!)
+-- Make it so that as part of the command call, you must include the name of the wrapper type. (done!)
+- Make CascadingUnderflow work with LCB wrapping (done!)
+- Fix issue with yanfly-nametag-detection conflicting with message log wrapper detecting nametags (done!)
+- Fix issue with spaces removed in text like "perspiciatis \C[5]unde omnis \C[3]iste" (done!)
+- Fix the issue with how sometimes, spaces get inappropriately added in some places (done!)

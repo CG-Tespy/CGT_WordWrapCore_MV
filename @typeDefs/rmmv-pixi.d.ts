@@ -7773,9 +7773,11 @@ declare class Game_Timer {
  * @class Game_Message
  */
 declare class Game_Message {
-    protected _texts: Array<string>;
+    
+
+    public _texts: Array<string>;
     protected _choices: Array<string>;
-    protected _faceName: string;
+    public _faceName: string;
     protected _faceIndex: number;
     protected _background: number;
     protected _positionType: number;
@@ -8008,6 +8010,8 @@ declare class Game_Message {
      * @memberof Game_Message
      */
     allText(): string;
+
+    bustPos: number;
 }
 
 /**
@@ -17292,6 +17296,7 @@ declare class Spriteset_Battle extends Spriteset_Base {
  * @extends {Window}
  */
 declare class Window_Base extends _Window {
+
   /**
    * The standard icon width;
    * default is 32.
@@ -17318,7 +17323,7 @@ declare class Window_Base extends _Window {
    * @type {number}
    * @memberof Window_Base
    */
-  protected static _faceWidth: number;
+  public static _faceWidth: number;
   /**
    * The standard face height;
    * default is 144.
@@ -17327,7 +17332,7 @@ declare class Window_Base extends _Window {
    * @type {number}
    * @memberof Window_Base
    */
-  protected static _faceHeight: number;
+  public static _faceHeight: number;
   /**
    * The opening property; determines if
    * the window is opening.
@@ -18554,7 +18559,9 @@ declare class Window_HorzCommand extends Window_Command {
  */
 declare class Window_Help extends Window_Base {
 
-    wordWrapArgs: { textField: Bitmap, rawTextToWrap: string, widthOffset: number };
+    wordWrapArgs: 
+    { textField: Bitmap, rawTextToWrap: string, 
+        spacing: CGT.WWCore.IWrapperSpacing, considerYanflyNamebox: boolean };
 
     refresh(): void;
 
@@ -19809,6 +19816,11 @@ declare class Window_EventItem extends Window_ItemList {
  * @class Window_Message
  */
 declare class Window_Message extends Window_Base {
+
+    testWidthEx(input: string): number;
+    yOffset: number;
+    pTarget: any;
+
     protected _background: number;
     protected _positionType: number;
     protected _waitCount: number;
@@ -19991,6 +20003,8 @@ declare class Window_Message extends Window_Base {
     createMessageBacklogWindow(): void;
 
     _backlogWindow: Window_MessageBacklog;
+
+    changeWindowDimensions(): void;
 }
 
 /**

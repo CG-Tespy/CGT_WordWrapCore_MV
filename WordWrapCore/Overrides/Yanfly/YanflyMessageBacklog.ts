@@ -32,17 +32,27 @@ function OverrideAddIndividualLines()
 function WrapText(this: Window_MessageBacklog, text: string): string
 {
     let WrapTarget = CGT.WWCore.WrapTarget;
-    var activeWrapper = CGT.WWCore.ActiveWrappers.get(WrapTarget.MessageBacklog);
-    var wrapArgs = 
+    let targetBacklog = WrapTarget.MessageBacklog;
+
+    var activeWrapper = CGT.WWCore.ActiveWrappers.get(targetBacklog);
+    let spacing = CGT.WWCore.WrapperSpacing.get(targetBacklog);
+
+    var wrapArgs: CGT.WWCore.IWordWrapArgs = 
     {
         textField: this.contents,
         rawTextToWrap: text,
-        widthOffset: 0,
+        spacing: spacing,
+
+        considerYanflyNamebox: false,
+        // ^ When wrapping message backlog text that includes a yanfly nametag, it is 
+        // included in the input as opposed to moved to the namebox. Hence why
+        // here, we need the wrapper to ignore what's in the namebox
     };
     
     var wrappedText = activeWrapper.Wrap(wrapArgs);
     return wrappedText;
 }
+
 
 function AddNewMemberFunctions()
 {
