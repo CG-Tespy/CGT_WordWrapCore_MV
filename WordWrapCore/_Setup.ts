@@ -16,6 +16,7 @@ import { IWrapperSpacing } from './Structures/WordWrappers/WordWrapArgs/IWrapper
 
 export let WWCore = 
 {
+    version: 30103,
     Params: pluginParams,
     WrapRules: WrapRules,
     Overflow: Overflow, 
@@ -86,8 +87,6 @@ export let WWCore =
         activeNametagText: "",
         messageBacklogWindow: null,
     },
-
-    version: 30101,
 
     WrapTarget: WrapTarget,
     

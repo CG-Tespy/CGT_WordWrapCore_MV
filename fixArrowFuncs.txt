@@ -1,0 +1,3 @@
+const _isBoolean = function(string) { return string === 'true' || string === 'false'; }
+
+Object.keys(parameters).forEach(function(key) {
