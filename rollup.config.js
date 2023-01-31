@@ -11,7 +11,6 @@ export default {
         
 	},
 
-    
 	plugins: [
 		resolve({
 		  jsnext: true,

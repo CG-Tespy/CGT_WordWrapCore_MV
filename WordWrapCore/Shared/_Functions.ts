@@ -10,3 +10,16 @@ export function WrapperSpacingByString(input: string)
     let whatWeWant = allSpacings.get(wrapTarget);
     return whatWeWant;
 }
+
+/** Since MV 1.5.1 doesn't support the regular Object.values() func */
+export function ValuesFromObject(obj: Object): unknown[]
+{
+    let result = [];
+    for (let key in obj)
+    {
+        result.push(obj[key]);
+    }
+
+    return result;
+
+}

@@ -21,6 +21,9 @@ function OverrideAddIndividualLines()
 
     function NewAddIndividualLines(this: Window_MessageBacklog, text: string)
     {
+        // Need to convert escape chars here so that cascading underflow works as intended
+        // for the log
+        text = this.convertEscapeCharacters(text);
         let wrappedText = this.WrapText(text);
         oldVersion.call(this, wrappedText);
     }
